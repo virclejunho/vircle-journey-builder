@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIRCLE 여정도 빌더 — 기능 소개 (내부 공유용)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --paper:#F6F1E7; --paper-deep:#EFE7D7; --ink:#1F1B16; --ink-soft:#5C5347;
+  --brick:#8C2F1B; --brick-2:#C96B3A; --line:#DDD2BE; --card:#FFFFFF;
+  --flow-pink:#E0457B; --console-blue:#2240B0; --ok:#2A7A52;
+  --serif:'Noto Serif KR', serif;
+  --sans:'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;
+  background-image:radial-gradient(rgba(140,47,27,.06) 1px,transparent 1px);background-size:26px 26px;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px;}
+em{font-style:normal;color:var(--brick);}
+
+/* 상단 바 */
+.topbar{border-bottom:2px solid var(--ink);position:sticky;top:0;background:var(--paper);z-index:50;}
+.topbar .wrap{display:flex;align-items:center;gap:14px;padding:13px 28px;flex-wrap:wrap;}
+.mark{font-size:11px;letter-spacing:.22em;font-weight:800;color:var(--brick);border:1.5px solid var(--brick);padding:4px 10px;border-radius:999px;}
+.topbar .doc{font-size:13px;color:var(--ink-soft);font-weight:600;}
+.topbar .cta{margin-left:auto;}
+.btn{font-family:var(--sans);font-size:13.5px;font-weight:800;cursor:pointer;border:1.5px solid var(--ink);background:var(--brick);color:#fff;border-color:var(--brick);padding:9px 16px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;box-shadow:2.5px 2.5px 0 rgba(140,47,27,.4);transition:transform .15s,box-shadow .15s;}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(140,47,27,.4);}
+
+/* 히어로 */
+.hero{padding:64px 0 40px;text-align:center;}
+.hero .eyebrow{font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--brick-2);margin-bottom:18px;}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(34px,6vw,62px);line-height:1.12;letter-spacing:-.02em;}
+.hero p{font-size:clamp(16px,2.2vw,20px);color:var(--ink-soft);max-width:680px;margin:22px auto 0;}
+.hero .pill{display:inline-block;margin-top:30px;font-size:13.5px;font-weight:700;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:8px 18px;}
+.hero .pill b{color:var(--brick);}
+
+/* 섹션 */
+section{padding:46px 0;border-top:1.5px solid var(--line);}
+.sec-tag{font-size:12.5px;font-weight:800;letter-spacing:.1em;color:var(--brick);margin-bottom:12px;}
+.sec-h{font-family:var(--serif);font-weight:900;font-size:clamp(24px,3.6vw,36px);letter-spacing:-.015em;line-height:1.25;margin-bottom:14px;}
+.lead{font-size:17px;color:var(--ink-soft);max-width:760px;}
+
+/* 문제→전환 */
+.shift{display:grid;grid-template-columns:1fr auto 1fr;gap:22px;align-items:center;margin-top:30px;}
+.shift .box{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:22px;}
+.shift .box.before{opacity:.86;}
+.shift .box.after{border-color:var(--brick);box-shadow:5px 5px 0 rgba(140,47,27,.18);}
+.shift .box h4{font-size:13px;font-weight:800;letter-spacing:.06em;margin-bottom:12px;}
+.shift .box.before h4{color:var(--ink-soft);}
+.shift .box.after h4{color:var(--brick);}
+.shift .box ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.shift .box li{font-size:14.5px;padding-left:22px;position:relative;}
+.shift .box.before li::before{content:'✕';position:absolute;left:0;color:#B0654E;font-weight:800;}
+.shift .box.after li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:800;}
+.shift .arrow{font-size:30px;color:var(--brick);font-weight:900;}
+@media(max-width:760px){.shift{grid-template-columns:1fr;}.shift .arrow{transform:rotate(90deg);justify-self:center;}}
+
+/* 3스텝 */
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;}
+.step{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:24px;box-shadow:5px 5px 0 rgba(31,27,22,.1);}
+.step .n{font-family:var(--serif);font-weight:900;font-size:38px;color:var(--brick-2);line-height:1;}
+.step h3{font-family:var(--serif);font-size:20px;font-weight:900;margin:10px 0 8px;}
+.step p{font-size:14.5px;color:var(--ink-soft);}
+@media(max-width:760px){.steps3{grid-template-columns:1fr;}}
+
+/* 뷰 3종 */
+.views{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;}
+.view{background:var(--card);border:2px solid var(--line);border-radius:16px;overflow:hidden;}
+.view .vis{height:150px;background:#FbF8F2;background-image:radial-gradient(rgba(31,27,22,.07) 1px,transparent 1px);background-size:14px 14px;display:flex;align-items:center;justify-content:center;border-bottom:2px solid var(--line);padding:14px;}
+.view .vt{padding:18px 20px 22px;}
+.view h3{font-family:var(--serif);font-size:19px;font-weight:900;margin-bottom:6px;}
+.view p{font-size:14px;color:var(--ink-soft);}
+/* 미니 비주얼 */
+.mini-phone{width:42px;height:78px;background:#fff;border:1.5px solid var(--ink);border-radius:8px;display:inline-block;vertical-align:middle;}
+.mini-phone.brick{background:linear-gradient(135deg,var(--brick),var(--brick-2));}
+.mini-arrow{color:var(--flow-pink);font-weight:800;margin:0 5px;}
+.mini-card{width:62px;height:78px;background:#fff;border:2px solid var(--ink);border-radius:9px;display:inline-block;margin:0 3px;position:relative;}
+.mini-card::after{content:'';position:absolute;left:7px;right:7px;bottom:10px;height:14px;background:var(--kakao,#FEE500);border-radius:4px;}
+.mini-tl{width:100%;}
+.mini-tl .ln{height:3px;background:var(--brick-2);position:relative;margin:30px 14px;}
+.mini-tl .dot{position:absolute;top:-4px;width:11px;height:11px;border-radius:50%;background:var(--brick);}
+.mini-tl .chk{position:absolute;top:-30px;font-size:9px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:1px 5px;white-space:nowrap;}
+@media(max-width:760px){.views{grid-template-columns:1fr;}}
+
+/* 템플릿 */
+.tpls{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:30px;}
+.tpl{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:20px;display:flex;gap:16px;align-items:flex-start;}
+.tpl .em{font-size:30px;}
+.tpl h3{font-family:var(--serif);font-size:19px;font-weight:900;}
+.tpl p{font-size:14px;color:var(--ink-soft);margin-top:3px;}
+.tpl .badge{font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:2px;}
+.tpl .badge.live{background:#E9F4EC;color:var(--ok);}
+.tpl .badge.soon{background:#FBEFE6;color:var(--brick-2);}
+@media(max-width:760px){.tpls{grid-template-columns:1fr;}}
+
+/* 기능 그리드 */
+.feats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:30px;}
+.feat{background:var(--card);border:1.5px solid var(--line);border-radius:13px;padding:18px 20px;display:flex;gap:14px;}
+.feat .ic{font-size:22px;flex-shrink:0;}
+.feat h4{font-size:15.5px;font-weight:800;margin-bottom:3px;}
+.feat p{font-size:13.5px;color:var(--ink-soft);}
+@media(max-width:560px){.feats{grid-template-columns:1fr;}}
+
+/* 핸드오프 */
+.handoff{background:var(--ink);color:var(--paper);border-radius:20px;padding:36px;margin-top:30px;}
+.handoff .sec-h{color:var(--paper);}
+.handoff .lead{color:#D7CFC0;}
+.flowline{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:24px;}
+.flowline .node{background:#2C2823;border:1.5px solid #45403A;border-radius:12px;padding:14px 18px;font-size:14px;flex:1;min-width:150px;}
+.flowline .node b{color:#F3C9A6;display:block;font-size:13px;margin-bottom:3px;}
+.flowline .sep{color:var(--brick-2);font-size:22px;font-weight:900;}
+@media(max-width:760px){.flowline .sep{transform:rotate(90deg);}}
+
+/* 상태 */
+.status{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px;}
+.status .col{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:22px;}
+.status .col h4{font-size:14px;font-weight:800;letter-spacing:.04em;margin-bottom:12px;}
+.status .col.now h4{color:var(--ok);}
+.status .col.next h4{color:var(--brick);}
+.status ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.status li{font-size:14px;padding-left:20px;position:relative;color:var(--ink-soft);}
+.status .col.now li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:800;}
+.status .col.next li::before{content:'→';position:absolute;left:0;color:var(--brick);font-weight:800;}
+@media(max-width:560px){.status{grid-template-columns:1fr;}}
+
+/* 푸터 CTA */
+.footcta{text-align:center;padding:56px 0 70px;border-top:1.5px solid var(--line);}
+.footcta h2{font-family:var(--serif);font-weight:900;font-size:clamp(24px,4vw,38px);margin-bottom:10px;}
+.footcta p{color:var(--ink-soft);margin-bottom:24px;}
+.foot-mark{font-family:var(--serif);font-weight:900;color:var(--brick);font-size:15px;}
+.disclaimer{font-size:12px;color:var(--ink-soft);text-align:center;padding:0 0 40px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <span class="mark">VIRCLE JOURNEY</span>
+    <span class="doc">기능 소개 · 내부 공유용 v0.1</span>
+    <a class="btn cta" href="index.html">▶ 데모 열어보기</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">CUSTOMER-LED CAMPAIGN JOURNEY BUILDER</div>
+    <h1>고객이 직접 그리는<br><em>마케팅 캠페인 여정도</em></h1>
+    <p>미팅로그를 보고 에이전트가 기획을 대신 짜는 대신, <b>고객사가 몇 번의 선택으로 자기 브랜드의 CRM 여정도를 직접 만들고</b>, 그 결과물을 그대로 버클 그로스팀과 공유하는 웹 도구입니다.</p>
+    <span class="pill">레퍼런스: <b>plus-ex Contact</b> (선택형 위저드) + <b>버클 컨설팅 패키지</b> (여정도 비주얼)</span>
+  </div>
+
+  <section>
+    <div class="sec-tag">WHY · 왜 만드나</div>
+    <div class="sec-h">기획 과정을 고객에게 넘기면,<br>더 빠르고 더 정확해집니다</div>
+    <p class="lead">고객마다 캠페인이 너무 달라서 에이전트가 미팅로그만으로 여정을 정확히 짜기는 어렵습니다. 대신 <b>고객이 아는 것(브랜드·목표·혜택·일정)을 직접 고르게</b> 하고, 버클은 검증된 실행 패턴(템플릿)과 콘솔 세팅 가이드를 제공합니다.</p>
+    <div class="shift">
+      <div class="box before">
+        <h4>지금 — 수작업</h4>
+        <ul>
+          <li>노션·피그마로 매번 처음부터 제작</li>
+          <li>여정도 비주얼은 디자이너 수작업</li>
+          <li>고객 의도 → 기획 사이 왕복 多</li>
+          <li>재기획 때 또 처음부터</li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box after">
+        <h4>여정도 빌더</h4>
+        <ul>
+          <li>고객이 위저드로 5분 만에 초안 생성</li>
+          <li>템플릿이 여정도 비주얼을 자동 구성</li>
+          <li>완성 링크가 곧 협업·소통의 시작점</li>
+          <li>템플릿만 바꿔 다음 캠페인 재사용</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag">HOW · 어떻게 동작하나</div>
+    <div class="sec-h">브랜드 입력 → 선택 위저드 → 여정도</div>
+    <div class="steps3">
+      <div class="step"><div class="n">1</div><h3>브랜드 입력 · 시작</h3><p>브랜드명만 입력하면 바로 시작합니다. 로그인·가입 없이 누구나 열어 만들 수 있어요.</p></div>
+      <div class="step"><div class="n">2</div><h3>6단계 선택 위저드</h3><p>캠페인 유형 · 목표/혜택 · 기간 · 타깃/채널 · 제품 사진. plus-ex처럼 한 화면에 질문 하나씩, 고른 것에 따라 다음 질문이 달라집니다.</p></div>
+      <div class="step"><div class="n">3</div><h3>여정도 자동 생성</h3><p>선택을 조합해 화면 플로우 · 메시지 · 발송 일정 · 할 일이 한 번에 그려집니다. 카드를 눌러 바로 다듬을 수 있어요.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag">OUTPUT · 결과물 3가지 뷰</div>
+    <div class="sec-h">같은 여정을, 보는 사람에 맞게</div>
+    <div class="views">
+      <div class="view">
+        <div class="vis"><span class="mini-phone brick"></span><span class="mini-arrow">→</span><span class="mini-phone"></span><span class="mini-arrow">→</span><span class="mini-phone"></span></div>
+        <div class="vt"><h3>📱 화면 플로우</h3><p>고객이 실제로 보게 될 화면(랜딩·럭키드로우·쿠폰)이 이어지는 뷰. 컨설팅 패키지 피그마와 같은 문법 — 발표·공유에 강합니다.</p></div>
+      </div>
+      <div class="view">
+        <div class="vis"><span class="mini-card"></span><span class="mini-card"></span><span class="mini-card"></span></div>
+        <div class="vt"><h3>📋 단계 카드</h3><p>CRM 발송 회차별 카드(채널·타깃·메시지). 말풍선을 클릭해 문안을 바로 수정 — 기획·편집에 강합니다.</p></div>
+      </div>
+      <div class="view">
+        <div class="vis"><div class="mini-tl"><div class="ln"><span class="dot" style="left:6%"></span><span class="chk" style="left:0">☐ 쿠폰 세팅</span><span class="dot" style="left:48%"></span><span class="chk" style="left:42%">☐ QA</span><span class="dot" style="left:90%"></span><span class="chk" style="left:80%">발송</span></div></div></div>
+        <div class="vt"><h3>🗓️ 타임라인 &amp; 할 일</h3><p>날짜 축 위에 발송·준비 시점이 놓이고, 각 지점마다 담당(버클/브랜드/함께)·기한이 붙은 투두 — 실행 관리에 강합니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag">TEMPLATES · 캠페인 템플릿</div>
+    <div class="sec-h">검증된 실행 패턴을 템플릿으로</div>
+    <p class="lead">버클이 실제로 운영한 캠페인 패턴(분크 럭키드로우·패밀리세일 등)을 템플릿화했습니다. 고객은 고르기만, 그로스팀은 코드 없이 템플릿 파일만 손봐 확장합니다.</p>
+    <div class="tpls">
+      <div class="tpl"><div class="em">🎰</div><div><h3>게임화 이벤트<span class="badge live">데모 완성</span></h3><p>럭키드로우·퀴즈·룰렛. QR→가입→드로우→쿠폰 + 꽝 재도전 분기까지.</p></div></div>
+      <div class="tpl"><div class="em">🏷️</div><div><h3>세일 / 패밀리세일<span class="badge soon">구조 동일</span></h3><p>티징→오픈→타임딜→마감. 기본·선착순 쿠폰, 타임딜 구성.</p></div></div>
+      <div class="tpl"><div class="em">✨</div><div><h3>신상품 런칭 / 드랍<span class="badge soon">구조 동일</span></h3><p>사전 알림→선공개/우선구매→구매→후속 리뷰.</p></div></div>
+      <div class="tpl"><div class="em">💌</div><div><h3>리텐션 / 재구매<span class="badge soon">구조 동일</span></h3><p>구매 후 D+3/D+7/D+14 자동 시퀀스·VIP·휴면 복구.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag">BUILT-IN · 기본 탑재 기능</div>
+    <div class="sec-h">여정도 하나에 담기는 것들</div>
+    <div class="feats">
+      <div class="feat"><div class="ic">🖥️</div><div><h4>버클 콘솔 설정 가이드</h4><p>각 단계에 "이 기능은 콘솔에서 이렇게 설정" 안내가 펼쳐집니다. 고객이 막히지 않게.</p></div></div>
+      <div class="feat"><div class="ic">💬</div><div><h4>메시지 톤 자동 + 직접 수정</h4><p>템플릿 문안에 브랜드·혜택을 치환해 채우고, 말풍선을 눌러 바로 다듬습니다. (기존 발송 톤 학습 연동 예정)</p></div></div>
+      <div class="feat"><div class="ic">🖼️</div><div><h4>제품 사진 반영</h4><p>업로드한 사진이 랜딩·쿠폰·메시지 화면에 자동으로 들어가 실제 느낌으로.</p></div></div>
+      <div class="feat"><div class="ic">⬇</div><div><h4>PDF · SVG 다운로드</h4><p>PDF로 보고/공유, SVG로 피그마·일러스트레이터에서 바로 편집. 노션 의존 없음.</p></div></div>
+      <div class="feat"><div class="ic">🔄</div><div><h4>템플릿 전환 · 재편집</h4><p>완성 후 다른 캠페인 템플릿으로 바꿔도 브랜드·기간·사진·톤은 유지. 다음 달 재기획이 빨라집니다.</p></div></div>
+      <div class="feat"><div class="ic">🖨️</div><div><h4>그대로 보고용</h4><p>PDF·SVG로 내려받아 그대로 공유. 별도 계정·링크 없이 파일 하나로 소통합니다.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="handoff">
+      <div class="sec-tag" style="color:var(--brick-2)">HANDOFF · 담당자와 소통</div>
+      <div class="sec-h">고객이 만든 여정도가<br>그로스팀 협업의 시작점</div>
+      <p class="lead">고객은 자기 의도를 직접 구조화하고, 그로스팀은 그 위에서 데이터 근거(과거 ROAS 사례·RFM 타깃)와 실행 디테일을 더합니다. 같은 화면을 보며 대화가 시작됩니다.</p>
+      <div class="flowline">
+        <div class="node"><b>고객사</b>위저드로 여정도 초안 생성 · 사진/메시지 반영</div>
+        <span class="sep">→</span>
+        <div class="node"><b>공유</b>PDF · SVG로 담당자에게 전달</div>
+        <span class="sep">→</span>
+        <div class="node"><b>그로스팀</b>같은 여정도 위에서 검토·보완하며 실행 기획으로</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag">STATUS · 현재 / 다음</div>
+    <div class="sec-h">데모 범위와 로드맵</div>
+    <div class="status">
+      <div class="col now">
+        <h4>지금 데모에서 되는 것</h4>
+        <ul>
+          <li>6단계 위저드 (전 단계 인터랙션)</li>
+          <li>게임화 템플릿 풀 여정도 (분기 포함)</li>
+          <li>화면 플로우 · 카드 · 타임라인 3뷰</li>
+          <li>말풍선 인라인 수정 · 투두 체크</li>
+          <li>PDF · SVG 다운로드</li>
+          <li>템플릿 4종 선택 (3종은 경량 구성)</li>
+        </ul>
+      </div>
+      <div class="col next">
+        <h4>다음 단계 (협의 후)</h4>
+        <ul>
+          <li>세일·드랍·리텐션 템플릿 풀 제작</li>
+          <li>기존 발송 메시지 톤 연동(브랜드별)</li>
+          <li>여정도 저장/재편집 백엔드</li>
+          <li>그로스팀 알림·검토 연계 (crm-ref)</li>
+          <li>호스팅 배포 (현재 로컬/내부 데모)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="footcta">
+  <h2>직접 만들어 보세요</h2>
+  <p>5분이면 한 브랜드의 캠페인 여정도가 나옵니다.</p>
+  <a class="btn" href="index.html" style="font-size:15px;padding:13px 26px;">▶ 여정도 빌더 데모 열기</a>
+</div>
+
+<div class="disclaimer">
+  <span class="foot-mark">VIRCLE</span> · 여정도 빌더 기능 소개 (내부 공유용) · 2026.06 · 콘솔 화면·일부 데이터는 데모용 목업입니다.
+</div>
+
+</body>
+</html>
