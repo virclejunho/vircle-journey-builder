@@ -3,585 +3,680 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIRCLE 여정도 빌더 — 고객 캠페인 여정 설계</title>
+<title>VIRCLE Journey Builder — 버클 화면 플로우 생성기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{
-  --paper:#F6F1E7; --paper-deep:#EFE7D7; --ink:#1F1B16; --ink-soft:#5C5347;
-  --brick:#8C2F1B; --brick-2:#C96B3A; --line:#DDD2BE; --card:#FFFFFF;
-  --flow-pink:#E0457B; --console-blue:#2240B0; --console-bg:#E8EFFF;
-  --kakao:#FEE500; --ok:#2A7A52;
-  --serif:'Noto Serif KR', serif;
-  --sans:'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+  --primary:#0066cc; --primary-focus:#0071e3; --primary-on-dark:#2997ff;
+  --canvas:#ffffff; --parchment:#f5f5f7; --pearl:#fafafc;
+  --tile-1:#272729; --black:#000000;
+  --ink:#1d1d1f; --ink-muted:#333333; --fine:#666666;
+  --on-dark:#ffffff; --muted-on-dark:#cccccc;
+  --hairline:#e0e0e0; --divider-soft:#f0f0f0;
+  --kakao:#FEE500;
+  --sans:-apple-system,system-ui,BlinkMacSystemFont,'Pretendard Variable',Pretendard,'Segoe UI',sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --shadow-product:3px 5px 30px 0 rgba(0,0,0,.22);
+  --cardbg:#ffffff; --cardborder:#e0e0e0;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;
-  background-image:radial-gradient(rgba(140,47,27,.06) 1px, transparent 1px);background-size:26px 26px;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.35;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");}
-
-header{border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:100;}
-.h-inner{max-width:1240px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.h-mark{font-size:11px;letter-spacing:.22em;font-weight:800;color:var(--brick);border:1.5px solid var(--brick);padding:4px 10px;border-radius:999px;white-space:nowrap;}
-.h-title{display:flex;align-items:center;gap:10px;flex:1;min-width:220px;}
-.h-title .brand-dot{width:12px;height:12px;border-radius:50%;background:var(--brick);flex-shrink:0;}
-.h-title h1{font-family:var(--serif);font-weight:900;font-size:clamp(16px,2.3vw,22px);letter-spacing:-.01em;}
-.h-title h1 em{font-style:normal;color:var(--brick);}
-.actions{display:flex;gap:8px;flex-wrap:wrap;}
-.btn{font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:9px;display:inline-flex;align-items:center;gap:6px;transition:transform .15s,box-shadow .15s,background .15s;box-shadow:2.5px 2.5px 0 rgba(31,27,22,.85);}
-.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(31,27,22,.85);}
-.btn:active{transform:translate(1.5px,1.5px);box-shadow:0 0 0;}
-.btn.primary{background:var(--brick);color:#fff;border-color:var(--brick);box-shadow:2.5px 2.5px 0 rgba(140,47,27,.45);}
-.btn.ghost{box-shadow:none;background:transparent;}
-.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
+body{font-family:var(--sans);background:var(--parchment);color:var(--ink);line-height:1.47;-webkit-font-smoothing:antialiased;letter-spacing:-.01em;}
 .hidden{display:none !important;}
+em{font-style:normal;color:var(--primary);}
 
-/* ───────── 위저드 ───────── */
-#stage-wizard{max-width:840px;margin:0 auto;padding:34px 28px 60px;}
-.wz-progress{display:flex;gap:6px;margin-bottom:30px;}
-.wz-progress .seg{height:5px;flex:1;border-radius:99px;background:var(--paper-deep);overflow:hidden;}
-.wz-progress .seg.done{background:var(--brick);}
-.wz-progress .seg.cur{background:var(--brick-2);}
+/* 나브 */
+.global-nav{background:var(--black);color:var(--on-dark);height:44px;position:sticky;top:0;z-index:200;}
+.gn-inner{max-width:1240px;margin:0 auto;height:100%;padding:0 28px;display:flex;align-items:center;gap:16px;}
+.gn-mark{font-size:15px;font-weight:600;letter-spacing:.12em;}
+.gn-label{font-size:12px;color:var(--muted-on-dark);}
+.sub-nav{background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--hairline);position:sticky;top:44px;z-index:190;}
+.sn-inner{max-width:1240px;margin:0 auto;min-height:52px;padding:8px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.sn-title{font-size:21px;font-weight:600;letter-spacing:-.018em;flex:1;min-width:200px;}
+.sn-title .sn-sep{color:var(--fine);font-weight:400;margin:0 4px;}
+.sn-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;}
+
+/* 버튼 */
+.btn-pill{font-family:var(--sans);font-size:15px;font-weight:400;letter-spacing:-.01em;cursor:pointer;background:var(--primary);color:#fff;border:none;border-radius:9999px;padding:10px 22px;transition:transform .12s ease;display:inline-flex;align-items:center;gap:6px;}
+.btn-pill:active{transform:scale(.95);}
+.btn-pill:focus-visible{outline:2px solid var(--primary-focus);outline-offset:2px;}
+.btn-ghost-pill{font-family:var(--sans);font-size:15px;font-weight:400;letter-spacing:-.01em;cursor:pointer;background:transparent;color:var(--primary);border:1px solid var(--primary);border-radius:9999px;padding:9px 21px;transition:transform .12s ease;}
+.btn-ghost-pill:active{transform:scale(.95);}
+.btn-ghost-pill.sm{font-size:13px;padding:7px 16px;}
+.btn-util{font-family:var(--sans);font-size:14px;font-weight:400;letter-spacing:-.224px;cursor:pointer;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:9px 16px;transition:transform .12s ease;}
+.btn-util:active{transform:scale(.95);}
+button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* 위저드 */
+#stage-wizard{max-width:880px;margin:0 auto;padding:72px 28px 96px;}
+.wz-progress{display:flex;gap:6px;margin-bottom:52px;}
+.wz-progress .seg{height:4px;flex:1;border-radius:99px;background:var(--hairline);}
+.wz-progress .seg.done{background:var(--primary);}
+.wz-progress .seg.cur{background:#7fb5e6;}
 .wz-step{animation:rise .5s ease both;}
-.wz-kicker{font-size:13px;font-weight:800;letter-spacing:.04em;color:var(--brick);margin-bottom:8px;}
-.wz-q{font-family:var(--serif);font-weight:900;font-size:clamp(24px,4vw,34px);letter-spacing:-.015em;line-height:1.25;margin-bottom:6px;}
-.wz-sub{font-size:15px;color:var(--ink-soft);margin-bottom:26px;}
-.opt-grid{display:grid;gap:12px;}
-.opt-grid.cols2{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
-.opt-grid.chips{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
-.opt{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;display:flex;gap:14px;align-items:flex-start;}
-.opt:hover{border-color:var(--brick-2);transform:translateY(-2px);}
-.opt.sel{border-color:var(--brick);box-shadow:4px 4px 0 rgba(140,47,27,.25);}
-.opt .em{font-size:26px;line-height:1;flex-shrink:0;}
-.opt .ot h3{font-family:var(--serif);font-size:18px;font-weight:900;margin-bottom:3px;}
-.opt .ot p{font-size:13px;color:var(--ink-soft);}
-.opt .check{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;}
-.opt.sel .check{background:var(--brick);border-color:var(--brick);}
-.opt .check::after{content:'✓';opacity:0;}
-.opt.sel .check::after{opacity:1;}
-.field{margin-bottom:18px;}
-.field label{display:block;font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:7px;}
-.field input[type=text],.field input[type=date]{font-family:var(--sans);font-size:15px;width:100%;max-width:280px;padding:11px 13px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);}
-.field input:focus{outline:none;border-color:var(--brick);}
-.dates{display:flex;gap:12px;flex-wrap:wrap;}
-.toggle{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:14px;font-weight:600;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:9px 14px;}
-.toggle.on{border-color:var(--brick);}
-.toggle .sw{width:34px;height:19px;border-radius:99px;background:var(--line);position:relative;transition:background .2s;}
-.toggle.on .sw{background:var(--brick);}
-.toggle .sw::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform .2s;}
-.toggle.on .sw::after{transform:translateX(15px);}
-.upload{border:2px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--ink-soft);cursor:pointer;background:var(--card);transition:border-color .15s;}
-.upload:hover{border-color:var(--brick-2);}
-.upload.has{border-style:solid;border-color:var(--brick);padding:12px;}
-.upload img{max-height:130px;border-radius:9px;}
-.wz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:34px;gap:12px;}
-.wz-count{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
-.gen-wrap{text-align:center;padding:18px 0;}
-.gen-spin{width:46px;height:46px;border:4px solid var(--paper-deep);border-top-color:var(--brick);border-radius:50%;margin:0 auto 18px;animation:spin .8s linear infinite;}
+.wz-kicker{font-size:14px;font-weight:600;letter-spacing:-.224px;color:var(--primary);margin-bottom:16px;}
+.wz-q{font-weight:600;font-size:clamp(32px,5vw,52px);letter-spacing:-.03em;line-height:1.07;margin-bottom:18px;}
+.wz-sub{font-size:19px;font-weight:400;color:var(--ink-muted);line-height:1.45;margin-bottom:40px;max-width:600px;}
+.chan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:560px;}
+.chan{background:var(--cardbg);border:1px solid var(--cardborder);border-radius:20px;padding:30px 28px;cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s;}
+.chan:hover{border-color:#c7c7c7;}.chan:active{transform:scale(.985);}
+.chan.sel{border-color:var(--primary-focus);box-shadow:0 0 0 1.5px var(--primary-focus);}
+.chan .e{font-size:34px;}
+.chan h3{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:14px 0 6px;}
+.chan p{font-size:14px;color:var(--ink-muted);line-height:1.45;}
+.ev-grid{display:flex;flex-wrap:wrap;gap:12px;max-width:720px;}
+.ev{background:var(--cardbg);border:1px solid var(--cardborder);border-radius:9999px;padding:15px 24px;font-size:16px;font-weight:600;letter-spacing:-.01em;cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s;}
+.ev:hover{border-color:#c7c7c7;}.ev:active{transform:scale(.97);}
+.ev.sel{background:var(--primary);color:#fff;border-color:var(--primary);}
+.cond-grid{display:flex;flex-wrap:wrap;gap:12px;max-width:680px;}
+.cond{background:var(--cardbg);border:1px solid var(--cardborder);border-radius:9999px;padding:13px 22px;font-size:15px;font-weight:600;letter-spacing:-.01em;cursor:pointer;display:inline-flex;align-items:center;gap:9px;color:var(--ink-muted);transition:transform .12s,border-color .12s;}
+.cond:hover{border-color:#c7c7c7;color:var(--ink);}.cond:active{transform:scale(.97);}
+.cond.sel{background:var(--ink);color:#fff;border-color:var(--ink);}
+.cond .ck{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.cond.sel .ck::after{content:'✓';}
+.brand-box{background:var(--cardbg);border:1px solid var(--cardborder);border-radius:20px;padding:28px 30px;max-width:420px;}
+.brand-box label{display:block;font-size:13px;font-weight:600;color:var(--fine);letter-spacing:.06em;margin-bottom:12px;}
+.brand-box input{font-family:var(--sans);font-size:24px;font-weight:600;letter-spacing:-.02em;width:100%;border:none;border-bottom:2px solid var(--hairline);background:transparent;padding:6px 0;outline:none;color:var(--ink);}
+.brand-box input:focus{border-color:var(--primary);}
+.brand-box input::placeholder{color:#c7c7c7;}
+.wz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;gap:12px;}
+.wz-count{font-size:14px;color:var(--ink-muted);font-variant-numeric:tabular-nums;}
+.gen-wrap{text-align:center;padding:40px 0;}
+.gen-spin{width:48px;height:48px;border:3px solid var(--hairline);border-top-color:var(--primary);border-radius:50%;margin:0 auto 24px;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.soon{display:inline-block;font-size:11px;font-weight:800;color:var(--brick-2);background:#FBEFE6;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px;}
 
-/* ───────── 결과 ───────── */
-#stage-result{max-width:1240px;margin:0 auto;padding:0 0 30px;}
-.meta{padding:26px 28px 0;display:flex;gap:10px;flex-wrap:wrap;}
-.chip{background:var(--card);border:1.5px solid var(--line);border-radius:999px;font-size:13px;padding:7px 14px;}
-.chip b{color:var(--brick);font-weight:800;}
-section{padding:34px 28px 4px;}
-.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
-.sec-num{font-family:var(--serif);font-weight:900;font-size:15px;color:var(--brick);letter-spacing:.08em;}
-.sec-head h2{font-family:var(--serif);font-weight:900;font-size:clamp(19px,2.6vw,26px);letter-spacing:-.01em;}
-.sec-head .hint{font-size:13px;color:var(--ink-soft);margin-left:auto;}
-.tabs{display:inline-flex;border:1.5px solid var(--ink);border-radius:11px;overflow:hidden;margin-bottom:18px;background:var(--card);}
-.tab{font-size:13.5px;font-weight:700;padding:9px 18px;cursor:pointer;border:none;background:transparent;color:var(--ink-soft);}
-.tab.active{background:var(--ink);color:var(--paper);}
-.canvas{background:var(--card);background-image:radial-gradient(rgba(31,27,22,.08) 1.1px,transparent 1.1px);background-size:20px 20px;border:2px solid var(--ink);border-radius:16px;overflow-x:auto;padding:34px 26px;box-shadow:6px 6px 0 rgba(31,27,22,.12);}
-.flow-col{display:inline-flex;flex-direction:column;gap:6px;min-width:max-content;}
+/* 결과 타일 */
+#stage-result{width:100%;}
+.tile{width:100%;}
+.tile-inner{max-width:1240px;margin:0 auto;padding:72px 28px;}
+.tile-inner.tight{padding:52px 28px 32px;}
+.t-canvas{background:var(--canvas);}
+.t-parchment{background:var(--parchment);}
+.t-dark{background:var(--tile-1);color:var(--on-dark);}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:34px;}
+.chip{background:var(--cardbg);border:1px solid var(--hairline);border-radius:9999px;font-size:14px;font-weight:400;padding:8px 16px;color:var(--ink-muted);}
+.chip b{color:var(--ink);font-weight:600;}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:24px;flex-wrap:wrap;}
+.sec-num{font-weight:600;font-size:15px;color:var(--primary);letter-spacing:.04em;}
+.sec-head h2{font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;}
+.sec-head .hint{font-size:14px;color:var(--ink-muted);margin-left:auto;font-weight:400;}
+.t-dark .sec-num{color:var(--primary-on-dark);}.t-dark .hint{color:var(--muted-on-dark);}
+
+/* 액션 레전드 */
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:26px;}
+.lg{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted-on-dark);font-weight:500;}
+.lg i{width:11px;height:11px;border-radius:3px;display:inline-block;}
+
+/* 플로우 (다크 스테이지) */
+.canvas{overflow-x:auto;padding:6px 0 12px;}
+.flow-col{display:inline-flex;flex-direction:column;min-width:max-content;}
 .flow-row{display:inline-flex;align-items:flex-start;}
-.group{text-align:center;animation:rise .7s ease both;}
-.g-label{display:inline-block;background:var(--ink);color:var(--paper);font-size:12.5px;font-weight:700;border-radius:7px;padding:5px 16px;margin-bottom:14px;}
-.g-label.sub{background:#857A6A;}
+.group{text-align:center;animation:rise .6s ease both;}
+.g-lbl{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:-.01em;border-radius:9999px;padding:5px 14px;margin-bottom:14px;color:#fff;}
+.g-lbl.branch{background:#8a8a8e;}
 .g-phones{display:flex;justify-content:center;gap:10px;}
-.arrow{align-self:center;color:var(--flow-pink);font-size:24px;font-weight:800;padding:0 13px;margin-top:30px;}
-.branch-row{margin-top:10px;}
-.branch-tag{color:var(--flow-pink);font-size:15px;font-weight:800;padding-top:42px;padding-right:10px;white-space:nowrap;}
-.phone{width:138px;height:268px;background:#fff;border:2px solid var(--ink);border-radius:18px;padding:9px;display:flex;flex-direction:column;gap:7px;position:relative;text-align:center;transition:transform .2s,box-shadow .2s;}
-.phone:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(31,27,22,.18);}
-.phone::before{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:36px;height:5px;border-radius:99px;background:#E5E0D6;}
-.phone.dark{background:#262420;border-color:#262420;}
-.p-img{border-radius:9px;background:linear-gradient(135deg,var(--brick),var(--brick-2));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;line-height:1.45;background-size:cover;background-position:center;}
-.p-img .ph{opacity:.85;font-size:10px;font-weight:600;}
-.p-title{font-size:12px;font-weight:800;color:var(--ink);line-height:1.4;}
-.p-text{font-size:10.5px;color:#4A443B;line-height:1.5;}
-.p-btn{margin-top:auto;width:100%;background:var(--ink);color:#fff;font-size:10.5px;font-weight:700;border-radius:8px;padding:7px 4px;}
-.p-btn.brick{background:var(--brick);}
-.p-btn.kakao{background:var(--kakao);color:#191600;}
-.p-caption{font-size:11px;color:var(--ink-soft);margin-top:7px;}
-.qr{width:74px;height:74px;background:#fff;border-radius:8px;margin:auto auto 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:7px;}
-.qr i{background:#111;border-radius:1px;}.qr i.off{background:transparent;}
-.prize{background:#F6F1E8;border:1.5px solid #D9C7A8;border-radius:9px;font-size:10.5px;padding:8px;width:94%;margin:0 auto;color:var(--ink);line-height:1.5;}
-.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:92%;margin:4px auto 0;}
-.pinpad i{background:#F1EDE4;border-radius:6px;font-size:11px;font-style:normal;padding:6px 0;color:var(--ink);}
-.draw-card{width:86px;height:108px;border-radius:11px;margin:18px auto 0;background:linear-gradient(160deg,#1D3A35,#2A6B54);display:flex;align-items:center;justify-content:center;color:#9FE3C0;font-size:26px;font-family:var(--serif);animation:tease 2.6s ease-in-out infinite;}
-@keyframes tease{0%,100%,40%,64%{transform:rotate(0)}48%{transform:rotate(-4deg)}56%{transform:rotate(4deg)}}
-.logo-circ{width:58px;height:58px;background:var(--brick);border-radius:50%;margin:28px auto 0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;font-family:var(--serif);}
-details.console{margin-top:10px;text-align:left;display:inline-block;}
-details.console summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--console-blue);background:var(--console-bg);border:1.5px solid #B9C9F2;border-radius:7px;padding:5px 11px;}
-details.console summary::-webkit-details-marker{display:none;}
-details.console summary::after{content:'▾';font-size:10px;}
-details.console[open] summary::after{content:'▴';}
-.console-body{margin-top:8px;background:#fff;border:1.5px solid #B9C9F2;border-radius:10px;padding:10px;width:290px;font-size:12px;color:var(--ink);box-shadow:0 8px 18px rgba(34,64,176,.12);}
-.console-shot{border:1.5px solid #D8DFF2;border-radius:8px;overflow:hidden;margin-bottom:8px;}
-.console-shot .bar{background:#E9EEFB;padding:4px 8px;display:flex;gap:4px;}.console-shot .bar i{width:7px;height:7px;border-radius:50%;background:#C4CEE8;}
-.console-shot .body{display:flex;min-height:80px;}
-.console-shot .nav{width:54px;background:#EFF3FC;border-right:1px solid #DDE4F5;padding:6px 5px;font-size:8.5px;}
-.console-shot .nav div{padding:3px 4px;border-radius:4px;color:#5A6BA8;}
-.console-shot .nav div.on{background:#2240B0;color:#fff;font-weight:700;}
-.console-shot .main{flex:1;padding:7px;font-size:9px;display:flex;flex-direction:column;gap:4px;}
-.console-shot .main .row{background:#fff;border:1px solid #E3E8F6;border-radius:4px;padding:4px 6px;text-align:left;color:#7A84A8;}
-.console-steps{line-height:1.65;}.console-steps b{color:var(--console-blue);}
-.cards-wrap{display:none;}.cards-wrap.visible{display:block;}.flow-wrap.hidden{display:none;}
-.step-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px;}
-.s-card{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:16px;box-shadow:4px 4px 0 rgba(31,27,22,.1);animation:rise .6s ease both;}
-.s-when{font-size:12.5px;font-weight:800;color:var(--brick);letter-spacing:.03em;}
-.s-card h3{font-family:var(--serif);font-size:17px;font-weight:900;margin:5px 0 9px;}
-.bubble{background:var(--kakao);border-radius:11px;padding:10px 12px;font-size:13px;line-height:1.55;color:#191600;outline:none;transition:box-shadow .15s;}
-.bubble[contenteditable]:hover{box-shadow:0 0 0 2px rgba(140,47,27,.35);cursor:text;}
-.bubble[contenteditable]:focus{box-shadow:0 0 0 2.5px var(--brick);}
-.s-card .edit-hint{font-size:11px;color:var(--ink-soft);margin-top:5px;}
-.s-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
-.s-tag{font-size:11.5px;font-weight:700;background:var(--paper-deep);border-radius:6px;padding:3px 9px;color:var(--ink-soft);}
-.timeline{border-left:3px solid var(--brick-2);margin:8px 0 0 10px;padding-left:22px;}
-.t-node{position:relative;padding-bottom:26px;animation:rise .6s ease both;}
-.t-node::before{content:'';position:absolute;left:-31px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:3px solid var(--brick);}
-.t-node.send::before{background:var(--brick);}
-.t-date{font-size:14.5px;font-weight:800;}
-.t-date .send-tag{color:#fff;background:var(--brick);border-radius:6px;font-size:11.5px;padding:2px 9px;margin-left:8px;vertical-align:2px;}
-.todos{background:var(--card);border:1.5px solid var(--line);border-radius:11px;margin-top:9px;padding:6px 4px;max-width:620px;}
-.todo{display:flex;align-items:center;gap:10px;padding:7px 12px;font-size:13.5px;border-radius:8px;cursor:pointer;}
-.todo:hover{background:var(--paper);}
-.todo input{accent-color:var(--brick);width:15px;height:15px;flex-shrink:0;}
-.todo.done .t-text{text-decoration:line-through;color:#A39880;}
-.t-text{flex:1;text-align:left;}
-.owner{font-size:11px;font-weight:800;border-radius:5px;padding:2px 8px;white-space:nowrap;}
-.owner.vircle{background:#E8EFFF;color:var(--console-blue);}
-.owner.brand{background:#FBE9E2;color:var(--brick);}
-.owner.both{background:#E9F4EC;color:var(--ok);}
-footer{max-width:1240px;margin:30px auto 0;padding:22px 28px 46px;border-top:2px solid var(--ink);display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
-footer .foot-mark{font-family:var(--serif);font-weight:900;color:var(--brick);}
-footer p{font-size:12.5px;color:var(--ink-soft);}footer .v{margin-left:auto;font-size:11.5px;color:var(--ink-soft);}
-#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);font-size:13.5px;font-weight:600;border-radius:10px;padding:11px 20px;transition:transform .3s cubic-bezier(.2,.9,.3,1.2);z-index:999;}
+.arr{align-self:center;color:var(--primary-on-dark);font-size:22px;padding:0 14px;margin-top:30px;}
+.branch-row{margin-top:14px;}
+.b-tag{color:var(--primary-on-dark);font-size:13px;font-weight:600;padding-top:46px;padding-right:10px;white-space:nowrap;}
+.p-cap{font-size:12px;color:var(--muted-on-dark);margin-top:9px;}
+
+/* 폰 */
+.phone{width:140px;height:266px;background:#fff;border-radius:24px;padding:11px;display:flex;flex-direction:column;gap:6px;position:relative;text-align:center;box-shadow:var(--shadow-product);transition:transform .2s;}
+.phone:hover{transform:translateY(-5px);}
+.phone::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:99px;background:#e5e5ea;}
+.ptag{font-size:8.5px;font-weight:700;letter-spacing:.04em;color:var(--fine);text-transform:uppercase;margin-top:6px;}
+.pimg{border-radius:10px;background:#efeff1;color:var(--ink-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;line-height:1.4;background-size:cover;background-position:center;}
+.pimg.slot{cursor:pointer;transition:box-shadow .12s;}.pimg.slot:hover{box-shadow:0 0 0 2px var(--primary);}
+.pimg.filled{color:transparent;}
+.ptitle{font-size:12px;font-weight:600;color:var(--ink);line-height:1.35;}
+.ptext{font-size:10px;color:var(--ink-muted);line-height:1.45;}
+.pbtn{margin-top:auto;width:100%;background:var(--ink);color:#fff;font-size:10px;font-weight:600;border-radius:9999px;padding:8px 4px;}
+.pbtn.blue{background:var(--primary);}.pbtn.kakao{background:var(--kakao);color:#191600;}
+.pbtn.outline{background:transparent;color:var(--ink);border:1px solid var(--hairline);}
+.qr-box{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px;background:#fff;border:1px solid #eee;border-radius:7px;margin:6px auto 0;}
+.qr-box i{background:#1d1d1f;border-radius:1px;aspect-ratio:1;}.qr-box i.o{background:transparent;}
+.vmark{width:46px;height:46px;border-radius:50%;background:var(--primary);margin:10px auto 0;display:flex;align-items:center;justify-content:center;}
+.vmark span{color:#fff;font-size:11px;font-weight:700;}
+.badge.g{display:inline-block;font-size:9px;font-weight:600;color:#1A7A3A;background:#E6F4EA;border-radius:9999px;padding:2px 9px;}
+.tog-row{display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#666;background:#f5f5f7;border-radius:6px;padding:5px 7px;}
+.tog-sw{width:22px;height:12px;border-radius:99px;background:#d2d2d7;position:relative;}
+.tog-sw.on{background:var(--primary);}
+.tog-sw::after{content:'';position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:#fff;}
+.tog-sw.on::after{left:auto;right:2px;}
+
+/* 표 */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--hairline);border-radius:14px;background:var(--canvas);}
+table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:640px;}
+table.tbl th{text-align:left;font-weight:600;color:var(--fine);font-size:12.5px;letter-spacing:.02em;padding:12px 16px;border-bottom:1px solid var(--hairline);background:#fafafa;white-space:nowrap;}
+table.tbl td{padding:12px 16px;border-bottom:1px solid var(--divider-soft);vertical-align:middle;}
+table.tbl tr:last-child td{border-bottom:none;}
+.act-dot{display:inline-flex;align-items:center;gap:7px;font-weight:600;}
+.act-dot i{width:9px;height:9px;border-radius:3px;}
+.comp{font-family:var(--mono);font-size:12.5px;color:var(--primary);background:rgba(0,102,204,.07);border-radius:6px;padding:3px 8px;white-space:nowrap;}
+.scr-th{font-weight:600;color:var(--ink);}
+
+/* 분기/상태 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:740px){.two-col{grid-template-columns:1fr;}}
+.panel{background:var(--cardbg);border:1px solid var(--hairline);border-radius:16px;padding:22px 24px;}
+.panel h3{font-size:15px;font-weight:600;margin-bottom:14px;letter-spacing:-.01em;}
+.state-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.state-chip{font-size:13px;font-weight:500;color:var(--ink-muted);background:#f0f0f2;border-radius:9999px;padding:6px 13px;}
+.branch-item{display:flex;align-items:center;gap:10px;font-size:14px;padding:10px 0;border-top:1px solid var(--divider-soft);}
+.branch-item:first-child{border-top:none;}
+.branch-item .cond{color:var(--primary-on-dark);}
+.bc{font-size:12px;font-weight:600;color:#fff;background:#8a8a8e;border-radius:9999px;padding:3px 10px;white-space:nowrap;}
+.barrow{color:var(--fine);}
+
+/* JSON */
+.json-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.json-box{background:#1d1d1f;color:#e6e6e6;border-radius:14px;padding:20px 22px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;max-height:420px;overflow-y:auto;}
+.json-box .k{color:#7fb5e6;}.json-box .s{color:#9FE3C0;}.json-box .n{color:#F2C7AC;}
+
+/* 운영 체크리스트 */
+.ops{display:flex;flex-direction:column;gap:2px;max-width:760px;}
+.op-item{display:flex;align-items:center;gap:12px;padding:11px 6px;font-size:14.5px;border-top:1px solid var(--divider-soft);cursor:pointer;border-radius:8px;}
+.op-item:first-child{border-top:none;}
+.op-item:hover{background:rgba(0,0,0,.03);}
+.op-item input{accent-color:var(--primary);width:17px;height:17px;flex-shrink:0;}
+.op-item.done span{text-decoration:line-through;color:var(--fine);}
+
+footer{max-width:1240px;margin:0 auto;padding:34px 28px 72px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+footer .foot-mark{font-weight:600;letter-spacing:.12em;color:var(--ink);}
+footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-size:12px;color:var(--fine);}
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;font-size:14px;border-radius:9999px;padding:13px 24px;transition:transform .3s cubic-bezier(.2,.9,.3,1.2);z-index:999;box-shadow:0 12px 32px rgba(0,0,0,.24);}
 #toast.show{transform:translateX(-50%) translateY(0);}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media print{
   @page{size:A4 landscape;margin:10mm;}
-  body{background:#fff;background-image:none;}body::before{display:none;}
-  header{position:static;}.actions,.tabs,#stage-wizard{display:none!important;}
-  .canvas{overflow:visible;box-shadow:none;border-width:1.5px;}.flow-col{min-width:0;}.flow-row{flex-wrap:wrap;row-gap:20px;}
-  .branch-row{margin-left:0!important;}section{break-inside:avoid-page;}
-  .phone:hover{transform:none;box-shadow:none;}details.console{display:none;}.edit-hint{display:none;}
+  body{background:#fff;}.global-nav,.sub-nav{position:static;}
+  .sn-actions,#stage-wizard{display:none!important;}
+  .tile-inner{padding:16px 8px;}.t-dark{background:#fff;color:var(--ink);}
+  .t-dark .g-lbl{filter:none;}.t-dark .arr{color:var(--primary);}.t-dark .p-cap,.t-dark .lg,.t-dark .hint{color:var(--ink-muted);}.t-dark .sec-head h2{color:var(--ink);}
+  .canvas{overflow:visible;}.flow-col{min-width:0;}.flow-row{flex-wrap:wrap;row-gap:18px;}
+  .phone{box-shadow:none;border:1px solid var(--hairline);}.phone:hover{transform:none;}
+  .json-box{max-height:none;}.tile{break-inside:avoid-page;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .card-upload,.task-del,.task-add{display:none!important;}
+  .pimg.slot:not(.filled){color:transparent!important;}
+  .branch-row{margin-left:0!important;}
+  .task-date{border:none!important;appearance:none;-webkit-appearance:none;color:var(--ink)!important;padding:0!important;}
+  .task-date::-webkit-calendar-picker-indicator,.task-date::-webkit-inner-spin-button{display:none!important;}
 }
+/* 일정 설정 (위저드) */
+.date-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+.date-field label{display:block;font-size:13px;font-weight:600;color:var(--fine);margin-bottom:8px;letter-spacing:.02em;}
+.date-field input[type=date]{font-family:var(--sans);font-size:16px;padding:12px 16px;border:1px solid var(--hairline);border-radius:12px;background:var(--canvas);color:var(--ink);}
+.date-field input[type=date]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 1px var(--primary);}
+.dtoggle{display:inline-flex;align-items:center;gap:11px;cursor:pointer;font-size:15px;font-weight:400;background:var(--canvas);border:1px solid var(--hairline);border-radius:9999px;padding:11px 19px;}
+.dtoggle.on{border-color:var(--primary);}
+.dtoggle-sw{width:38px;height:21px;border-radius:99px;background:var(--hairline);position:relative;transition:background .2s;}
+.dtoggle.on .dtoggle-sw{background:var(--primary);}
+.dtoggle-sw::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.dtoggle.on .dtoggle-sw::after{transform:translateX(17px);}
+/* 카드 이미지 업로드 */
+.card-hero{height:44px;border-radius:8px;background-size:cover;background-position:center;margin-bottom:4px;}
+.card-upload{margin-top:10px;font-family:var(--sans);font-size:11.5px;font-weight:600;color:var(--muted-on-dark);background:rgba(255,255,255,.1);border:none;border-radius:9999px;padding:5px 12px;cursor:pointer;}
+.card-upload:hover{background:rgba(255,255,255,.2);color:#fff;}
+/* 일정 & 할 일 (편집 가능) */
+.sched{display:flex;flex-direction:column;gap:8px;}
+.task-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--hairline);border-radius:12px;padding:11px 14px;flex-wrap:wrap;}
+.task-row.done .task-text{text-decoration:line-through;color:var(--fine);}
+.task-row input[type=checkbox]{accent-color:var(--primary);width:17px;height:17px;flex-shrink:0;}
+.task-date{font-family:var(--sans);font-size:13px;border:1px solid var(--hairline);border-radius:8px;padding:6px 9px;color:var(--ink-muted);background:#fff;flex-shrink:0;}
+.task-date:focus{outline:none;border-color:var(--primary);}
+.task-text{flex:1;font-size:15px;color:var(--ink);outline:none;border-radius:6px;padding:3px 6px;min-width:160px;line-height:1.4;}
+.task-text:focus{box-shadow:0 0 0 2px var(--primary);}
+.task-owner{font-size:12px;font-weight:600;border-radius:9999px;padding:5px 12px;cursor:pointer;white-space:nowrap;user-select:none;}
+.task-owner.o-vircle{background:rgba(0,102,204,.1);color:var(--primary);}
+.task-owner.o-brand{background:rgba(0,0,0,.07);color:var(--ink);}
+.task-owner.o-both{background:rgba(0,0,0,.045);color:var(--ink-muted);}
+.task-del{border:none;background:transparent;color:var(--fine);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;flex-shrink:0;}
+.task-del:hover{color:#c0392b;}
+.task-add{margin-top:14px;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--primary);background:transparent;border:1px dashed var(--primary);border-radius:12px;padding:11px 18px;cursor:pointer;}
+.task-add:active{transform:scale(.98);}
+.task-empty{font-size:15px;color:var(--fine);padding:18px 4px;}
+.task-empty b{color:var(--primary);font-weight:600;}
+@media(max-width:520px){.task-text{min-width:60%;}}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="h-inner">
-    <span class="h-mark">VIRCLE JOURNEY</span>
-    <div class="h-title">
-      <span class="brand-dot"></span>
-      <h1 id="h-title-text">고객 캠페인 여정 빌더</h1>
-    </div>
-    <div class="actions hidden" id="result-actions">
-      <button class="btn ghost" onclick="restart()">↺ 처음부터</button>
-      <button class="btn" onclick="downloadPDF()">⬇ PDF</button>
-      <button class="btn primary" onclick="downloadSVG()">⬇ SVG</button>
+<header class="global-nav">
+  <div class="gn-inner"><span class="gn-mark">VIRCLE</span><span class="gn-label">Journey Builder</span></div>
+</header>
+<div class="sub-nav">
+  <div class="sn-inner">
+    <span class="sn-title" id="sn-title">버클 화면 플로우 생성기</span>
+    <div class="sn-actions hidden" id="result-actions">
+      <button class="btn-ghost-pill sm" onclick="restart()">↺ 처음부터</button>
+      <button class="btn-util" onclick="downloadPDF()">PDF</button>
+      <button class="btn-pill" onclick="copyJSON()">Figma JSON 복사</button>
     </div>
   </div>
-</header>
+</div>
 
-<!-- ════════ 위저드 ════════ -->
 <div id="stage-wizard">
   <div class="wz-progress" id="wz-progress"></div>
   <div class="wz-step" id="wz-step"></div>
   <div class="wz-nav">
-    <button class="btn ghost" id="wz-prev" onclick="prevStep()">← 이전</button>
+    <button class="btn-ghost-pill" id="wz-prev" onclick="prevStep()">← 이전</button>
     <span class="wz-count" id="wz-count"></span>
-    <button class="btn primary" id="wz-next" onclick="nextStep()">다음 →</button>
+    <button class="btn-pill" id="wz-next" onclick="nextStep()">다음 →</button>
   </div>
 </div>
 
-<!-- ════════ 결과 ════════ -->
 <div id="stage-result" class="hidden">
-  <div class="meta" id="meta"></div>
+  <div class="tile t-parchment"><div class="tile-inner tight">
+    <div class="meta" id="meta"></div>
+    <div class="sec-head"><span class="sec-num">01</span><h2>고객 여정 플로우</h2><span class="hint">옆으로 스크롤 · 액션별 색상으로 구분</span></div>
+  </div></div>
+  <div class="tile t-dark"><div class="tile-inner" style="padding-top:40px;">
+    <div class="legend" id="legend"></div>
+    <div class="canvas"><div class="flow-col" id="flow-col"></div></div>
+    <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;">각 화면 카드 아래 <b style="color:#fff;font-weight:600;">＋ 사진</b> 버튼으로 화면마다 제품 이미지를 따로 올릴 수 있어요.</p>
+  </div></div>
 
-  <section>
-    <div class="sec-head">
-      <span class="sec-num">01</span><h2>고객 여정</h2>
-      <span class="hint">📱 화면 플로우는 옆으로 스크롤 · 🖥️ 칩을 누르면 버클 콘솔 설정 안내</span>
-    </div>
-    <div class="tabs">
-      <button class="tab active" id="tab-flow" onclick="switchView('flow')">📱 화면 플로우</button>
-      <button class="tab" id="tab-cards" onclick="switchView('cards')">📋 단계 카드</button>
-    </div>
-    <div class="flow-wrap" id="view-flow"><div class="canvas"><div class="flow-col" id="flow-col"></div></div></div>
-    <div class="cards-wrap" id="view-cards"><div class="step-cards" id="step-cards"></div></div>
-  </section>
+  <div class="tile t-parchment"><div class="tile-inner">
+    <div class="sec-head"><span class="sec-num">02</span><h2>화면 리스트 &amp; Figma 컴포넌트</h2><span class="hint">피그마에서 이 이름으로 컴포넌트를 가져오세요</span></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>순서</th><th>화면명</th><th>Atomic Action</th><th>Screen Type</th><th>Figma Component</th></tr></thead><tbody id="screen-rows"></tbody></table></div>
+  </div></div>
 
-  <section>
-    <div class="sec-head"><span class="sec-num">02</span><h2>실행 타임라인 &amp; 할 일</h2><span class="hint">체크 상태는 이 브라우저에 저장됩니다</span></div>
-    <div class="timeline" id="timeline"></div>
-  </section>
+  <div class="tile t-canvas"><div class="tile-inner">
+    <div class="sec-head"><span class="sec-num">03</span><h2>분기 &amp; 상태값</h2></div>
+    <div class="two-col">
+      <div class="panel"><h3>상태값</h3><div class="state-chips" id="states"></div></div>
+      <div class="panel"><h3>조건 분기</h3><div id="branches"></div></div>
+    </div>
+  </div></div>
+
+  <div class="tile t-parchment"><div class="tile-inner">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Figma 배치용 JSON</h2><span class="hint">플러그인·MCP가 이 구조로 화면을 배치합니다</span></div>
+    <div class="json-head">
+      <button class="btn-pill" onclick="copyJSON()">복사</button>
+      <button class="btn-ghost-pill sm" onclick="downloadJSON()">.json 내려받기</button>
+    </div>
+    <div class="json-box" id="json-box"></div>
+  </div></div>
+
+  <div class="tile t-parchment"><div class="tile-inner">
+    <div class="sec-head"><span class="sec-num">05</span><h2>일정 &amp; 할 일</h2><span class="hint">날짜·할 일 텍스트는 직접 수정 · 담당 배지를 누르면 버클↔브랜드↔함께 전환 · 추가/삭제해 고객사와 공유</span></div>
+    <div class="sched" id="sched"></div>
+    <button class="task-add" onclick="addTask()">＋ 할 일 추가</button>
+  </div></div>
+
+  <div class="tile t-canvas"><div class="tile-inner">
+    <div class="sec-head"><span class="sec-num">06</span><h2>운영 체크리스트</h2><span class="hint">화면 외에 미리 정해둘 운영 조건 · 체크는 이 브라우저에 저장</span></div>
+    <div class="ops" id="ops"></div>
+  </div></div>
 
   <footer>
     <span class="foot-mark">VIRCLE</span>
-    <p>이 여정도는 <b>버클 여정도 빌더</b>로 만들어졌습니다 · 고객사 × 버클 그로스팀</p>
-    <span class="v">v0.1 데모 · 2026.06</span>
+    <p>버클 Atomic Action 기반 화면 플로우 생성기 · 고객사 × 버클 그로스팀</p>
+    <span class="v">v0.3 데모 · 2026.06</span>
   </footer>
 </div>
 
 <div id="toast">완료!</div>
 
 <script>
-/* ════════ 폰 화면 렌더러 (모든 템플릿 공용) ════════ */
-const photoCSS = () => state.photo ? `background-image:url('${state.photo}')` : '';
-const SCR = {
-  qr: () => `<div class="qr">${'<i></i><i class="off"></i>'.repeat(12).slice(0,0)}${Array.from({length:25},(_,i)=>`<i class="${[2,5,7,11,13,16,19,22].includes(i)?'off':''}"></i>`).join('')}</div><div class="p-text" style="color:#CFC9BE;">매장 QR 스탠드<br>스캔 즉시 진입</div>`,
-  landing: (s) => `<div class="p-img" style="height:94px;${photoCSS()}">${state.photo?'':'◬ 제품 사진'}<span class="ph">${s.tag||'EVENT'}</span></div><div class="p-title" style="color:var(--brick);">${s.title||'SPECIAL EVENT'}</div><div class="p-text" style="text-align:left;">${(s.steps||[]).map(t=>`· ${t}`).join('<br>')}</div><div class="p-btn brick">${s.btn||'참여하기'}</div>`,
-  login: () => `<div class="logo-circ">${(state.brand||'BRAND').slice(0,2)}</div><div class="p-text">${state.brand||'브랜드'} 라운지에<br>초대합니다</div><div class="p-btn kakao">💬 카카오로 시작하기</div>`,
-  msg: (s) => `<div class="p-img" style="height:58px;${photoCSS()}">${state.photo?'':'◬'}</div><div class="p-title" style="margin-top:4px;">${s.title||''}</div><div class="prize" style="background:var(--kakao);border-color:#E4CE00;">💬 ${s.bubble||''}</div><div class="p-btn">${s.btn||'자세히'}</div>`,
-  draw: () => `<div class="draw-card">?</div><div class="p-text">카드를 뒤집어<br>행운을 확인하세요</div><div class="p-btn">도전하기</div>`,
-  prize:(s) => `<div class="p-title" style="margin-top:24px;">🎉 축하드립니다!</div><div class="p-text">${s.text||'경품에 당첨되셨어요'}</div><div class="prize">${s.prize||'🎁 경품'}<br><span style="color:#857A6A;">${s.note||''}</span></div><div class="p-btn">확인</div>`,
-  coupon:(s) => `<div class="p-img" style="height:70px;margin-top:12px;${photoCSS()}">${state.photo?'':'◬ 사진'}</div><div class="p-title">${s.title||'쿠폰'}</div><div class="p-text" style="color:#857A6A;">${s.date||''}</div><div class="p-btn">${s.btn||'사용하기'}</div>`,
-  pin: () => `<div class="p-text" style="margin-top:18px;">매장 직원이<br>비밀번호를 눌러주세요</div><div class="pinpad">${[1,2,3,4,5,6,7,8,9].map(n=>`<i>${n}</i>`).join('')}</div>`,
-  plain:(s) => `<div class="p-title" style="margin-top:22px;">${s.title||''}</div><div class="p-text">${s.text||''}</div>${s.img?`<div class="p-img" style="height:58px;${photoCSS()}">${state.photo?'':'◬'}</div>`:'<div style="width:72px;height:48px;background:#EBE6DC;border-radius:9px;margin:0 auto;"></div>'}<div class="p-btn ${s.brick?'brick':''}">${s.btn||'확인'}</div>`,
-  product:(s) => `<div class="p-img" style="height:120px;margin-top:6px;${photoCSS()}">${state.photo?'':'◬ 신상품'}</div><div class="p-title">${s.title||'신상품'}</div><div class="p-text" style="color:#857A6A;">${s.price||''}</div><div class="p-btn brick">${s.btn||'구매하기'}</div>`,
+/* ════════ Atomic Action 컬러 ════════ */
+const AC={진입:'#0066cc',인증:'#C77700',가입:'#1A7A3A',참여:'#6D3FD4',당첨:'#B45309',발급:'#0E8A6E',예약:'#3B6FE0',체크인:'#C0356B',공유:'#7C3AED',리워드:'#2A7A52',분기:'#8a8a8e'};
+
+/* ════════ Screen Type → Figma Component 매핑 ════════ */
+const TYPE_META={
+  qr_entry:{st:'QR 진입',comp:'Entry/QR/Offline'},
+  crm_entry:{st:'CRM 진입',comp:'Entry/CRM/Online'},
+  landing:{st:'캠페인 랜딩',comp:'Entry/Campaign/Landing'},
+  auth_phone:{st:'휴대폰 인증',comp:'Auth/Phone/Basic'},
+  auth_kakao:{st:'카카오 인증',comp:'Auth/Kakao/Basic'},
+  signup:{st:'약관 동의',comp:'Signup/Agreement/Basic'},
+  luckydraw:{st:'럭키드로우 응모',comp:'Participation/LuckyDraw/Form'},
+  winner:{st:'당첨 결과',comp:'Result/LuckyDraw/Winner'},
+  loser:{st:'미당첨 결과',comp:'Result/LuckyDraw/Loser'},
+  coupon:{st:'쿠폰 발급',comp:'Reward/Coupon/Issued'},
+  ticket:{st:'티켓 발급',comp:'Reward/Ticket/Issued'},
+  photocard_sel:{st:'포토카드 선택',comp:'Participation/Photocard/Select'},
+  photocard_issued:{st:'포토카드 발급',comp:'Reward/Photocard/Issued'},
+  reserve:{st:'날짜·시간 선택',comp:'Reservation/DateTime/Select'},
+  reserve_done:{st:'예약 완료',comp:'Reservation/Complete'},
+  reserve_full:{st:'예약 마감·대기',comp:'Reservation/Full/Waitlist'},
+  checkin_qr:{st:'체크인 QR',comp:'Checkin/QR/Scan'},
+  checkin_done:{st:'체크인 완료',comp:'Checkin/Complete'},
+  survey:{st:'설문 응답',comp:'Participation/Survey/Form'},
+  raffle:{st:'래플 응모',comp:'Participation/Raffle/Entry'},
+  firstcome_fail:{st:'선착순 마감',comp:'Result/FirstCome/Closed'},
+  share:{st:'공유 CTA',comp:'Share/CTA/Basic'},
+  reward:{st:'리워드 안내',comp:'Reward/Guide/Basic'},
+  member_fail:{st:'참여 불가',comp:'Gate/MemberOnly/Blocked'},
 };
-function renderPhone(spec){
-  const dark = spec.type==='qr';
-  const h = spec.h ? `height:${spec.h}px;` : '';
-  return `<div class="phone ${dark?'dark':''}" style="${h}">${SCR[spec.type](spec)}</div>`;
+const IMG_SLOTS=['landing','coupon','photocard_sel','photocard_issued','reward'];
+
+/* ════════ 폰 화면 렌더러 ════════ */
+function photoOf(slot){ return state.photoSlots[slot] || ''; }
+function slotImg(slot,style){
+  const url=photoOf(slot), bg=url?`background-image:url('${url}');`:'';
+  return `<div class="pimg slot ${url?'filled':''}" style="${style||''}${bg}" onclick="pickSlot('${slot}')">${url?'':'＋ 제품 사진'}</div>`;
 }
-function consoleChip(c){
-  if(!c) return '';
-  return `<details class="console"><summary>🖥️ 버클 콘솔 · ${c.title}</summary><div class="console-body">
-    <div class="console-shot"><div class="bar"><i></i><i></i><i></i></div><div class="body">
-      <div class="nav">${c.nav.map(n=>`<div class="${n.on?'on':''}">${n.t}</div>`).join('')}</div>
-      <div class="main">${c.rows.map(r=>`<div class="row">${r}</div>`).join('')}</div></div></div>
-    <div class="console-steps">${c.steps}</div></div></details>`;
+const QR=(n)=>`<div class="qr-box" style="width:${n}px;height:${n}px">${Array.from({length:25},(_,i)=>`<i class="${[2,5,7,11,13,16,19,22].includes(i)?'o':''}"></i>`).join('')}</div>`;
+const SCR={
+  qr_entry:()=>`<div class="ptag">진입 · QR</div>${QR(62)}<div class="ptext" style="color:#999;margin-top:4px;">매장 QR 스캔</div>`,
+  crm_entry:(s)=>`<div class="ptag">진입 · CRM</div><div class="pimg" style="height:48px;">📨 ${s.ch||'친구톡'}</div><div class="ptext" style="margin-top:4px;">${s.title||'이벤트 안내'}</div><div class="pbtn kakao">${s.cta||'참여하기'}</div>`,
+  landing:(s)=>`<div class="ptag">캠페인 랜딩</div>${slotImg(s.slot,'height:74px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'CAMPAIGN'}</div><div class="ptext">${s.desc||'이벤트 안내'}</div><div class="pbtn blue">${s.cta||'참여하기'}</div>`,
+  auth_phone:()=>`<div class="ptag">인증 · 휴대폰</div><div class="ptitle" style="margin-top:12px;">휴대폰 인증</div><div style="background:#f5f5f7;border-radius:7px;padding:7px;font-size:9px;color:#999;margin-top:8px;">010 - XXXX - XXXX</div><div style="background:#f5f5f7;border-radius:7px;padding:7px;font-size:9px;color:#999;margin-top:5px;">인증번호 6자리</div><div class="pbtn">인증하기</div>`,
+  auth_kakao:(s)=>`<div class="ptag">인증 · 카카오</div><div class="vmark"><span>${(s.brand||'B').slice(0,2)}</span></div><div class="ptext" style="margin-top:8px;">${s.brand||'브랜드'} 라운지</div><div class="pbtn kakao">💬 카카오로 시작</div>`,
+  signup:()=>`<div class="ptag">가입 · 약관동의</div><div class="ptitle" style="margin-top:8px;">약관 동의</div><div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;width:100%;">${['(필수) 이용약관','(필수) 개인정보','(선택) 마케팅'].map((t,i)=>`<div class="tog-row">${t}<div class="tog-sw ${i<2?'on':''}"></div></div>`).join('')}</div><div class="pbtn">동의하고 시작</div>`,
+  luckydraw:(s)=>`<div class="ptag">참여 · 럭키드로우</div><div class="pimg" style="height:74px;font-size:24px;">🎰</div><div class="ptitle" style="margin-top:5px;">${s.title||'럭키드로우'}</div><div class="ptext">${s.desc||'1일 1회 응모'}</div><div class="pbtn blue">${s.cta||'응모하기'}</div>`,
+  winner:(s)=>`<div class="ptag">당첨</div><div style="font-size:24px;margin-top:14px;">🎉</div><div class="ptitle" style="margin-top:5px;">당첨됐어요!</div><div style="background:#E6F4EA;border-radius:7px;padding:6px;font-size:9px;color:#1A7A3A;margin-top:6px;">${s.prize||'🎁 경품/쿠폰'}</div><div class="pbtn blue">혜택 받기</div>`,
+  loser:()=>`<div class="ptag">미당첨</div><div style="font-size:22px;margin-top:16px;">😢</div><div class="ptitle" style="margin-top:7px;">아쉽네요</div><div class="ptext" style="margin-top:4px;">내일 다시<br>도전하세요!</div><div class="pbtn outline">재도전하기</div>`,
+  coupon:(s)=>`<div class="ptag">발급 · 쿠폰</div>${slotImg(s.slot,'height:56px;margin-top:6px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'쿠폰'}</div><div class="ptext">${s.sub||'유효기간 내 사용'}</div><div class="pbtn">${s.cta||'사용하기'}</div>`,
+  ticket:()=>`<div class="ptag">발급 · 티켓</div>${QR(56)}<div class="ptitle" style="margin-top:5px;">입장 티켓</div><div class="ptext">QR로 입장</div>`,
+  photocard_sel:(s)=>`<div class="ptag">참여 · 포토카드</div>${slotImg(s.slot,'height:84px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'포토카드 선택'}</div><div class="pbtn blue">선택하기</div>`,
+  photocard_issued:(s)=>`<div class="ptag">발급 · 포토카드</div>${slotImg(s.slot,'height:92px;')}<div class="ptitle" style="margin-top:5px;">발급 완료</div><div class="pbtn blue">저장 / 공유</div>`,
+  reserve:()=>`<div class="ptag">예약</div><div class="ptitle" style="margin-top:10px;">날짜 선택</div><div style="background:#f5f5f7;border-radius:7px;padding:8px;font-size:9px;color:#888;margin-top:6px;line-height:1.9;">📅 날짜 선택<br>⏰ 시간 선택</div><div class="pbtn blue">예약 확정</div>`,
+  reserve_done:()=>`<div class="ptag">예약 완료</div><div style="font-size:22px;margin-top:16px;">✅</div><div class="ptitle" style="margin-top:7px;">예약 완료!</div><div class="ptext" style="margin-top:4px;">리마인드<br>발송 예정</div><div class="pbtn">확인</div>`,
+  reserve_full:()=>`<div class="ptag">예약 마감</div><div style="font-size:22px;margin-top:14px;">📵</div><div class="ptitle" style="margin-top:7px;">예약 마감</div><div class="ptext" style="margin-top:4px;">대기 신청을<br>남겨드릴게요</div><div class="pbtn outline">알림 신청</div>`,
+  checkin_qr:()=>`<div class="ptag">체크인 · QR</div>${QR(60)}<div class="ptext" style="margin-top:5px;">직원에게 보여주세요</div><div class="pbtn">입장하기</div>`,
+  checkin_done:()=>`<div class="ptag">체크인 완료</div><div style="font-size:22px;margin-top:14px;">✅</div><div class="ptitle" style="margin-top:7px;">입장 완료!</div><div style="margin-top:6px;"><span class="badge g">체크인 완료</span></div><div class="pbtn blue">리워드 받기</div>`,
+  survey:()=>`<div class="ptag">참여 · 설문</div><div class="ptitle" style="margin-top:8px;">취향 선택</div><div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;width:100%;">${['A. 선택지 1','B. 선택지 2','C. 선택지 3'].map(t=>`<div style="background:#f5f5f7;border-radius:7px;padding:6px 8px;font-size:9.5px;color:#666;">${t}</div>`).join('')}</div><div class="pbtn">다음</div>`,
+  raffle:(s)=>`<div class="ptag">참여 · 래플</div><div style="font-size:26px;font-weight:700;color:var(--primary);margin-top:14px;">#${s.num||'????'}</div><div class="ptext" style="margin-top:5px;">${s.desc||'응모 완료'}</div><div style="background:#E8F0FE;border-radius:7px;padding:6px;font-size:9px;color:var(--primary);margin-top:5px;">${s.date||'당첨 발표: D+7'}</div>`,
+  firstcome_fail:()=>`<div class="ptag">선착순 마감</div><div style="font-size:22px;margin-top:14px;">⏰</div><div class="ptitle" style="margin-top:7px;">마감됐어요</div><div class="ptext" style="margin-top:4px;">다음 기회를<br>기다려주세요</div><div class="pbtn outline">알림 받기</div>`,
+  share:()=>`<div class="ptag">공유</div><div style="font-size:22px;margin-top:14px;">🔗</div><div class="ptitle" style="margin-top:5px;">친구 초대</div><div class="ptext" style="margin-top:4px;">공유하면<br>추가 혜택!</div><div class="pbtn kakao">카카오 공유</div>`,
+  reward:(s)=>`<div class="ptag">리워드</div>${slotImg(s.slot,'height:58px;margin-top:6px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'리워드'}</div><div class="ptext">${s.desc||'혜택 안내'}</div><div class="pbtn blue">받기</div>`,
+  member_fail:()=>`<div class="ptag">참여 불가</div><div style="font-size:22px;margin-top:14px;">🚫</div><div class="ptitle" style="margin-top:7px;">참여 불가</div><div class="ptext" style="margin-top:4px;">구매자만<br>참여 가능해요</div>`,
+};
+function phone(type,props={}){
+  const fn=SCR[type]; const inner=fn?fn(props):`<div class="ptext" style="margin-top:20px;">${type}</div>`;
+  const slot=props.slot, url=slot?photoOf(slot):'';
+  const hero=(url && !IMG_SLOTS.includes(type))?`<div class="card-hero" style="background-image:url('${url}')"></div>`:'';
+  return `<div class="phone">${hero}${inner}</div>`;
 }
 
-/* ════════ 템플릿 4종 ════════ */
-const TEMPLATES = {
-  game: {
-    emoji:'🎰', name:'게임화 이벤트', desc:'럭키드로우·퀴즈·룰렛 등 참여형', demo:true,
-    campaign:'팝업스토어 럭키드로우',
-    benefit:{q:'어떤 참여 보상을 줄까요?', opts:[
-      {v:'경품 럭키드로우', d:'당첨 시 경품·쿠폰 (100% 또는 추첨)'},
-      {v:'퀴즈 이벤트', d:'정답자 대상 추첨'},
-      {v:'룰렛 / 즉석뽑기', d:'돌리면 즉시 보상'}]},
-    flow:[
-      {label:'(선택) QR 스캔 · 오프라인', screens:[{type:'qr'}], caption:'팝업스토어 입구·계산대'},
-      {label:'랜딩페이지', screens:[{type:'landing', tag:'POP-UP EVENT', steps:['라운지 가입','럭키드로우','경품 수령'], btn:'럭키드로우 참여'}], caption:'업로드 사진이 ◬에'},
-      {label:'로그인 / 회원가입', screens:[{type:'login'}], console:{title:'라운지 가입 설정', nav:[{t:'대시보드'},{t:'라운지',on:1},{t:'혜택'},{t:'메시지'}], rows:['가입 경로: 카카오 싱크 ✓','가입 완료 혜택: 웰컴 쿠폰','개인정보 동의 항목'], steps:'<b>콘솔 → 라운지 → 가입 설정</b>에서 카카오 싱크를 켜고 웰컴 혜택을 연결하세요.'}},
-      {label:'럭키드로우 도전', screens:[{type:'draw'},{type:'prize', prize:'🧀 그릴링 치즈 1ea', note:'팝업 현장 수령'}], console:{title:'프로모션 카드 발급', nav:[{t:'대시보드'},{t:'라운지'},{t:'혜택',on:1},{t:'메시지'}], rows:['럭키드로우 · 1일 1회','당첨 100% · 일 50개','경품: 재고 연동'], steps:'<b>콘솔 → 혜택 → 프로모션 카드</b>에서 유형·확률·수량·경품을 설정하세요.'}},
-      {label:'쿠폰 사용 · 매장', screens:[{type:'coupon', title:'그릴링 치즈 쿠폰', date:'유효기간 내', btn:'직원 확인'},{type:'pin'}], caption:'현장 수령 → 직원 PIN 검증'},
-    ],
-    branch:{from:3, tag:'↘ 꽝이면', label:'꽝 → 재도전 유도', screens:[{type:'plain', title:'아쉽네요!', text:'이번엔 당첨되지 않았어요', h:228},{type:'plain', title:'', text:'내일 다시<br>도전할 수 있어요', img:1, brick:1, btn:'내일 또 도전하기', h:228}], caption:'1일 1회 → 재방문 동기'},
-    cards:[
-      {when:'D-3', title:'티징 — 예고', bubble:'🎁 {brand} 특별 이벤트가 곧 시작돼요! 럭키드로우에서 경품을 받아가세요', tags:['친구톡','라운지 전체','이미지 1장']},
-      {when:'D-day', title:'오픈 — QR 럭키드로우', bubble:'오늘부터 시작! 매장 QR 찍고 럭키드로우 도전 — 100% 당첨 🍀', tags:['알림톡','전체','🖥️ 카드 발급']},
-      {when:'기간 중 매일', title:'재도전 리마인드 (꽝)', bubble:'어제는 아쉬웠죠? 오늘의 행운이 기다려요 🍀 하루 한 번 다시 도전!', tags:['친구톡','꽝 고객','자동 세그먼트']},
-      {when:'마감일', title:'라스트 콜', bubble:'오늘이 마지막! 받아둔 쿠폰, 종료 전 매장에서 쓰세요', tags:['알림톡','쿠폰 미사용']},
-      {when:'D+10', title:'팔로업 — 첫 구매', bubble:'만나서 반가웠어요 💌 라운지 회원 첫 구매 10% 쿠폰을 드려요', tags:['친구톡','신규 가입자','온라인몰 전환']},
-    ],
-    timeline:[
-      {date:'~D-7', title:'준비 확정', send:false, todos:[{t:'경품 종류·일 수량 확정',o:'brand'},{t:'제품·경품 사진 업로드',o:'brand'},{t:'럭키드로우 정책(1일 1회) 확정',o:'both'}]},
-      {date:'~D-3', title:'세팅 · QA', send:false, todos:[{t:'라운지 가입 + 웰컴 혜택 연결',o:'vircle'},{t:'프로모션 카드(럭키드로우) 발급',o:'vircle'},{t:'쿠폰 PIN 매장 교육 · QR 스탠드 배치',o:'brand'},{t:'전 플로우 리허설',o:'both'}]},
-      {date:'D-3', title:'티징 발송', send:true, todos:[{t:'티징 카피·이미지 컨펌',o:'both'}]},
-      {date:'D-day', title:'오픈 발송 + 이벤트 시작', send:true, todos:[{t:'발송 모수 확인',o:'vircle'},{t:'현장 QR 동선 점검',o:'brand'}]},
-      {date:'마감일', title:'라스트 콜 발송', send:true, todos:[{t:'쿠폰 미사용 세그먼트 추출',o:'vircle'}]},
-      {date:'D+10', title:'팔로업 + 성과 리뷰', send:true, todos:[{t:'가입·사용·재방문 성과 집계(ROAS)',o:'vircle'},{t:'첫 구매 전환 검토 미팅',o:'both'}]},
-    ],
-  },
-  sale: {
-    emoji:'🏷️', name:'세일 / 패밀리세일', desc:'기간 한정 할인·쿠폰 중심', demo:false,
-    campaign:'시즌 패밀리세일',
-    benefit:{q:'할인 혜택을 어떻게 구성할까요?', opts:[
-      {v:'전 고객 기본 쿠폰', d:'예: 5% 일괄 발급'},
-      {v:'선착순 추가 쿠폰', d:'예: 1일 1천명 10%'},
-      {v:'타임딜 / 균일가', d:'시간대별 한정가'}]},
-    flow:[
-      {label:'티징 메시지', screens:[{type:'msg', title:'세일 예고', bubble:'곧 시작! 최대 50%', btn:'알림 받기'}], caption:'친구톡 티징'},
-      {label:'랜딩 · 세일 오픈', screens:[{type:'landing', tag:'FAMILY SALE', steps:['전 고객 쿠폰','선착순 추가','타임딜'], btn:'쿠폰 받기'}]},
-      {label:'쿠폰 발급', screens:[{type:'coupon', title:'5% + 10% 쿠폰', date:'기간 내 사용', btn:'쿠폰 받기'}], console:{title:'쿠폰 일괄 발급', nav:[{t:'대시보드'},{t:'혜택',on:1},{t:'메시지'}], rows:['전 고객 5% 일괄','선착순 10% · 일 1,000명','중복 불가 설정'], steps:'<b>콘솔 → 혜택 → 쿠폰</b>에서 기본·선착순 쿠폰과 사용조건을 설정하세요.'}},
-      {label:'구매 전환', screens:[{type:'product', title:'세일 상품', price:'할인가 적용', btn:'구매하기'}]},
-    ],
-    branch:null,
-    cards:[
-      {when:'D-1', title:'티징', bubble:'내일 오픈! {brand} 패밀리세일 — 최대 14.5% 쿠폰', tags:['친구톡','전체']},
-      {when:'D-day', title:'오픈 + 쿠폰', bubble:'지금 오픈! 쿠폰 받고 바로 쓰세요 🛍️', tags:['알림톡','전체','🖥️ 쿠폰 발급']},
-      {when:'중반', title:'타임딜 리마인드', bubble:'오늘 2시·4시·6시 타임딜! 놓치지 마세요', tags:['친구톡','관심 고객']},
-      {when:'마감일', title:'마감 리마인드', bubble:'오늘 종료! 쿠폰 만료 전 마지막 기회', tags:['알림톡','쿠폰 미사용']},
-    ],
-    timeline:[
-      {date:'~D-5', title:'준비 확정', send:false, todos:[{t:'쿠폰율·할인 품목 확정',o:'both'},{t:'세일 비주얼·상세 제작',o:'brand'}]},
-      {date:'~D-2', title:'세팅 · QA', send:false, todos:[{t:'쿠폰 일괄/선착순 세팅 + 더블체크',o:'vircle'},{t:'타임딜 상품·시간 등록',o:'both'}]},
-      {date:'D-1', title:'티징 발송', send:true, todos:[{t:'티징 카피 컨펌',o:'both'}]},
-      {date:'D-day', title:'오픈 발송', send:true, todos:[{t:'발송 모수 확인',o:'vircle'}]},
-      {date:'마감일', title:'마감 리마인드 발송', send:true, todos:[{t:'미사용 세그먼트 추출',o:'vircle'},{t:'성과 집계(ROAS)',o:'vircle'}]},
-    ],
-  },
-  drop: {
-    emoji:'✨', name:'신상품 런칭 / 드랍', desc:'사전 예고 → 오픈런 → 후속', demo:false,
-    campaign:'신상품 드랍',
-    benefit:{q:'런칭을 어떻게 띄울까요?', opts:[
-      {v:'사전 알림 신청', d:'오픈 전 웨이팅 모으기'},
-      {v:'선공개 / 우선구매', d:'라운지 회원 먼저'},
-      {v:'런칭 기념 혜택', d:'첫 구매 사은품·쿠폰'}]},
-    flow:[
-      {label:'사전 알림', screens:[{type:'msg', title:'신상 예고', bubble:'곧 공개됩니다 👀', btn:'알림 신청'}], caption:'친구톡 · 라운지'},
-      {label:'D-day 오픈', screens:[{type:'landing', tag:'NEW DROP', steps:['선공개','우선구매','런칭 혜택'], btn:'지금 보기'}], console:{title:'라운지 선공개 설정', nav:[{t:'라운지',on:1},{t:'혜택'},{t:'메시지'}], rows:['회원 선공개 시점','우선구매 권한','런칭 쿠폰 연결'], steps:'<b>콘솔 → 라운지</b>에서 선공개 시점과 회원 우선구매를 설정하세요.'}},
-      {label:'상세 / 구매', screens:[{type:'product', title:'신상품', price:'런칭가', btn:'구매하기'}]},
-      {label:'후속 리마인드', screens:[{type:'msg', title:'재입고/리뷰', bubble:'써보셨나요? 리뷰 남기고 적립 🎁', btn:'리뷰 쓰기'}]},
-    ],
-    branch:null,
-    cards:[
-      {when:'D-5', title:'사전 알림 모집', bubble:'{brand} 신상이 곧 나와요 👀 알림 신청하고 먼저 만나보세요', tags:['친구톡','전체']},
-      {when:'D-day', title:'오픈 — 선공개', bubble:'드디어 공개! 라운지 회원 우선구매 시작 ✨', tags:['알림톡','알림 신청자','🖥️ 선공개']},
-      {when:'D+3', title:'후속 — 리뷰/재입고', bubble:'신상 어떠셨나요? 리뷰 남기면 적립금 🎁', tags:['친구톡','구매 고객']},
-    ],
-    timeline:[
-      {date:'~D-7', title:'준비 확정', send:false, todos:[{t:'런칭 혜택·선공개 정책 확정',o:'both'},{t:'신상 상세·비주얼 제작',o:'brand'}]},
-      {date:'~D-2', title:'세팅', send:false, todos:[{t:'라운지 선공개·우선구매 세팅',o:'vircle'},{t:'알림 신청 폼 연결',o:'vircle'}]},
-      {date:'D-5', title:'사전 알림 발송', send:true, todos:[{t:'예고 카피 컨펌',o:'both'}]},
-      {date:'D-day', title:'오픈 발송', send:true, todos:[{t:'선공개 모수 확인',o:'vircle'}]},
-      {date:'D+3', title:'후속 발송 + 리뷰', send:true, todos:[{t:'구매 전환·리뷰 집계',o:'vircle'}]},
-    ],
-  },
-  retention: {
-    emoji:'💌', name:'리텐션 / 재구매', desc:'구매 후 시퀀스·VIP·휴면 복구', demo:false,
-    campaign:'재구매 리텐션 시퀀스',
-    benefit:{q:'어떤 리텐션을 돌릴까요?', opts:[
-      {v:'구매 후 시퀀스', d:'D+3 / D+7 / D+14 자동'},
-      {v:'VIP 등급 혜택', d:'상위 고객 전용 쿠폰'},
-      {v:'휴면 고객 복구', d:'재방문 유도 쿠폰'}]},
-    flow:[
-      {label:'구매 완료', screens:[{type:'plain', title:'구매 완료!', text:'감사합니다 😊', btn:'주문 확인'}], caption:'트리거 시작점'},
-      {label:'D+3 감사·케어', screens:[{type:'msg', title:'잘 받으셨나요?', bubble:'사용 꿀팁 + 케어 안내 💡', btn:'가이드 보기'}], console:{title:'구매 후 자동 시퀀스', nav:[{t:'메시지',on:1},{t:'세그먼트'}], rows:['트리거: 구매 완료','D+3 / D+7 / D+14','구매 즉시 제외 ✓'], steps:'<b>콘솔 → 메시지 → 자동화</b>에서 구매 트리거와 D+N 단계를 설정하세요.'}},
-      {label:'D+7 크로스셀', screens:[{type:'product', title:'함께 쓰면 좋은', price:'추천 상품', btn:'담아보기'}]},
-      {label:'D+14 재구매 쿠폰', screens:[{type:'coupon', title:'재구매 10% 쿠폰', date:'2주 한정', btn:'쿠폰 받기'}]},
-    ],
-    branch:null,
-    cards:[
-      {when:'D+3', title:'감사 · 케어', bubble:'{brand} 구매 감사합니다 💌 잘 쓰는 꿀팁을 보내드려요', tags:['친구톡','구매 고객','자동']},
-      {when:'D+7', title:'크로스셀', bubble:'함께 쓰면 좋은 상품을 골라봤어요 🛒', tags:['알림톡','구매 고객','🖥️ 자동 시퀀스']},
-      {when:'D+14', title:'재구매 쿠폰', bubble:'다시 만나요! 재구매 10% 쿠폰을 드려요', tags:['친구톡','미재구매']},
-    ],
-    timeline:[
-      {date:'~D-3', title:'시퀀스 설계', send:false, todos:[{t:'단계별 혜택·크로스셀 상품 선정',o:'both'},{t:'케어 콘텐츠 준비',o:'brand'}]},
-      {date:'~D-1', title:'자동화 세팅', send:false, todos:[{t:'구매 트리거 + D+N 시퀀스 세팅',o:'vircle'},{t:'구매 즉시 제외 설정',o:'vircle'}]},
-      {date:'상시', title:'D+3 / D+7 / D+14 자동 발송', send:true, todos:[{t:'발송 정상 동작 모니터링',o:'vircle'}]},
-      {date:'월말', title:'성과 리뷰', send:true, todos:[{t:'재구매율·LTV 집계',o:'vircle'},{t:'시퀀스 개선 미팅',o:'both'}]},
-    ],
-  },
-};
+/* ════════ 사진 업로드 (화면별) ════════ */
+let _pickTarget=null;
+function _fileInput(){ let el=document.getElementById('photo-input'); if(!el){el=document.createElement('input');el.type='file';el.accept='image/*';el.id='photo-input';el.style.display='none';el.onchange=_onPick;document.body.appendChild(el);} return el; }
+function pickSlot(slot){ _pickTarget=slot; _fileInput().click(); }
+function _onPick(e){ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{ state.photoSlots[_pickTarget]=ev.target.result; e.target.value=''; savePhotos(); renderFlow(); toast('이 화면에 제품 사진을 적용했어요'); }; r.readAsDataURL(f); }
+function photoKey(){ return 'vjb-photos-'+(state.brand||'x')+'|'+(state.ev||'x'); }
+function savePhotos(){ try{ localStorage.setItem(photoKey(),JSON.stringify(state.photoSlots)); }catch(e){ /* 용량 초과 시 세션 내 유지만 */ } }
+function loadPhotos(){ try{ const o=JSON.parse(localStorage.getItem(photoKey())||'null'); if(o&&typeof o==='object') return o; }catch(e){} return {}; }
+
 /* ════════ 상태 ════════ */
-const state = { brand:'', template:null, benefit:null, start:'', end:'', teasing:true, targets:[], channels:[], photo:null };
+const state={ brand:'', ch:null, ev:null, opts:[], start:'', end:'', teasing:true, photoSlots:{}, tasks:[] };
 
-/* ════════ 위저드 정의 ════════ */
-const TARGETS = ['전체 고객','신규','휴면','VIP','팝업 방문'];
-const CHANNELS = ['친구톡','알림톡','브랜드 라운지','오프라인 QR','문자(SMS)'];
-let step = 0;
-const STEPS = [
-  { // 0 환영 + 브랜드 입력
-    kicker:'VIRCLE JOURNEY BUILDER',
-    q: () => `안녕하세요 👋<br>어떤 브랜드의 캠페인인가요?`,
-    sub:'브랜드명만 입력하면, 몇 가지 선택으로 이번 캠페인의 여정도를 함께 그려드려요. 로그인·가입은 없어요.',
-    body: () => `<div class="field"><label>브랜드명</label><input type="text" id="f-brand" value="${state.brand}" placeholder="예: 앙투아솔레" oninput="state.brand=this.value" onkeydown="if(event.key==='Enter')nextStep()"></div>`,
-    valid: () => state.brand.trim()!=='', nextLabel:'시작하기 →',
-  },
-  { // 1 캠페인 유형
-    kicker:'STEP 1 · 캠페인 유형',
-    q: () => '어떤 캠페인을<br>준비하고 계세요?',
-    sub:'유형을 고르면 그에 맞는 단계·메시지·할 일 템플릿이 채워집니다.',
-    body: () => `<div class="opt-grid cols2">${Object.entries(TEMPLATES).map(([k,t])=>`
-      <div class="opt ${state.template===k?'sel':''}" onclick="pickTemplate('${k}')">
-        <div class="em">${t.emoji}</div>
-        <div class="ot"><h3>${t.name}${t.demo?'':'<span class="soon">곧</span>'}</h3><p>${t.desc}</p></div>
-        <div class="check"></div></div>`).join('')}</div>
-      <p class="wz-sub" style="margin-top:16px;font-size:13px;">※ 이 데모는 <b>게임화 이벤트</b> 템플릿이 가장 풍부하게 구현돼 있어요. 나머지도 같은 구조로 동작합니다.</p>`,
-    valid: () => !!state.template,
-  },
-  { // 2 목표·혜택 (템플릿 분기)
-    kicker:'STEP 2 · 목표 · 혜택',
-    q: () => TEMPLATES[state.template].benefit.q.replace(/\?/,'?'),
-    sub:'고객이 받게 될 핵심 혜택이에요. 나중에 결과 화면에서 메시지로 다듬을 수 있어요.',
-    body: () => `<div class="opt-grid">${TEMPLATES[state.template].benefit.opts.map(o=>`
-      <div class="opt ${state.benefit===o.v?'sel':''}" onclick="pickBenefit('${o.v}')">
-        <div class="ot"><h3>${o.v}</h3><p>${o.d}</p></div><div class="check"></div></div>`).join('')}</div>`,
-    valid: () => !!state.benefit,
-  },
-  { // 3 기간
-    kicker:'STEP 3 · 기간 · 일정',
-    q: () => '언제 진행하나요?',
-    sub:'시작·종료일을 넣으면 발송 회차와 할 일 기한이 자동으로 배치됩니다.',
-    body: () => `<div class="dates">
-        <div class="field"><label>시작일</label><input type="date" id="f-start" value="${state.start}" onchange="state.start=this.value"></div>
-        <div class="field"><label>종료일</label><input type="date" id="f-end" value="${state.end}" onchange="state.end=this.value"></div>
-      </div>
-      <div class="toggle ${state.teasing?'on':''}" onclick="state.teasing=!state.teasing;this.classList.toggle('on')"><span class="sw"></span> 시작 전 티징(예고) 발송 포함</div>`,
-    valid: () => true,
-  },
-  { // 4 타깃·채널
-    kicker:'STEP 4 · 타깃 · 채널',
-    q: () => '누구에게,<br>어디로 보낼까요?',
-    sub:'복수 선택 가능합니다.',
-    body: () => `<p class="wz-sub" style="margin:0 0 10px;font-weight:700;color:var(--ink);">타깃</p>
-      <div class="opt-grid chips">${TARGETS.map(t=>`<div class="opt ${state.targets.includes(t)?'sel':''}" style="padding:13px;" onclick="toggleArr('targets','${t}',this)"><div class="ot"><h3 style="font-size:15px;">${t}</h3></div><div class="check"></div></div>`).join('')}</div>
-      <p class="wz-sub" style="margin:20px 0 10px;font-weight:700;color:var(--ink);">채널</p>
-      <div class="opt-grid chips">${CHANNELS.map(c=>`<div class="opt ${state.channels.includes(c)?'sel':''}" style="padding:13px;" onclick="toggleArr('channels','${c}',this)"><div class="ot"><h3 style="font-size:15px;">${c}</h3></div><div class="check"></div></div>`).join('')}</div>`,
-    valid: () => state.targets.length>0 && state.channels.length>0,
-  },
-  { // 5 소재
-    kicker:'STEP 5 · 소재 (선택)',
-    q: () => '제품 사진이 있나요?',
-    sub:'업로드하면 여정도의 랜딩·쿠폰·메시지 화면에 자동으로 들어갑니다. 건너뛰어도 돼요.',
-    body: () => `<label class="upload ${state.photo?'has':''}" id="up-box">
-        ${state.photo?`<img src="${state.photo}">`:'📷 클릭해서 제품 사진 업로드<br><span style="font-size:13px;">JPG · PNG</span>'}
-        <input type="file" accept="image/*" style="display:none" id="f-photo" onchange="onPhoto(this)">
-      </label>`,
-    valid: () => true, nextLabel:'✨ 여정도 생성',
-  },
+/* ════════ 이벤트 정의 ════════ */
+const EV={
+  lucky:{n:'럭키드로우',e:'🎰',screens:[
+    {id:'m1',n:'럭키드로우 응모',a:'참여',t:'luckydraw',p:{title:'럭키드로우',desc:'1일 1회 응모',cta:'응모하기'}},
+    {id:'m2',n:'당첨 결과',a:'당첨',t:'winner',p:{prize:'🎁 경품/쿠폰'}},
+    {id:'m3',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'당첨 쿠폰',sub:'7일 유효',cta:'사용하기'}},
+  ],branches:[{from:'m2',cond:'미당첨',n:'미당첨 화면',t:'loser',cap:'재도전 유도'}]},
+  rsvp:{n:'RSVP / 초대',e:'📅',screens:[
+    {id:'m1',n:'날짜·시간 선택',a:'예약',t:'reserve'},
+    {id:'m2',n:'예약 완료',a:'예약',t:'reserve_done'},
+    {id:'m3',n:'입장 티켓 발급',a:'발급',t:'ticket'},
+  ],branches:[{from:'m1',cond:'예약 마감',n:'예약 마감',t:'reserve_full'}]},
+  photocard:{n:'포토카드',e:'📸',screens:[
+    {id:'m1',n:'포토카드 선택',a:'참여',t:'photocard_sel',p:{title:'카드 선택'}},
+    {id:'m2',n:'포토카드 발급',a:'발급',t:'photocard_issued'},
+  ],branches:[]},
+  coupon:{n:'쿠폰 발급',e:'🏷️',screens:[
+    {id:'m1',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'웰컴 쿠폰',sub:'즉시 사용 가능',cta:'사용하기'}},
+  ],branches:[]},
+  checkin:{n:'오프라인 체크인',e:'📍',screens:[
+    {id:'m1',n:'체크인 QR',a:'체크인',t:'checkin_qr'},
+    {id:'m2',n:'체크인 완료',a:'체크인',t:'checkin_done'},
+    {id:'m3',n:'리워드 안내',a:'리워드',t:'reward',p:{title:'방문 리워드',desc:'방문 감사 혜택'}},
+  ],branches:[]},
+  survey:{n:'설문/취향 수집',e:'📝',screens:[
+    {id:'m1',n:'설문 응답',a:'참여',t:'survey'},
+    {id:'m2',n:'리워드 안내',a:'리워드',t:'reward',p:{title:'참여 감사 혜택',desc:'설문 완료 리워드'}},
+    {id:'m3',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'감사 쿠폰',sub:'7일 유효'}},
+  ],branches:[]},
+  raffle:{n:'래플 이벤트',e:'🎲',screens:[
+    {id:'m1',n:'래플 응모',a:'참여',t:'raffle',p:{num:'????',desc:'래플 응모 완료',date:'당첨 발표: D+7'}},
+    {id:'m2',n:'응모 완료',a:'당첨',t:'winner',p:{prize:'🎁 래플 경품 (추첨)'}},
+  ],branches:[]},
+};
+
+/* ════════ 플로우 조립 ════════ */
+function buildFlow(){
+  const off=state.ch==='offline';
+  const o=state.opts;
+  const hasSu=o.includes('signup'), hasMo=o.includes('member_only'), hasFc=o.includes('firstcome'), hasSh=o.includes('share'), hasCk=o.includes('checkin');
+  const entry=off
+    ?{id:'e1',n:'QR 진입',a:'진입',t:'qr_entry',cap:'매장/팝업 입구'}
+    :{id:'e1',n:'CRM 발송',a:'진입',t:'crm_entry',p:{ch:'친구톡',title:'이벤트 안내',cta:'참여하기'},cap:'친구톡/알림톡'};
+  const auth={id:'e2',n:'본인 인증',a:'인증',t:'auth_phone'};
+  let main=[entry,auth];
+  if(hasSu) main.push({id:'e3',n:'약관 동의',a:'가입',t:'signup'});
+
+  let branches=[{from:'e2',cond:'비회원',n:'가입 안내',t:'signup',cap:'회원가입 유도'}];
+  if(hasMo) branches.push({from:'e2',cond:'구매자 아님',n:'참여 불가',t:'member_fail'});
+
+  const ev=EV[state.ev]||EV.coupon;
+  let screens=[...main,...ev.screens.map(s=>({...s}))];
+  if(hasSh) screens.push({id:'sh',n:'공유 유도',a:'공유',t:'share'});
+  if(hasCk && state.ev!=='checkin'){
+    const idx=screens.findIndex(s=>s.a==='발급'||s.a==='리워드');
+    if(idx>-1) screens.splice(idx,0,{id:'ck',n:'현장 체크인',a:'체크인',t:'checkin_qr'});
+  }
+  if(hasFc && state.ev==='coupon') branches.push({from:'m1',cond:'선착순 마감',n:'선착순 마감',t:'firstcome_fail'});
+  branches=[...branches,...ev.branches];
+  // 슬롯 id 부여 (화면별 사진 업로드 — 모든 카드)
+  screens.forEach(s=>{ s.slot='s_'+s.id; });
+  branches.forEach((b,i)=>{ b.slot='sb_'+i; });
+  return {name:ev.n,emoji:ev.e,screens,branches};
+}
+
+/* ════════ 위저드 ════════ */
+const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'photocard',l:'📸 포토카드 발급'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향 수집'},{v:'raffle',l:'🎲 래플 이벤트'}];
+const CONDS=[{v:'signup',l:'회원가입 필요'},{v:'member_only',l:'구매자만 참여'},{v:'firstcome',l:'선착순 제한'},{v:'share',l:'공유 기능 포함'},{v:'checkin',l:'체크인 필요'}];
+const STEPS=[
+  {kicker:'VIRCLE JOURNEY BUILDER',q:()=>'안녕하세요 👋<br>어떤 브랜드의<br>캠페인인가요?',sub:'브랜드명만 입력하면 바로 시작합니다. 로그인·가입은 없어요.',
+    body:()=>`<div class="brand-box"><label>BRAND NAME</label><input type="text" id="fb" value="${state.brand}" placeholder="예: 미세키서울" oninput="state.brand=this.value" onkeydown="if(event.key==='Enter')nextStep()"></div>`,
+    valid:()=>state.brand.trim()!=='',nl:'시작하기 →',enter:()=>setTimeout(()=>document.getElementById('fb')?.focus(),60)},
+  {kicker:'STEP 1 · 진입',q:()=>'온라인 캠페인인가요,<br>오프라인 캠페인인가요?',sub:'진입 화면이 달라져요.',
+    body:()=>`<div class="chan-grid">
+      <div class="chan ${state.ch==='offline'?'sel':''}" onclick="state.ch='offline';renderStep()"><div class="e">🏪</div><h3>오프라인</h3><p>팝업·매장 현장<br>QR / NFC로 시작</p></div>
+      <div class="chan ${state.ch==='online'?'sel':''}" onclick="state.ch='online';renderStep()"><div class="e">📱</div><h3>온라인</h3><p>CRM 메시지·라운지<br>브랜드몰 링크</p></div>
+    </div>`,valid:()=>!!state.ch,nl:'다음 →'},
+  {kicker:'STEP 2 · 이벤트',q:()=>'어떤 이벤트를<br>만들고 싶나요?',sub:'고르면 그에 맞는 버클 화면 묶음이 자동으로 조립됩니다.',
+    body:()=>`<div class="ev-grid">${EVENTS.map(o=>`<div class="ev ${state.ev===o.v?'sel':''}" onclick="state.ev='${o.v}';renderStep()">${o.l}</div>`).join('')}</div>`,
+    valid:()=>!!state.ev,nl:'다음 →'},
+  {kicker:'STEP 3 · 일정',q:()=>'언제<br>진행하나요?',sub:'시작·종료일을 넣으면 준비·발송 일정과 할 일이 날짜에 맞춰 자동 배치됩니다. 건너뛰어도 돼요.',
+    body:()=>`<div class="date-row">
+      <div class="date-field"><label>시작일</label><input type="date" id="fs" value="${state.start}" onchange="state.start=this.value"></div>
+      <div class="date-field"><label>종료일</label><input type="date" id="fe" value="${state.end}" onchange="state.end=this.value"></div>
+    </div>
+    <div class="dtoggle ${state.teasing?'on':''}" onclick="state.teasing=!state.teasing;this.classList.toggle('on')"><span class="dtoggle-sw"></span> 시작 전 티징(예고) 발송 포함</div>`,
+    valid:()=>true,nl:'다음 →'},
+  {kicker:'STEP 4 · 조건',q:()=>'추가 조건이<br>있나요?',sub:'복수 선택 가능 · 없으면 바로 생성하세요.',
+    body:()=>`<div class="cond-grid">${CONDS.map(o=>`<div class="cond ${state.opts.includes(o.v)?'sel':''}" onclick="tog('${o.v}')"><div class="ck"></div>${o.l}</div>`).join('')}</div>`,
+    valid:()=>true,nl:'✨ 플로우 생성'},
 ];
-
-function renderProgress(){
-  document.getElementById('wz-progress').innerHTML = STEPS.map((_,i)=>
-    `<div class="seg ${i<step?'done':i===step?'cur':''}"></div>`).join('');
-}
+let step=0;
+function tog(v){ const i=state.opts.indexOf(v); i<0?state.opts.push(v):state.opts.splice(i,1); renderStep(); }
+function renderProgress(){ document.getElementById('wz-progress').innerHTML=STEPS.map((_,i)=>`<div class="seg ${i<step?'done':i===step?'cur':''}"></div>`).join(''); }
 function renderStep(){
-  const s = STEPS[step];
-  document.getElementById('wz-step').innerHTML =
-    `<div class="wz-kicker">${s.kicker}</div><div class="wz-q">${s.q()}</div><div class="wz-sub">${s.sub}</div>${s.body()}`;
-  renderProgress();
-  document.getElementById('wz-count').textContent = `${step+1} / ${STEPS.length}`;
-  document.getElementById('wz-prev').classList.toggle('hidden', step===0);
-  document.getElementById('wz-next').textContent = s.nextLabel || '다음 →';
-  if(step===0){ const b=document.getElementById('f-brand'); if(b) setTimeout(()=>b.focus(),50); }
-  if(step===5){ const b=document.getElementById('up-box'); if(b) b.onclick=()=>document.getElementById('f-photo').click(); }
-}
-function pickTemplate(k){ state.template=k; state.benefit=null; renderStep(); }
-function pickBenefit(v){ state.benefit=v; renderStep(); }
-function toggleArr(key,val,el){ const a=state[key]; const i=a.indexOf(val); i<0?a.push(val):a.splice(i,1); el.classList.toggle('sel'); }
-function onPhoto(input){ const f=input.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{state.photo=e.target.result; renderStep();}; r.readAsDataURL(f); }
-function prevStep(){ if(step>0){step--;renderStep();} }
-function nextStep(){
   const s=STEPS[step];
-  if(!s.valid()){ toast('이 단계를 먼저 선택해 주세요'); return; }
-  if(step===STEPS.length-1){ generate(); return; }
-  step++; renderStep();
+  document.getElementById('wz-step').innerHTML=`<div class="wz-kicker">${s.kicker}</div><div class="wz-q">${s.q()}</div><div class="wz-sub">${s.sub}</div>${s.body()}`;
+  renderProgress();
+  document.getElementById('wz-count').textContent=`${step+1} / ${STEPS.length}`;
+  document.getElementById('wz-prev').classList.toggle('hidden',step===0);
+  document.getElementById('wz-next').textContent=s.nl||'다음 →';
+  if(s.enter)s.enter();
 }
-
-/* ════════ 생성 → 결과 ════════ */
-function fmt(d){ if(!d) return ''; const [y,m,dd]=d.split('-'); return `${y}.${m}.${dd}`; }
+function prevStep(){ if(step>0){step--;renderStep();} }
+function nextStep(){ const s=STEPS[step]; if(!s.valid()){toast('이 단계를 먼저 선택해 주세요');return;} if(step===STEPS.length-1){generate();return;} step++;renderStep(); }
 function generate(){
-  document.getElementById('wz-step').innerHTML = `<div class="gen-wrap"><div class="gen-spin"></div><div class="wz-q" style="font-size:24px;">여정도를 그리고 있어요…</div><div class="wz-sub">${TEMPLATES[state.template].name} 템플릿 · ${state.brand}</div></div>`;
+  document.getElementById('wz-step').innerHTML=`<div class="gen-wrap"><div class="gen-spin"></div><div class="wz-q" style="font-size:28px;">화면 플로우를<br>조립하고 있어요…</div></div>`;
   document.querySelector('.wz-nav').classList.add('hidden');
   document.getElementById('wz-progress').classList.add('hidden');
-  setTimeout(renderResult, 1100);
+  setTimeout(renderResult,750);
 }
 
-function renderResult(){
-  const t = TEMPLATES[state.template];
-  document.getElementById('h-title-text').innerHTML = `${state.brand} — <em>${t.campaign}</em> 여정도`;
-  // 메타
-  const period = (state.start||state.end) ? `${fmt(state.start)||'?'} — ${fmt(state.end)||'?'}` : '기간 미정';
-  document.getElementById('meta').innerHTML = [
-    `📅 기간 <b>${period}</b>`, `${t.emoji} 템플릿 <b>${t.name}</b>`,
-    `🎁 혜택 <b>${state.benefit||'-'}</b>`,
-    `👥 타깃 <b>${state.targets.join(', ')||'-'}</b>`,
-    `📨 채널 <b>${state.channels.join(', ')||'-'}</b>`,
-  ].map(h=>`<span class="chip">${h}</span>`).join('');
-
-  // 플로우
-  let rows = `<div class="flow-row">`;
-  t.flow.forEach((g,i)=>{
-    rows += `<div class="group" style="animation-delay:${i*.08}s"><div class="g-label">${g.label}</div><div class="g-phones">${g.screens.map(renderPhone).join('')}</div>${g.caption?`<div class="p-caption">${g.caption}</div>`:''}${consoleChip(g.console)}</div>`;
-    if(i<t.flow.length-1) rows += `<div class="arrow">→</div>`;
+/* ════════ 결과 ════════ */
+let FLOW=null;
+function renderFlow(){
+  const f=FLOW;
+  let html=`<div class="flow-row">`;
+  f.screens.forEach((s,i)=>{
+    const up=`<button class="card-upload" onclick="pickSlot('${s.slot}')">${photoOf(s.slot)?'🖼 사진 교체':'＋ 사진'}</button>`;
+    html+=`<div class="group" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${s.n}</div><div class="g-phones">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${s.cap}</div>`:''}</div>`;
+    if(i<f.screens.length-1) html+=`<div class="arr">→</div>`;
   });
-  rows += `</div>`;
-  if(t.branch){
-    const indent = (t.branch.from)*(158+50);
-    rows += `<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="branch-tag">${t.branch.tag}</div><div class="group"><div class="g-label sub">${t.branch.label}</div><div class="g-phones">${t.branch.screens.map(renderPhone).join('')}</div>${t.branch.caption?`<div class="p-caption">${t.branch.caption}</div>`:''}</div></div>`;
-  }
-  document.getElementById('flow-col').innerHTML = rows;
+  html+=`</div>`;
+  f.branches.forEach(b=>{
+    const fromIdx=f.screens.findIndex(s=>s.id===b.from);
+    const indent=Math.max(0,fromIdx)*(140+50);
+    const up=`<button class="card-upload" onclick="pickSlot('${b.slot}')">${photoOf(b.slot)?'🖼 사진 교체':'＋ 사진'}</button>`;
+    html+=`<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="b-tag">↘ ${b.cond}</div><div class="group"><div class="g-lbl branch">${b.n}</div><div class="g-phones">${phone(b.t,{brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${b.cap}</div>`:''}</div></div>`;
+  });
+  document.getElementById('flow-col').innerHTML=html;
+}
+function renderLegend(){
+  const acts=[...new Set(FLOW.screens.map(s=>s.a))];
+  document.getElementById('legend').innerHTML=acts.map(a=>`<span class="lg"><i style="background:${AC[a]}"></i>${a}</span>`).join('');
+}
+function renderScreenTable(){
+  const all=[...FLOW.screens.map(s=>({...s,branch:false})),...FLOW.branches.map(b=>({n:b.n,a:'분기',t:b.t,branch:true}))];
+  document.getElementById('screen-rows').innerHTML=all.map((s,i)=>{
+    const m=TYPE_META[s.t]||{st:s.t,comp:s.t};
+    return `<tr><td>${s.branch?'분기':i+1}</td><td class="scr-th">${s.n}</td><td><span class="act-dot"><i style="background:${AC[s.a]||'#888'}"></i>${s.a}</span></td><td>${m.st}</td><td><span class="comp">${m.comp}</span></td></tr>`;
+  }).join('');
+}
+function renderBranchesStates(){
+  const types=new Set(FLOW.screens.map(s=>s.t));
+  const st=['인증 성공 / 실패'];
+  if(state.opts.includes('signup')||types.has('signup')) st.push('회원 / 비회원');
+  if(state.opts.includes('member_only')) st.push('구매자 / 비구매자');
+  if(types.has('winner')||types.has('loser')) st.push('당첨 / 미당첨');
+  if(types.has('reserve')) st.push('예약 가능 / 예약 마감');
+  if(state.opts.includes('firstcome')) st.push('선착순 가능 / 마감');
+  if([...types].some(t=>t.startsWith('checkin'))) st.push('체크인 전 / 체크인 완료');
+  if(types.has('coupon')) st.push('쿠폰 사용 전 / 사용 완료');
+  document.getElementById('states').innerHTML=st.map(s=>`<span class="state-chip">${s}</span>`).join('');
+  document.getElementById('branches').innerHTML=FLOW.branches.length
+    ? FLOW.branches.map(b=>`<div class="branch-item"><span class="bc">${b.cond}</span><span class="barrow">→</span><span>${b.n}</span></div>`).join('')
+    : `<div class="branch-item" style="color:var(--fine)">조건 분기 없음</div>`;
+}
+function figmaJSON(){
+  const flow=FLOW.screens.map((s,i)=>({id:s.id,screen_name:s.n,atomic_action:s.a,component_name:(TYPE_META[s.t]||{}).comp||s.t,x:i*420,y:0}));
+  FLOW.branches.forEach((b,i)=>{ const fi=Math.max(0,FLOW.screens.findIndex(s=>s.id===b.from)); flow.push({id:'b'+i,screen_name:b.n,atomic_action:'분기',component_name:(TYPE_META[b.t]||{}).comp||b.t,x:fi*420,y:300}); });
+  const connections=[];
+  for(let i=0;i<FLOW.screens.length-1;i++) connections.push({from:FLOW.screens[i].id,to:FLOW.screens[i+1].id,label:'CTA'});
+  FLOW.branches.forEach((b,i)=>connections.push({from:b.from,to:'b'+i,label:b.cond}));
+  return {campaign:FLOW.name,channel:state.ch,brand:state.brand,flow,connections};
+}
+function renderJSON(){
+  const json=JSON.stringify(figmaJSON(),null,2);
+  const esc=json.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const hi=esc.replace(/"([^"]+)":/g,'"<span class="k">$1</span>":').replace(/: "([^"]*)"/g,': "<span class="s">$1</span>"').replace(/: (\d+)/g,': <span class="n">$1</span>');
+  document.getElementById('json-box').innerHTML=hi;
+}
+const saved=JSON.parse(localStorage.getItem('vjb-ops')||'{}');
+function opsList(){
+  const types=new Set(FLOW.screens.map(s=>s.t));
+  const acts=new Set(FLOW.screens.map(s=>s.a));
+  const items=[];
+  if(state.opts.includes('signup')||types.has('signup')){ items.push('개인정보 수집·이용 동의 항목 확정'); items.push('마케팅 수신 동의(선택) 문구 준비'); }
+  if(state.ch==='online') items.push('CRM 발송 채널(친구톡/알림톡)·발송 모수 준비');
+  if(types.has('coupon')) items.push('쿠폰 수량·재고·유효기간 설정');
+  if(types.has('ticket')) items.push('티켓 발급 수량·입장 검증 방식');
+  if(acts.has('당첨')||state.opts.includes('firstcome')) items.push('당첨자 선정 방식 확정 (즉시/추첨/선착순)');
+  if(types.has('reserve')) items.push('예약 가능 시간·정원 설정');
+  if(acts.has('체크인')) items.push('현장 스태프 QR/NFC 확인 절차');
+  if(state.opts.includes('member_only')) items.push('구매자/회원 자격 판별 기준');
+  if(state.opts.includes('share')) items.push('공유 리워드 지급 기준·중복 방지');
+  items.push('진입 채널별 링크/QR 발급 및 동선 점검');
+  return items;
+}
+function renderOps(){
+  document.getElementById('ops').innerHTML=opsList().map((t,i)=>{
+    const key=(state.brand||'x')+'|'+state.ev+'-'+i, done=!!saved[key];
+    return `<label class="op-item ${done?'done':''}"><input type="checkbox" ${done?'checked':''} onchange="toggleOp('${key}',this)"><span>${t}</span></label>`;
+  }).join('');
+}
+function toggleOp(key,el){ saved[key]=el.checked; localStorage.setItem('vjb-ops',JSON.stringify(saved)); el.closest('.op-item').classList.toggle('done',el.checked); }
 
-  // 카드
-  document.getElementById('step-cards').innerHTML = t.cards.map((c,i)=>`
-    <div class="s-card" style="animation-delay:${i*.07}s">
-      <div class="s-when">${c.when}</div><h3>${c.title}</h3>
-      <div class="bubble" contenteditable="true" spellcheck="false">${c.bubble.replace(/{brand}/g,state.brand)}</div>
-      <div class="edit-hint">✎ 말풍선을 클릭하면 바로 수정됩니다</div>
-      <div class="s-meta">${c.tags.map(x=>`<span class="s-tag">${x}</span>`).join('')}</div>
+/* ════════ 일정 & 할 일 (편집 가능) ════════ */
+const OWN_LBL={vircle:'버클',brand:'브랜드',both:'함께'};
+const OWN_NEXT={vircle:'brand',brand:'both',both:'vircle'};
+let _tid=0;
+function parseD(s){ if(!s) return null; const [y,m,dd]=s.split('-').map(Number); return new Date(y,m-1,dd); }
+function fmtD(d){ return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''; }
+function relToDate(rel){
+  const s=parseD(state.start); if(!s) return ''; const e=parseD(state.end); let m;
+  if(rel==='D-day') return fmtD(s);
+  if(rel.includes('마감')||rel==='종료') return e?fmtD(e):'';
+  if((m=rel.match(/D-(\d+)/))){ const d=new Date(s); d.setDate(s.getDate()-(+m[1])); return fmtD(d); }
+  if((m=rel.match(/D\+(\d+)/))){ const d=new Date(s); d.setDate(s.getDate()+(+m[1])); return fmtD(d); }
+  return '';
+}
+function seedTasks(){
+  const types=new Set(FLOW.screens.map(s=>s.t));
+  const seeds=[];
+  const add=(label,owner,rel)=>seeds.push({label,owner,rel});
+  add('화면·소재(제품 이미지) 확정','brand','~D-7');
+  add('이벤트 정책 확정 (당첨·선착순·예약 정원 등)','both','~D-7');
+  if(state.teasing && state.ch==='online') add('티징(예고) 발송 카피 컨펌','both','D-3');
+  add('버클 콘솔 세팅 (라운지·혜택·메시지)','vircle','~D-3');
+  add('전체 플로우 리허설 · QA','both','~D-3');
+  add(state.ch==='offline'?'현장 QR·동선·스태프 점검':'CRM 발송 카피·모수 확정','brand','D-1');
+  add('오픈 — 발송 / 진입 시작','vircle','D-day');
+  if(types.has('reserve')) add('예약 현황 모니터링·리마인드','vircle','D-day');
+  add('종료 — 미사용 쿠폰/세그먼트 추출','vircle','마감일');
+  add('성과 측정 · 리뷰','vircle','D+7');
+  return seeds.map(s=>({id:'t'+(_tid++),label:s.label,owner:s.owner,date:relToDate(s.rel),done:false}));
+}
+function taskKey(){ return 'vjb-tasks-'+(state.brand||'x')+'|'+(state.ev||'x'); }
+function loadTasks(){
+  try{ const a=JSON.parse(localStorage.getItem(taskKey())||'null'); if(Array.isArray(a)){ a.forEach((t,i)=>{t.id='t'+i;}); _tid=a.length; return a; } }catch(e){}
+  return seedTasks();
+}
+function saveTasks(){ localStorage.setItem(taskKey(),JSON.stringify(state.tasks)); }
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderSched(){
+  const rows=[...state.tasks].sort((a,b)=>(a.date||'9999-99-99').localeCompare(b.date||'9999-99-99'));
+  if(!rows.length){ document.getElementById('sched').innerHTML=`<div class="task-empty">아직 등록된 할 일이 없어요. 아래 <b>＋ 할 일 추가</b>로 시작하세요.</div>`; return; }
+  document.getElementById('sched').innerHTML=rows.map(t=>`
+    <div class="task-row ${t.done?'done':''}">
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}',this.checked)">
+      <input type="date" class="task-date" value="${t.date||''}" onchange="setTaskDate('${t.id}',this.value)">
+      <span class="task-text" contenteditable="true" spellcheck="false" onblur="editTask('${t.id}',this.textContent)">${escHtml(t.label)}</span>
+      <span class="task-owner o-${t.owner}" onclick="cycleOwner('${t.id}')" title="담당 전환 (버클→브랜드→함께)">${OWN_LBL[t.owner]}</span>
+      <button class="task-del" onclick="removeTask('${t.id}')" title="삭제">×</button>
     </div>`).join('');
+}
+function findTask(id){ return state.tasks.find(t=>t.id===id); }
+function toggleTask(id,v){ const t=findTask(id); if(t){t.done=v;saveTasks();renderSched();} }
+function setTaskDate(id,v){ const t=findTask(id); if(t){t.date=v;saveTasks();renderSched();} }
+function editTask(id,txt){ const t=findTask(id); if(!t) return; const v=(txt||'').trim(); if(!v){ renderSched(); return; } t.label=v; saveTasks(); }
+function cycleOwner(id){ const t=findTask(id); if(t){t.owner=OWN_NEXT[t.owner];saveTasks();renderSched();} }
+function addTask(){ if(!FLOW)return; state.tasks.push({id:'t'+(_tid++),label:'새 할 일',owner:'both',date:'',done:false}); saveTasks(); renderSched(); }
+function removeTask(id){ state.tasks=state.tasks.filter(t=>t.id!==id); saveTasks(); renderSched(); }
 
-  renderTimeline(t.timeline);
+function renderResult(){
+  FLOW=buildFlow();
+  document.getElementById('sn-title').innerHTML=`${state.brand} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`;
+  const ch=state.ch==='offline'?'🏪 오프라인':'📱 온라인';
+  document.getElementById('meta').innerHTML=[`${FLOW.emoji} <b>${FLOW.name}</b>`,ch,`화면 <b>${FLOW.screens.length}개</b>`,`분기 <b>${FLOW.branches.length}개</b>`,state.opts.length?`조건 <b>${state.opts.length}개</b>`:''].filter(Boolean).map(h=>`<span class="chip">${h}</span>`).join('');
+  state.photoSlots=loadPhotos(); state.tasks=loadTasks();
+  renderLegend(); renderFlow(); renderScreenTable(); renderBranchesStates(); renderJSON(); renderSched(); renderOps();
   document.getElementById('stage-wizard').classList.add('hidden');
   document.getElementById('stage-result').classList.remove('hidden');
   document.getElementById('result-actions').classList.remove('hidden');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ════════ 타임라인 ════════ */
-const OWNER={vircle:['vircle','버클'],brand:['brand','브랜드 확인'],both:['both','함께']};
-const TLKEY = 'vjb-todos-'+(state.template||'x');
-let saved = JSON.parse(localStorage.getItem('vjb-todos')||'{}');
-function renderTimeline(tl){
-  document.getElementById('timeline').innerHTML = tl.map((n,ni)=>`
-    <div class="t-node ${n.send?'send':''}" style="animation-delay:${ni*.07}s">
-      <div class="t-date">● ${n.date} — ${n.title}${n.send?'<span class="send-tag">CRM 발송</span>':''}</div>
-      ${n.todos.length?`<div class="todos">${n.todos.map((td,ti)=>{
-        const key=state.template+'-'+ni+'-'+ti, done=!!saved[key], [cls,label]=OWNER[td.o];
-        return `<label class="todo ${done?'done':''}"><input type="checkbox" ${done?'checked':''} onchange="toggleTodo('${key}',this)"><span class="t-text">${td.t}</span><span class="owner ${cls}">${label}</span></label>`;
-      }).join('')}</div>`:''}
-    </div>`).join('');
-}
-function toggleTodo(key,el){ saved[key]=el.checked; localStorage.setItem('vjb-todos',JSON.stringify(saved)); el.closest('.todo').classList.toggle('done',el.checked); }
-
 /* ════════ 액션 ════════ */
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
-function restart(){ if(confirm('처음부터 다시 시작할까요? (입력 내용이 초기화됩니다)')){ location.href=location.pathname; } }
+function restart(){ if(confirm('처음부터 다시 만들까요? (입력 내용이 초기화됩니다)')){ location.href=location.pathname; } }
 function downloadPDF(){ toast('인쇄 창에서 "PDF로 저장"을 선택하세요 (가로 권장)'); setTimeout(()=>window.print(),600); }
-function downloadSVG(){
-  const t=TEMPLATES[state.template]; const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  const boxW=210,boxH=92,gap=58,x0=40,y0=130, n=t.flow.length, W=Math.max(1180, x0*2+n*(boxW+gap)), H=520;
-  let el=[`<text x="${x0}" y="52" font-size="25" font-weight="900" fill="#1F1B16" font-family="'Noto Serif KR',serif">${esc(state.brand)} — ${esc(t.campaign)} 여정도</text>`,
-    `<text x="${x0}" y="80" font-size="14" fill="#5C5347">${esc(t.name)} · ${esc(state.benefit)} · ${state.start?fmt(state.start):''}${state.end?' ~ '+fmt(state.end):''}</text>`];
-  t.flow.forEach((g,i)=>{ const x=x0+i*(boxW+gap);
-    el.push(`<rect x="${x}" y="${y0}" width="${boxW}" height="${boxH}" rx="14" fill="#fff" stroke="#1F1B16" stroke-width="2.5"/>`);
-    el.push(`<text x="${x+boxW/2}" y="${y0+36}" font-size="12.5" font-weight="700" fill="#8C2F1B" text-anchor="middle">STEP ${i+1}</text>`);
-    el.push(`<text x="${x+boxW/2}" y="${y0+62}" font-size="14.5" font-weight="800" fill="#1F1B16" text-anchor="middle">${esc(g.label.replace(/\(.*?\)\s*/,'').split(' · ')[0])}</text>`);
-    if(i<n-1){ const ax=x+boxW; el.push(`<line x1="${ax+8}" y1="${y0+boxH/2}" x2="${ax+gap-12}" y2="${y0+boxH/2}" stroke="#E0457B" stroke-width="3"/><path d="M ${ax+gap-12} ${y0+boxH/2-6} l 11 6 l -11 6 z" fill="#E0457B"/>`); }
-  });
-  const ty=y0+boxH+120; el.push(`<line x1="${x0}" y1="${ty}" x2="${W-40}" y2="${ty}" stroke="#C96B3A" stroke-width="3"/>`);
-  t.timeline.forEach((nd,i)=>{ const tx=x0+30+i*((W-120)/(t.timeline.length-1||1));
-    el.push(`<circle cx="${tx}" cy="${ty}" r="8" fill="${nd.send?'#8C2F1B':'#F6F1E7'}" stroke="#8C2F1B" stroke-width="3"/>`);
-    el.push(`<text x="${tx}" y="${ty-16}" font-size="12" font-weight="700" fill="#1F1B16" text-anchor="middle">${esc(nd.date)}</text>`);
-    el.push(`<text x="${tx}" y="${ty+28}" font-size="11.5" fill="#5C5347" text-anchor="middle">${esc(nd.title)}</text>`);
-  });
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#F6F1E7"/>${el.join('')}</svg>`;
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})); a.download=`${state.brand}-여정도.svg`; a.click(); URL.revokeObjectURL(a.href);
-  toast('⬇ SVG 다운로드 — 피그마·일러스트레이터에서 바로 열립니다');
-}
-function switchView(v){
-  document.getElementById('view-flow').classList.toggle('hidden',v!=='flow');
-  document.getElementById('view-cards').classList.toggle('visible',v==='cards');
-  document.getElementById('tab-flow').classList.toggle('active',v==='flow');
-  document.getElementById('tab-cards').classList.toggle('active',v==='cards');
-}
+function copyJSON(){ const j=JSON.stringify(figmaJSON(),null,2); navigator.clipboard.writeText(j).then(()=>toast('Figma 배치용 JSON을 복사했어요')).catch(()=>toast('복사 실패 — JSON 박스에서 직접 선택해 주세요')); }
+function downloadJSON(){ const j=JSON.stringify(figmaJSON(),null,2); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([j],{type:'application/json'})); a.download=`${state.brand||'campaign'}-flow.json`; a.click(); URL.revokeObjectURL(a.href); toast('⬇ flow.json 내려받기'); }
 
 renderStep();
 </script>
