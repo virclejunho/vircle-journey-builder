@@ -20,13 +20,45 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  body{font-family:var(--sans);background:var(--parchment);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  body{font-family:var(--sans);background:var(--parchment);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;word-break:keep-all;overflow-wrap:break-word;}
+  code{word-break:break-all;}
+  /* 도식 공통 */
+  .dia-cap{font-size:14px;color:var(--fine);line-height:1.6;text-align:center;margin:18px auto 0;max-width:760px;}
+  .jwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .jflow{display:block;width:100%;max-width:960px;min-width:720px;height:auto;margin:0 auto;}
+  .jflow text{font-family:var(--sans);}
+  /* 파이프라인 */
+  .pipe{display:flex;align-items:stretch;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:42px;}
+  .pipe-col{flex:1 1 240px;min-width:210px;border-radius:18px;padding:22px;}
+  .pipe-col.in{background:var(--parchment);border:1px solid var(--hairline);}
+  .pipe-col.out{background:rgba(0,102,204,.05);border:1px solid rgba(0,102,204,.28);}
+  .pipe-lbl{font-size:13px;font-weight:600;color:var(--primary);letter-spacing:.02em;margin-bottom:14px;}
+  .pipe-chip{font-size:15px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--hairline);border-radius:10px;padding:10px 13px;margin-bottom:8px;line-height:1.45;}
+  .pipe-chip:last-child{margin-bottom:0;}
+  .pipe-eng{align-self:center;flex:0 0 auto;text-align:center;background:var(--ink);color:#fff;border-radius:18px;padding:20px 24px;}
+  .pipe-eng .ico{font-size:26px;line-height:1;}
+  .pipe-eng .t{font-size:15px;font-weight:600;margin-top:8px;white-space:nowrap;}
+  .pipe-arr{align-self:center;color:var(--primary);font-size:26px;flex:0 0 auto;}
+  /* 매핑 */
+  .map{margin-top:30px;background:var(--parchment);border:1px solid var(--hairline);border-radius:20px;padding:26px 24px;}
+  .map-head,.map-row{display:grid;grid-template-columns:1fr 22px 1.1fr 22px 1.5fr;gap:10px;align-items:center;}
+  .map-head{margin-bottom:6px;}
+  .map-head span{font-size:13px;font-weight:600;color:var(--fine);text-align:center;}
+  .map-row{margin-top:10px;}
+  .map-row .ar{color:var(--fine);text-align:center;font-size:15px;}
+  .map-act{font-size:15px;font-weight:600;border-radius:9999px;padding:10px 0;text-align:center;}
+  .map-scr{font-size:14px;font-weight:500;color:var(--ink);background:#fff;border:1px solid var(--hairline);border-radius:10px;padding:10px 12px;text-align:center;}
+  .map-comp{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--primary);background:rgba(0,102,204,.08);border-radius:9px;padding:10px 12px;text-align:center;word-break:break-all;}
   @media(max-width:760px){
     section [style*="grid-template-columns:repeat(3,1fr)"],
     section [style*="grid-template-columns:repeat(2,1fr)"],
     section [style*="grid-template-columns:1fr 1fr"],
     section [style*="grid-template-columns:1fr auto 1fr"]{grid-template-columns:1fr !important;}
     section [style*="1fr auto 1fr"] > div[style*="font-size:28px"]{transform:rotate(90deg);justify-self:center;}
+    .pipe-arr{transform:rotate(90deg);}
+    .map-head{display:none;}
+    .map-row{grid-template-columns:1fr;gap:7px;}
+    .map-row .ar{transform:rotate(90deg);}
   }
 </style>
 </head>
@@ -50,8 +82,33 @@
   <div style="max-width:1080px;margin:0 auto;padding:112px 28px 84px;text-align:center;">
     <p style="font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--primary);margin:0 0 22px;">BUCKLE ATOMIC FLOW BUILDER</p>
     <h1 style="font-weight:600;font-size:clamp(42px,6.6vw,72px);line-height:1.05;letter-spacing:-.035em;color:var(--ink);">선택만 하면 완성되는<br><span style="color:var(--primary);">버클 캠페인 화면 플로우</span></h1>
-    <p style="font-size:clamp(19px,2.2vw,22px);font-weight:400;color:var(--ink-2);max-width:760px;margin:30px auto 0;line-height:1.6;">온라인/오프라인 · 이벤트 유형 · 조건만 고르면, 버클의 검증된 <strong style="font-weight:600;color:var(--ink);">원자 기능(Atomic Action)을 조합해 고객 여정 화면 플로우</strong>를 자동으로 만들고, 피그마 컴포넌트 매핑 · 일정 · 할 일까지 한 번에 뽑아 줍니다.</p>
+    <p style="font-size:clamp(19px,2.2vw,22px);font-weight:400;color:var(--ink-2);max-width:760px;margin:30px auto 0;line-height:1.6;">온라인/오프라인 · 이벤트 유형 · 조건만 고르면, 버클의 검증된 <strong style="font-weight:600;color:var(--ink);">원자 기능(Atomic Action)을 조합해 고객 여정 화면 플로우</strong>를 자동으로 만들고,<br>피그마 컴포넌트 매핑 · 일정 · 할 일까지 한 번에 뽑아 줍니다.</p>
     <span style="display:inline-block;margin-top:38px;font-size:15px;font-weight:400;background:var(--parchment);border:1px solid var(--hairline);border-radius:9999px;padding:10px 22px;color:var(--ink-2);">핵심: <strong style="color:var(--primary);font-weight:600;">AI 캠페인 기획툴</strong>이 아니라 <strong style="color:var(--primary);font-weight:600;">피그마 반복노동 제거툴</strong></span>
+  </div>
+</section>
+
+<!-- ───────── FLOW PREVIEW (도식) ───────── -->
+<section style="background:var(--canvas);border-top:1px solid var(--hairline);width:100%;">
+  <div style="max-width:1040px;margin:0 auto;padding:56px 28px 64px;">
+    <p style="font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--primary);text-align:center;margin:0 0 22px;">예시 · 럭키드로우 화면 플로우 (자동 생성 결과)</p>
+    <div class="jwrap">
+      <svg class="jflow" viewBox="0 0 960 185" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="진입에서 인증, 참여, 당첨, 발급으로 이어지고 당첨에서 미당첨 분기가 갈라지는 화면 플로우 예시">
+        <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b8b8bd"/></marker></defs>
+        <line x1="165" y1="51" x2="207" y2="51" stroke="#c4c4c9" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="360" y1="51" x2="402" y2="51" stroke="#c4c4c9" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="555" y1="51" x2="597" y2="51" stroke="#c4c4c9" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="750" y1="51" x2="792" y2="51" stroke="#c4c4c9" stroke-width="2" marker-end="url(#ah)"/>
+        <path d="M675,80 L675,123" stroke="#b0b0b5" stroke-width="2" stroke-dasharray="4 4" fill="none" marker-end="url(#ah)"/>
+        <text x="686" y="106" font-size="11" fill="#6e6e73">미당첨</text>
+        <g><rect x="15" y="22" width="150" height="58" rx="13" fill="#e8f1fb" stroke="#0066cc" stroke-width="1.3"/><text x="90" y="49" text-anchor="middle" font-size="15" font-weight="600" fill="#0066cc">진입</text><text x="90" y="68" text-anchor="middle" font-size="11" fill="#6e6e73">QR · CRM</text></g>
+        <g><rect x="210" y="22" width="150" height="58" rx="13" fill="#f7efe0" stroke="#C77700" stroke-width="1.3"/><text x="285" y="49" text-anchor="middle" font-size="15" font-weight="600" fill="#8a5300">인증</text><text x="285" y="68" text-anchor="middle" font-size="11" fill="#6e6e73">휴대폰 인증</text></g>
+        <g><rect x="405" y="22" width="150" height="58" rx="13" fill="#efeafa" stroke="#6D3FD4" stroke-width="1.3"/><text x="480" y="49" text-anchor="middle" font-size="15" font-weight="600" fill="#6D3FD4">참여</text><text x="480" y="68" text-anchor="middle" font-size="11" fill="#6e6e73">럭키드로우 응모</text></g>
+        <g><rect x="600" y="22" width="150" height="58" rx="13" fill="#f7efe6" stroke="#B45309" stroke-width="1.3"/><text x="675" y="49" text-anchor="middle" font-size="15" font-weight="600" fill="#9c4708">당첨</text><text x="675" y="68" text-anchor="middle" font-size="11" fill="#6e6e73">당첨 결과</text></g>
+        <g><rect x="795" y="22" width="150" height="58" rx="13" fill="#e6f4ee" stroke="#0E8A6E" stroke-width="1.3"/><text x="870" y="49" text-anchor="middle" font-size="15" font-weight="600" fill="#0a6b54">발급</text><text x="870" y="68" text-anchor="middle" font-size="11" fill="#6e6e73">쿠폰 발급</text></g>
+        <g><rect x="600" y="125" width="150" height="46" rx="12" fill="#f0f0f2" stroke="#c4c4c9" stroke-width="1.3"/><text x="675" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="#6e6e73">미당첨</text><text x="675" y="162" text-anchor="middle" font-size="10.5" fill="#86868b">재도전 유도</text></g>
+      </svg>
+    </div>
+    <p class="dia-cap">진입 → 인증 → 참여 → 당첨 → 발급, 그리고 <b style="color:var(--ink);font-weight:600;">미당첨 분기</b>까지 — 몇 번의 선택만으로 이 화면 흐름이 자동으로 그려집니다.</p>
   </div>
 </section>
 
@@ -60,7 +117,7 @@
   <div style="max-width:1080px;margin:0 auto;padding:88px 28px;">
     <p style="font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--primary);margin:0 0 16px;">WHY · 왜 만드나</p>
     <h2 style="font-weight:600;font-size:clamp(30px,3.8vw,42px);letter-spacing:-.02em;line-height:1.16;margin:0 0 20px;color:var(--ink);">AI가 기획을 대신하는 게 아니라,<br>피그마 반복노동을 없앱니다</h2>
-    <p style="font-size:calc(var(--read) + 2px);font-weight:400;color:var(--ink-2);max-width:800px;line-height:1.62;margin:0;">진짜 힘든 지점은 캠페인 기획이 아니라, 피그마에서 <strong style="font-weight:600;color:var(--ink);">실제 화면을 가져오고 · 화살표로 연결하고 · 여정도를 그리는 반복 작업</strong>입니다. 그래서 빌더는 복잡한 기획을 대신하지 않고, 버클이 이미 운영 중인 화면을 원자 기능 단위로 조립해 줍니다.</p>
+    <p style="font-size:calc(var(--read) + 2px);font-weight:400;color:var(--ink-2);max-width:800px;line-height:1.62;margin:0;">진짜 힘든 지점은 캠페인 기획이 아니라, 피그마에서 <strong style="font-weight:600;color:var(--ink);">실제 화면을 가져오고 · 화살표로 연결하고 · 여정도를 그리는 반복 작업</strong>입니다.<br>그래서 빌더는 복잡한 기획을 대신하지 않고, 버클이 이미 운영 중인 화면을 원자 기능 단위로 조립해 줍니다.</p>
     <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center;margin-top:40px;">
       <div style="background:#fff;border:1px solid var(--hairline);border-radius:18px;padding:28px;">
         <h4 style="font-size:15px;font-weight:600;letter-spacing:.02em;margin:0 0 18px;color:var(--ink-2);">지금 — 피그마 수작업</h4>
@@ -104,7 +161,24 @@
       <div style="background:var(--parchment);border:1px solid var(--hairline);border-radius:18px;padding:30px;">
         <div style="font-weight:600;font-size:42px;color:var(--primary);line-height:1;letter-spacing:-.02em;">3</div>
         <h3 style="font-size:21px;font-weight:600;letter-spacing:-.015em;margin:16px 0 10px;color:var(--ink);">화면 플로우 자동 생성</h3>
-        <p style="font-size:var(--read);font-weight:400;color:var(--ink-2);line-height:1.6;">원자 기능을 조합한 화면 플로우 · 화면 리스트 · Figma 컴포넌트 · 배치 JSON · 일정 & 할 일이 한 번에. 화면별 이미지·일정은 여기서 바로 편집합니다.</p>
+        <p style="font-size:var(--read);font-weight:400;color:var(--ink-2);line-height:1.6;">원자 기능을 조합한 화면 플로우 · 화면 리스트 · Figma 컴포넌트 · 배치 JSON · 일정 &amp; 할 일이 한 번에. 화면별 이미지·일정은 여기서 바로 편집합니다.</p>
+      </div>
+    </div>
+    <div class="pipe">
+      <div class="pipe-col in">
+        <div class="pipe-lbl">고른다</div>
+        <div class="pipe-chip">온라인 / 오프라인</div>
+        <div class="pipe-chip">이벤트 유형</div>
+        <div class="pipe-chip">조건 · 일정</div>
+      </div>
+      <div class="pipe-arr">→</div>
+      <div class="pipe-eng"><div class="ico">⚙️</div><div class="t">버클 빌더</div></div>
+      <div class="pipe-arr">→</div>
+      <div class="pipe-col out">
+        <div class="pipe-lbl">자동으로 나온다</div>
+        <div class="pipe-chip">화면 플로우 (분기 · 상태)</div>
+        <div class="pipe-chip">화면 리스트 + Figma 컴포넌트 · JSON</div>
+        <div class="pipe-chip">일정 &amp; 할 일 · 운영 체크리스트</div>
       </div>
     </div>
   </div>
@@ -172,6 +246,13 @@
       <span style="font-size:14px;font-weight:600;border-radius:9999px;padding:8px 16px;background:rgba(192,53,107,.12);color:#C0356B;">체크인</span>
       <span style="font-size:14px;font-weight:600;border-radius:9999px;padding:8px 16px;background:rgba(124,58,237,.12);color:#7C3AED;">공유</span>
       <span style="font-size:14px;font-weight:600;border-radius:9999px;padding:8px 16px;background:rgba(42,122,82,.12);color:#2A7A52;">리워드</span>
+    </div>
+    <div class="map">
+      <div class="map-head"><span>원자 기능</span><span></span><span>버클 화면</span><span></span><span>Figma 컴포넌트</span></div>
+      <div class="map-row"><div class="map-act" style="background:rgba(109,63,212,.12);color:#6D3FD4;">참여</div><div class="ar">→</div><div class="map-scr">📱 럭키드로우 응모</div><div class="ar">→</div><div class="map-comp">Participation/LuckyDraw/Form</div></div>
+      <div class="map-row"><div class="map-act" style="background:rgba(199,119,0,.12);color:#8a5300;">인증</div><div class="ar">→</div><div class="map-scr">📱 휴대폰 인증</div><div class="ar">→</div><div class="map-comp">Auth/Phone/Basic</div></div>
+      <div class="map-row"><div class="map-act" style="background:rgba(14,138,110,.12);color:#0a6b54;">발급</div><div class="ar">→</div><div class="map-scr">📱 쿠폰 발급</div><div class="ar">→</div><div class="map-comp">Reward/Coupon/Issued</div></div>
+      <p class="dia-cap" style="text-align:left;">원자 기능 하나가 버클 화면과 규칙형 Figma 컴포넌트 이름으로 매핑됩니다. Claude는 피그마를 뒤지지 않고 이 사전에서 고르기만 하면 됩니다.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
       <div style="background:var(--parchment);border:1px solid var(--hairline);border-radius:18px;padding:24px 26px;"><h3 style="font-size:18px;font-weight:600;letter-spacing:-.015em;color:var(--ink);">🎰 럭키드로우</h3><p style="font-size:var(--read);font-weight:400;color:var(--ink-2);margin-top:9px;line-height:1.55;">진입 → 인증 → 참여 → 당첨 → 발급 <span style="color:var(--fine);">(+가입·공유 조건 · 미당첨 분기)</span></p></div>
