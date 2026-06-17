@@ -111,7 +111,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 /* 플로우 (다크 스테이지) */
 .canvas{overflow-x:auto;padding:6px 0 12px;}
 .flow-col{display:inline-flex;flex-direction:column;min-width:max-content;}
-.flow-row{display:inline-flex;align-items:flex-start;}
+.flow-row{display:inline-flex;align-items:center;}
 .group{text-align:center;animation:rise .6s ease both;}
 .g-lbl{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:-.01em;border-radius:9999px;padding:5px 14px;margin-bottom:14px;color:#fff;}
 .g-lbl.branch{background:#8a8a8e;}
@@ -119,7 +119,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .g-phones.editable{cursor:pointer;}
 .g-phones.editable .phone{transition:transform .15s cubic-bezier(.2,.7,.3,1),box-shadow .15s;}
 .g-phones.editable:hover .phone{transform:translateY(-4px);box-shadow:0 16px 40px -12px rgba(0,0,0,.55),0 0 0 2px var(--brand,var(--primary));}
-.g-phones.editable::after{content:'클릭하여 수정';position:absolute;top:9px;left:50%;transform:translateX(-50%) translateY(-6px);background:rgba(20,20,22,.82);color:#fff;font-size:10.5px;font-weight:600;letter-spacing:.01em;padding:4px 11px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:4;white-space:nowrap;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+/* 편집 힌트 핀치 제거 — 호버 시 카드 리프트+상단 툴바로 대체 */
 .g-phones.editable:hover::after{opacity:1;transform:translateX(-50%) translateY(0);}
 .modal-bg:not(.hidden) .modal{animation:modalIn .18s cubic-bezier(.2,.7,.3,1);}
 @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
@@ -196,12 +196,19 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 #toast.show{transform:translateX(-50%) translateY(0);}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media print{
-  @page{size:A4 landscape;margin:10mm;}
-  body{background:#fff;}.global-nav,.sub-nav{position:static;}
+  @page{size:A4 landscape;margin:8mm;}
+  body{background:#fff;}.global-nav{display:none!important;}.sub-nav{position:static;}
   .sn-actions,#stage-wizard{display:none!important;}
-  .tile-inner{padding:16px 8px;}.t-dark{background:#fff;color:var(--ink);}
+  .tile-inner{padding:8px 10px;}.t-dark{background:#fff;color:var(--ink);}.sec-head{margin-bottom:6px!important;}.tile{margin:0!important;}
   .t-dark .g-lbl{filter:none;}.t-dark .arr{color:var(--primary);}.t-dark .p-cap,.t-dark .lg,.t-dark .hint{color:var(--ink-muted);}.t-dark .sec-head h2{color:var(--ink);}
-  .canvas{overflow:visible;}.flow-col{min-width:0;}.flow-row{flex-wrap:wrap;row-gap:18px;}
+  #stage-result{zoom:var(--pdf-scale,1);}
+  .canvas{overflow:visible;display:flex;justify-content:center;}.flow-col{min-width:0;}.flow-row{flex-wrap:nowrap;}
+  .group{animation:none!important;opacity:1!important;}
+  #toast{display:none!important;}
+  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn{display:none!important;}
+  .t-dark .tile-inner>p{display:none!important;}
+  .g-phones.editable::after{display:none!important;}
+  .tile-inner.tight{padding-bottom:0;}
   .phone{box-shadow:none;border:1px solid var(--hairline);}.phone:hover{transform:none;}
   .json-box{max-height:none;}.tile{break-inside:avoid-page;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
@@ -313,7 +320,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
     <div class="legend" id="legend"></div>
     <div class="brand-bar" id="brand-bar"></div>
     <div class="canvas"><div class="flow-col" id="flow-col"></div></div>
-    <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;">화면을 <b style="color:#fff;font-weight:600;">✎ 수정 · ⇄ 교체 · ＋ 추가 · × 삭제</b> — 추가/교체는 <b style="color:#fff;font-weight:600;">버클 화면 애셋</b>에서 고릅니다. 화면별 사진은 <b style="color:#fff;font-weight:600;">＋ 사진</b>. <button class="btn-ghost-pill sm" style="margin-left:8px;border-color:rgba(255,255,255,.45);color:#fff;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
+    <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;"><b style="color:#fff;font-weight:600;">카드를 클릭</b>하면 사진·문구를 수정해요 · 카드 위 아이콘으로 <b style="color:#fff;font-weight:600;">교체·이동·삭제</b> · 화면 사이 <b style="color:#fff;font-weight:600;">＋</b>로 추가. <button class="btn-ghost-pill sm" style="margin-left:8px;border-color:rgba(255,255,255,.45);color:#fff;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
   </div></div>
 
   <footer>
@@ -325,20 +332,20 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 
 <style>
 /* 플로우 편집기 + 애셋 피커 */
-.card-tools{display:flex;gap:5px;justify-content:center;margin-bottom:9px;opacity:0;transform:translateY(3px);transition:opacity .15s,transform .15s;}
-.group:hover .card-tools,.card-tools:focus-within{opacity:1;transform:none;}
-@media(hover:none){.card-tools{opacity:.7;transform:none;}}
-.card-tools button{width:28px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:background .12s,transform .08s,border-color .12s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.card-tools{position:absolute;top:7px;left:50%;transform:translateX(-50%) translateY(-4px);display:flex;gap:5px;justify-content:center;opacity:0;transition:opacity .15s,transform .15s;z-index:6;pointer-events:none;}
+.group:hover .card-tools,.card-tools:focus-within{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(hover:none){.card-tools{opacity:.9;transform:translateX(-50%);}}
+.card-tools button{width:28px;height:28px;border-radius:8px;border:1px solid rgba(0,0,0,.06);background:rgba(255,255,255,.92);color:#1d1d1f;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;pointer-events:auto;box-shadow:0 3px 10px -3px rgba(0,0,0,.35);transition:background .12s,transform .08s,border-color .12s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
 .card-tools button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;}
-.card-tools button:hover{background:rgba(255,255,255,.95);color:#1d1d1f;border-color:transparent;}
+.card-tools button:hover{background:var(--brand,var(--primary));color:#fff;border-color:transparent;}
 .card-tools button:active{transform:scale(.9);}
 .card-tools button.del:hover{background:#e5484d;color:#fff;border-color:transparent;}
-.card-tools button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
-.ins-col{display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:40px;}
+.card-tools button:focus-visible{outline:2px solid var(--brand,var(--primary));outline-offset:2px;}
+.ins-col{display:flex;flex-direction:column;align-items:center;gap:7px;}
 .ins-col .arr{margin:0;padding:0;}
 .ins-btn{width:26px;height:26px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.45);background:transparent;color:var(--primary-on-dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex:0 0 auto;}
 .ins-btn:hover{background:var(--primary-on-dark);color:#fff;border-style:solid;}
-.ins-btn.edge{align-self:flex-start;margin-top:40px;margin-right:6px;}
+.ins-btn.edge{align-self:center;margin-right:6px;}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:500;padding:24px;}
 .modal-bg.hidden{display:none;}
 .modal{background:#fff;border-radius:20px;max-width:900px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);}
@@ -451,25 +458,25 @@ const SCR={
   auth_phone:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;"><div class="sc-h">${s.title||'휴대폰 인증'}</div><div style="background:#f5f5f7;border-radius:9px;padding:9px;font-size:9px;color:#aaa;margin-top:4px;">010 - XXXX - XXXX</div><div style="background:#f5f5f7;border-radius:9px;padding:9px;font-size:9px;color:#aaa;">인증번호 6자리</div><div class="sc-cta dark" style="margin-top:auto;">인증하기</div></div></div>`,
   signup:(s)=>`<div class="sc" style="background:#111;"><div style="flex:1;display:flex;flex-direction:column;padding:11px;">${slotImg(s.slot,'flex:1;border-radius:9px;min-height:46px;')}</div><div class="sc-sheet"><div class="sc-kkprof">${bmark()} ${s.brand||'브랜드'}</div><div style="font-size:10.5px;font-weight:700;">${s.title||'멤버십 혜택을 받기 위해 동의가 필요해요'}</div><div class="sc-sub">${s.desc||'선택 항목에 동의하지 않아도 이용 가능해요'}</div><div class="sc-agree">${(s.agreeItems||'홍보·마케팅 활용 동의 (선택)·마케팅 정보 수신 동의 (선택)').split('·').map(a=>`<div class="ar"><span class="ck">✓</span>${a.trim()} ›</div>`).join('')}</div><div class="sc-cta dark">${s.cta||'모두 동의하기'}</div></div></div>`,
   lounge_home:(s)=>`<div class="sc" style="background:#fafafa;"><div style="display:flex;align-items:center;gap:6px;padding:9px 10px 5px;">${bmark(18)}<div><div style="font-size:11px;font-weight:700;">${s.brand||'브랜드'}</div><div style="font-size:7px;color:#999;">${s.title||'라운지에 오신 것을 환영합니다'}</div></div></div><div style="display:flex;gap:12px;padding:0 10px;font-size:8.5px;font-weight:600;border-bottom:1px solid #eee;"><span style="border-bottom:2px solid var(--brand);padding:3px 0;">홈</span><span style="color:#aaa;padding:3px 0;">멤버 전용</span></div>${slotImg(s.slot,'height:72px;margin:8px 10px 4px;border-radius:9px;')}<div style="padding:0 10px;">${(s.menuItems||'보유한 쿠폰 확인하기·공식 온라인 스토어').split('·').map(m=>`<div class="sc-row"><b>${m.trim()}</b><span style="color:#bbb;">›</span></div>`).join('')}</div></div>`,
-  participate:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;"><div class="sc-h">${s.title||'참여하기'}</div>${slotImg(s.slot,'flex:1;border-radius:10px;min-height:74px;')}<div class="sc-sub">${s.desc||'이벤트에 참여하고 혜택을 받으세요'}</div>${s.hint?`<div style="background:#FFF7E6;border-radius:7px;padding:6px;font-size:8.5px;color:#B45309;">HINT! ${s.hint}</div>`:''}<div class="sc-cta dark">${s.cta||'다음'}</div></div></div>`,
-  luckydraw:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;align-items:center;">${slotImg(s.slot,'width:100%;height:92px;border-radius:11px;')}<div class="sc-h" style="text-align:center;">${s.title||'럭키드로우'}</div><div class="sc-sub" style="text-align:center;">${s.desc||'1일 1회 응모'}</div><div class="sc-cta brand" style="margin-top:auto;">${s.cta||'응모하기'}</div></div></div>`,
+  participate:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;"><div class="sc-h">${s.title||'참여하기'}</div>${slotImg(s.slot,'width:62%;aspect-ratio:3/4;align-self:center;border-radius:10px;')}<div class="sc-sub">${s.desc||'이벤트에 참여하고 혜택을 받으세요'}</div>${s.hint?`<div style="background:#FFF7E6;border-radius:7px;padding:6px;font-size:8.5px;color:#B45309;">HINT! ${s.hint}</div>`:''}<div class="sc-cta dark">${s.cta||'다음'}</div></div></div>`,
+  luckydraw:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;align-items:center;">${slotImg(s.slot,'width:62%;aspect-ratio:3/4;border-radius:11px;')}<div class="sc-h" style="text-align:center;">${s.title||'럭키드로우'}</div><div class="sc-sub" style="text-align:center;">${s.desc||'1일 1회 응모'}</div><div class="sc-cta brand" style="margin-top:auto;">${s.cta||'응모하기'}</div></div></div>`,
   winner:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;justify-content:center;gap:8px;text-align:center;"><div style="font-size:30px;">🎉</div><div class="sc-h">${s.title||'축하합니다!<br>당첨되셨어요'}</div><div style="background:#E6F4EA;color:#1A7A3A;border-radius:8px;padding:6px 10px;font-size:9px;">${s.prize||'🎁 경품 / 쿠폰'}</div><div class="sc-cta brand" style="margin-top:6px;">${s.cta||'혜택 받기'}</div></div></div>`,
   loser:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;justify-content:center;gap:7px;text-align:center;"><div style="font-size:28px;">😢</div><div class="sc-h">${s.title||'아쉽네요'}</div><div class="sc-sub">${s.desc||'다음 기회에 다시 도전하세요'}</div><div class="sc-cta outline" style="margin-top:6px;">${s.cta||'재도전하기'}</div></div></div>`,
-  photocard_sel:(s)=>`<div class="sc">${statbar()}<div class="sc-pad" style="gap:10px;padding-top:4px;"><div class="sc-h">${s.title||'사진을 등록해 주세요'}</div>${slotImg(s.slot,'flex:1;border-radius:16px;min-height:120px;')}<div class="sc-cta dark">${s.cta||'다음'}</div></div></div>`,
+  photocard_sel:(s)=>`<div class="sc">${statbar()}<div class="sc-pad" style="gap:10px;padding-top:4px;"><div class="sc-h">${s.title||'사진을 등록해 주세요'}</div>${slotImg(s.slot,'width:66%;aspect-ratio:3/4;align-self:center;border-radius:14px;margin:auto 0;')}<div class="sc-cta dark">${s.cta||'다음'}</div></div></div>`,
   photocard_issued:(s)=>`<div class="sc" style="background:#000;">${statbar('#fff')}<div style="padding:2px 12px;"><div class="sc-h on-dark" style="font-size:11px;">${s.title||'포토카드를 저장하고 혜택을 받아보세요'}</div></div>${slotImg(s.slot,'margin:8px 18px;flex:1;border-radius:10px;min-height:96px;')}<div style="text-align:center;color:#fff;font-size:8px;opacity:.85;margin-bottom:2px;">↻ 다시 만들기　⤓ 저장하기</div><div style="padding:4px 18px 12px;"><div class="sc-cta outline" style="border-color:#555;color:#fff;border-radius:99px;">${s.cta||'공유하기'}</div></div></div>`,
   coupon:(s)=>`<div class="sc" style="background:#f7f7f8;">${lhead(s.brand)}<div style="flex:1;display:flex;flex-direction:column;padding:11px;gap:5px;align-items:center;"><div style="font-size:13px;font-weight:800;color:var(--brand);margin-top:6px;">${s.benefit||'00% 할인'}</div><div style="font-size:10px;font-weight:600;">${s.title||'쿠폰'}</div><div style="font-size:8px;color:#aaa;">${s.validity||'YYYY.MM.DD ~ YYYY.MM.DD'}</div><div><span class="sc-tag">${s.channel||'온라인'}</span></div><div class="sc-card" style="width:100%;margin-top:4px;"><b style="color:#333;">상세내용</b><div style="margin-top:3px;">${s.condition||'라운지 가입 고객에게 지급되는 쿠폰입니다'}</div></div></div><div style="padding:0 11px 11px;"><div class="sc-cta dark">${s.cta||'쿠폰 사용'}</div></div></div>`,
   ticket:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;gap:7px;"><div class="sc-h" style="text-align:center;">${s.title||'입장 티켓'}</div>${QR(62)}<div class="sc-sub" style="text-align:center;">${s.desc||'QR로 입장하세요'}</div></div></div>`,
   coupon_box:(s)=>`<div class="sc" style="background:#f7f7f8;">${lhead(s.brand)}<div style="padding:7px 11px 2px;font-size:10px;font-weight:700;text-align:center;">쿠폰</div><div style="padding:0 11px;font-size:8px;color:#999;">${s.title||'보유 쿠폰'}</div><div style="padding:6px 11px;display:flex;flex-direction:column;gap:6px;">${(s.couponList||'웰컴 쿠폰·감사 쿠폰').split('·').map(c=>`<div style="background:#fff;border-radius:10px;padding:9px;"><div style="font-size:9px;font-weight:700;">${c.trim()} ›</div><div style="font-size:7px;color:#bbb;margin-top:3px;display:flex;justify-content:space-between;"><span>YYYY.MM.DD ~ YYYY.MM.DD</span><span class="sc-tag">온라인</span></div></div>`).join('')}</div></div>`,
   warranty_issue:(s)=>`<div class="sc" style="background:#f4f4f5;">${lhead(s.brand)}<div class="sc-pad" style="align-items:center;gap:5px;text-align:center;"><div style="font-size:8px;color:#aaa;margin-top:4px;">${s.brand||'브랜드'}</div><div class="sc-h">${s.title||'고객님께 보증서가<br>발급되고 있어요'}</div>${s.desc?`<div class="sc-sub">${s.desc}</div>`:''}<div style="font-size:15px;font-weight:800;color:var(--brand);">76%</div>${slotImg(s.slot,'flex:1;width:64%;border-radius:9px;min-height:72px;')}<div class="sc-sub">${s.validity||'보증기간 1년'}</div></div></div>`,
   reward_tier:(s)=>`<div class="sc"><div class="sc-pad" style="gap:6px;">${slotImg(s.slot,'height:52px;border-radius:9px;')}<div class="sc-h">${s.title||'단계별 사은품'}</div><div style="display:flex;flex-direction:column;gap:4px;">${(s.tiers||'00만원↑ A·00만원↑ B·00만원↑ C').split(/[·/]/).map(t=>`<div style="background:#f5f5f7;border-radius:7px;padding:6px 8px;font-size:8.5px;color:#555;">🎁 ${t.trim()}</div>`).join('')}</div></div></div>`,
-  reward:(s)=>`<div class="sc"><div class="sc-pad" style="gap:6px;align-items:center;text-align:center;">${slotImg(s.slot,'width:100%;height:64px;border-radius:9px;')}<div class="sc-h">${s.title||'리워드'}</div><div class="sc-sub">${s.desc||'혜택 안내'}</div><div class="sc-cta brand" style="margin-top:auto;">${s.cta||'받기'}</div></div></div>`,
+  reward:(s)=>`<div class="sc"><div class="sc-pad" style="gap:6px;align-items:center;text-align:center;">${slotImg(s.slot,'width:58%;aspect-ratio:3/4;border-radius:9px;')}<div class="sc-h">${s.title||'리워드'}</div><div class="sc-sub">${s.desc||'혜택 안내'}</div><div class="sc-cta brand" style="margin-top:auto;">${s.cta||'받기'}</div></div></div>`,
   rsvp_apply:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;">${slotImg(s.slot,'height:60px;border-radius:9px;')}<div class="sc-h">${s.title||'초대합니다'}</div>${s.desc?`<div class="sc-sub">${s.desc}</div>`:''}<div style="background:#f5f5f7;border-radius:9px;padding:8px;font-size:8.5px;color:#666;">📅 ${s.schedule||'일정 · 장소 안내'}</div><div class="sc-cta brand" style="margin-top:auto;">${s.cta||'RSVP 신청'}</div></div></div>`,
   rsvp_detail:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;gap:6px;text-align:center;"><div class="sc-h">${s.guestName||'OOO님'}</div><div class="sc-sub">${s.schedule||'입장 정보'}</div>${QR(60)}<div class="sc-cta outline" style="margin-top:auto;">${s.cta||'입장 QR 보기'}</div></div></div>`,
   reserve_done:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;justify-content:center;gap:7px;text-align:center;"><div style="font-size:28px;">✅</div><div class="sc-h">${s.title||'예약 완료!'}</div><div class="sc-sub">${s.desc||'리마인드를 보내드릴게요'}</div></div></div>`,
   checkin_qr:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;gap:7px;"><div class="sc-h" style="text-align:center;">${s.title||'직원에게 보여주세요'}</div>${QR(64)}<div class="sc-sub" style="text-align:center;">${s.desc||'쿠폰 사용을 위해 보여주세요'}</div><div class="sc-cta dark" style="margin-top:auto;">${s.cta||'입장하기'}</div></div></div>`,
   admin_scan:(s)=>`<div class="sc"><div class="sc-pad" style="gap:7px;"><div class="sc-h">${s.title||'고객 QR을 스캔하세요'}</div><div style="flex:1;border:2px dashed var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;min-height:96px;">📷</div><div class="sc-cta brand">${s.cta||'QR 인증하기'}</div></div></div>`,
   checkin_done:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;justify-content:center;gap:7px;text-align:center;"><div style="font-size:28px;">✅</div><div class="sc-h">${s.title||'입장 완료!'}</div><div style="background:#E6F4EA;color:#1A7A3A;border-radius:99px;padding:3px 11px;font-size:8.5px;font-weight:600;">체크인 완료</div><div class="sc-cta brand" style="margin-top:6px;">${s.cta||'리워드 받기'}</div></div></div>`,
-  share:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;gap:6px;text-align:center;">${slotImg(s.slot,'width:100%;height:64px;border-radius:9px;')}<div class="sc-h">${s.title||'친구 초대'}</div><div class="sc-sub">${s.desc||'공유하면 추가 혜택!'}</div><div class="sc-cta kakao" style="margin-top:auto;">💬 ${s.cta||'카카오 공유'}</div></div></div>`,
+  share:(s)=>`<div class="sc"><div class="sc-pad" style="align-items:center;gap:6px;text-align:center;">${slotImg(s.slot,'width:58%;aspect-ratio:3/4;border-radius:9px;')}<div class="sc-h">${s.title||'친구 초대'}</div><div class="sc-sub">${s.desc||'공유하면 추가 혜택!'}</div><div class="sc-cta kakao" style="margin-top:auto;">💬 ${s.cta||'카카오 공유'}</div></div></div>`,
   survey:(s)=>`<div class="sc"><div class="sc-pad" style="gap:6px;"><div class="sc-h">${s.title||'취향을 알려주세요'}</div><div style="display:flex;flex-direction:column;gap:5px;margin-top:2px;">${['선택지 1','선택지 2','선택지 3'].map(t=>`<div style="background:#f5f5f7;border-radius:8px;padding:8px;font-size:9px;color:#666;">${t}</div>`).join('')}</div><div class="sc-cta dark" style="margin-top:auto;">${s.cta||'다음'}</div></div></div>`,
 };
 /* 카드는 특정 업체 캡처가 아니라 "버클 화면을 만들기 위한 브랜드 중립 템플릿"을 렌더한다.
@@ -634,7 +641,7 @@ function renderFlow(){
   f.screens.forEach((s,i)=>{
     const up=!IMG_SLOTS.includes(s.t)?'':photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
     const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
-    html+=`<div class="group" style="animation-delay:${i*.05}s">${tools}<div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
+    html+=`<div class="group" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
   });
@@ -892,7 +899,21 @@ function renderResult(){
 /* ════════ 액션 ════════ */
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
 function restart(){ if(confirm('처음부터 다시 만들까요? (입력 내용이 초기화됩니다)')){ location.href=location.pathname; } }
-function downloadPDF(){ toast('인쇄 창에서 "PDF로 저장"을 선택하세요 (가로 권장)'); setTimeout(()=>window.print(),600); }
+function downloadPDF(){
+  // 결과 전체를 A4 가로 한 페이지에 맞게 동적 스케일 (분기 많을수록 더 축소)
+  const stage=document.getElementById('stage-result'), fc=document.getElementById('flow-col');
+  let scale=1;
+  if(stage&&fc){ const fw=fc.scrollWidth; let th=stage.offsetHeight;
+    // 인쇄 시 숨겨지는 요소 높이 차감(brand-bar·legend·meta·안내문) → 과대측정 보정
+    ['#meta','.legend','.brand-bar'].forEach(sel=>{const e=stage.querySelector(sel); if(e) th-=e.offsetHeight;});
+    const note=stage.querySelector('.t-dark .tile-inner>p'); if(note) th-=note.offsetHeight;
+    // A4 가로 인쇄영역(8mm 여백, 96dpi) ≈ 1040×716, 상단 서브내비·여백 ~70 제외
+    scale=Math.min(1, 1040/(fw+40), (716-70)/Math.max(th,1));
+    scale=Math.max(.3, scale); }
+  document.documentElement.style.setProperty('--pdf-scale', scale.toFixed(3));
+  toast('인쇄 창에서 "PDF로 저장" 선택 · 가로·배경그래픽 켜기 권장');
+  setTimeout(()=>window.print(),500);
+}
 function copyJSON(){ const j=JSON.stringify(figmaJSON(),null,2); navigator.clipboard.writeText(j).then(()=>toast('Figma 배치용 JSON을 복사했어요')).catch(()=>toast('복사 실패 — JSON 박스에서 직접 선택해 주세요')); }
 function downloadJSON(){ const j=JSON.stringify(figmaJSON(),null,2); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([j],{type:'application/json'})); a.download=`${state.brand||'campaign'}-flow.json`; a.click(); URL.revokeObjectURL(a.href); toast('⬇ flow.json 내려받기'); }
 
