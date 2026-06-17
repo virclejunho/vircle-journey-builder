@@ -115,7 +115,14 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .group{text-align:center;animation:rise .6s ease both;}
 .g-lbl{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:-.01em;border-radius:9999px;padding:5px 14px;margin-bottom:14px;color:#fff;}
 .g-lbl.branch{background:#8a8a8e;}
-.g-phones{display:flex;justify-content:center;gap:10px;}
+.g-phones{display:flex;justify-content:center;gap:10px;position:relative;}
+.g-phones.editable{cursor:pointer;}
+.g-phones.editable .phone{transition:transform .15s cubic-bezier(.2,.7,.3,1),box-shadow .15s;}
+.g-phones.editable:hover .phone{transform:translateY(-4px);box-shadow:0 16px 40px -12px rgba(0,0,0,.55),0 0 0 2px var(--brand,var(--primary));}
+.g-phones.editable::after{content:'✎ 수정';position:absolute;top:9px;left:50%;transform:translateX(-50%) translateY(-6px);background:rgba(20,20,22,.82);color:#fff;font-size:10.5px;font-weight:600;letter-spacing:.01em;padding:4px 11px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:4;white-space:nowrap;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+.g-phones.editable:hover::after{opacity:1;transform:translateX(-50%) translateY(0);}
+.modal-bg:not(.hidden) .modal{animation:modalIn .18s cubic-bezier(.2,.7,.3,1);}
+@keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
 .arr{align-self:center;color:var(--primary-on-dark);font-size:22px;padding:0 14px;margin-top:30px;}
 .branch-row{margin-top:14px;}
 .b-tag{color:var(--primary-on-dark);font-size:13px;font-weight:600;padding-top:46px;padding-right:10px;white-space:nowrap;}
@@ -127,7 +134,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .phone::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:99px;background:#e5e5ea;}
 .ptag{font-size:8.5px;font-weight:700;letter-spacing:.04em;color:var(--fine);text-transform:uppercase;margin-top:6px;}
 .pimg{border-radius:10px;background:#efeff1;color:var(--ink-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;line-height:1.4;background-size:cover;background-position:center;}
-.pimg.slot{cursor:pointer;transition:box-shadow .12s;}.pimg.slot:hover{box-shadow:0 0 0 2px var(--primary);}
+.pimg.slot{transition:box-shadow .12s;}
 .pimg.filled{color:transparent;}
 .ptitle{font-size:12px;font-weight:600;color:var(--ink);line-height:1.35;}
 .ptext{font-size:10px;color:var(--ink-muted);line-height:1.45;}
@@ -300,7 +307,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 <div id="stage-result" class="hidden">
   <div class="tile t-parchment"><div class="tile-inner tight">
     <div class="meta" id="meta"></div>
-    <div class="sec-head"><h2>고객 여정 플로우</h2><span class="hint">옆으로 스크롤 · 카드의 <b>✎ 수정</b>으로 문장 편집</span></div>
+    <div class="sec-head"><h2>고객 여정 플로우</h2><span class="hint">옆으로 스크롤 · <b>카드를 클릭</b>하면 사진·문구 편집</span></div>
   </div></div>
   <div class="tile t-dark"><div class="tile-inner" style="padding-top:40px;">
     <div class="legend" id="legend"></div>
@@ -429,7 +436,7 @@ const IMG_SLOTS=['crm_entry','landing','msg_alimtalk','msg_friendtalk','auth_kak
 function photoOf(slot){ return state.photoSlots[slot] || ''; }
 function slotImg(slot,style){
   const url=photoOf(slot), bg=url?`background-image:url('${url}');`:'';
-  return `<div class="pimg slot ${url?'filled':''}" style="${style||''}${bg}" onclick="pickSlot('${slot}')">${url?'':'＋ 제품 사진'}</div>`;
+  return `<div class="pimg slot ${url?'filled':''}" style="${style||''}${bg}">${url?'':'＋ 제품 사진'}</div>`;
 }
 const QR=(n)=>`<div class="qr-box" style="width:${n}px;height:${n}px">${Array.from({length:25},(_,i)=>`<i class="${[2,5,7,11,13,16,19,22].includes(i)?'o':''}"></i>`).join('')}</div>`;
 const SCR={
@@ -617,7 +624,7 @@ function renderFlow(){
   f.screens.forEach((s,i)=>{
     const up=!IMG_SLOTS.includes(s.t)?'':photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
     const tools=`<div class="card-tools"><button class="ed" title="이 화면의 문장·내용 수정" onclick="openEdit(${i})">✎ 수정</button><button title="화면 교체" onclick="openPicker('swap',${i})">⇄</button><button title="왼쪽으로" onclick="moveScreen(${i},-1)">‹</button><button title="오른쪽으로" onclick="moveScreen(${i},1)">›</button><button class="del" title="삭제" onclick="deleteScreen(${i})">×</button></div>`;
-    html+=`<div class="group" style="animation-delay:${i*.05}s">${tools}<div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
+    html+=`<div class="group" style="animation-delay:${i*.05}s">${tools}<div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
   });
