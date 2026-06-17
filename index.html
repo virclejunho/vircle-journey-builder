@@ -283,7 +283,6 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
     <div class="sn-actions hidden" id="result-actions">
       <button class="btn-ghost-pill sm" onclick="restart()">↺ 처음부터</button>
       <button class="btn-util" onclick="downloadPDF()">PDF</button>
-      <button class="btn-pill" onclick="copyJSON()">Figma JSON 복사</button>
     </div>
   </div>
 </div>
@@ -301,46 +300,13 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 <div id="stage-result" class="hidden">
   <div class="tile t-parchment"><div class="tile-inner tight">
     <div class="meta" id="meta"></div>
-    <div class="sec-head"><span class="sec-num">01</span><h2>고객 여정 플로우</h2><span class="hint">옆으로 스크롤 · 액션별 색상으로 구분</span></div>
+    <div class="sec-head"><h2>고객 여정 플로우</h2><span class="hint">옆으로 스크롤 · 카드의 <b>✎ 수정</b>으로 문장 편집</span></div>
   </div></div>
   <div class="tile t-dark"><div class="tile-inner" style="padding-top:40px;">
     <div class="legend" id="legend"></div>
     <div class="brand-bar" id="brand-bar"></div>
     <div class="canvas"><div class="flow-col" id="flow-col"></div></div>
     <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;">화면을 <b style="color:#fff;font-weight:600;">✎ 수정 · ⇄ 교체 · ＋ 추가 · × 삭제</b> — 추가/교체는 <b style="color:#fff;font-weight:600;">버클 화면 애셋</b>에서 고릅니다. 화면별 사진은 <b style="color:#fff;font-weight:600;">＋ 사진</b>. <button class="btn-ghost-pill sm" style="margin-left:8px;border-color:rgba(255,255,255,.45);color:#fff;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
-  </div></div>
-
-  <div class="tile t-parchment"><div class="tile-inner">
-    <div class="sec-head"><span class="sec-num">02</span><h2>화면 리스트 &amp; Figma 컴포넌트</h2><span class="hint">피그마에서 이 이름으로 컴포넌트를 가져오세요</span></div>
-    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>순서</th><th>화면명</th><th>Atomic Action</th><th>Screen Type</th><th>Figma Component</th></tr></thead><tbody id="screen-rows"></tbody></table></div>
-  </div></div>
-
-  <div class="tile t-canvas"><div class="tile-inner">
-    <div class="sec-head"><span class="sec-num">03</span><h2>분기 &amp; 상태값</h2></div>
-    <div class="two-col">
-      <div class="panel"><h3>상태값</h3><div class="state-chips" id="states"></div></div>
-      <div class="panel"><h3>조건 분기</h3><div id="branches"></div></div>
-    </div>
-  </div></div>
-
-  <div class="tile t-parchment"><div class="tile-inner">
-    <div class="sec-head"><span class="sec-num">04</span><h2>Figma 배치용 JSON</h2><span class="hint">플러그인·MCP가 이 구조로 화면을 배치합니다</span></div>
-    <div class="json-head">
-      <button class="btn-pill" onclick="copyJSON()">복사</button>
-      <button class="btn-ghost-pill sm" onclick="downloadJSON()">.json 내려받기</button>
-    </div>
-    <div class="json-box" id="json-box"></div>
-  </div></div>
-
-  <div class="tile t-parchment"><div class="tile-inner">
-    <div class="sec-head"><span class="sec-num">05</span><h2>일정 &amp; 할 일</h2><span class="hint">날짜·할 일 텍스트는 직접 수정 · 담당 배지를 누르면 버클↔브랜드↔함께 전환 · 추가/삭제해 고객사와 공유</span></div>
-    <div class="sched" id="sched"></div>
-    <button class="task-add" onclick="addTask()">＋ 할 일 추가</button>
-  </div></div>
-
-  <div class="tile t-canvas"><div class="tile-inner">
-    <div class="sec-head"><span class="sec-num">06</span><h2>운영 체크리스트</h2><span class="hint">화면 외에 미리 정해둘 운영 조건 · 체크는 이 브라우저에 저장</span></div>
-    <div class="ops" id="ops"></div>
   </div></div>
 
   <footer>
@@ -606,14 +572,7 @@ const STEPS=[
   {kicker:'STEP 2 · 이벤트',q:()=>'어떤 이벤트를<br>만들고 싶나요?',sub:'고르면 그에 맞는 버클 화면 묶음이 자동으로 조립됩니다.',
     body:()=>`<div class="ev-grid">${EVENTS.map(o=>`<div class="ev ${state.ev===o.v?'sel':''}" onclick="state.ev='${o.v}';renderStep()">${o.l}</div>`).join('')}</div>`,
     valid:()=>!!state.ev,nl:'다음 →'},
-  {kicker:'STEP 3 · 일정',q:()=>'언제<br>진행하나요?',sub:'시작·종료일을 넣으면 준비·발송 일정과 할 일이 날짜에 맞춰 자동 배치됩니다. 건너뛰어도 돼요.',
-    body:()=>`<div class="date-row">
-      <div class="date-field"><label>시작일</label><input type="date" id="fs" value="${state.start}" onchange="state.start=this.value"></div>
-      <div class="date-field"><label>종료일</label><input type="date" id="fe" value="${state.end}" onchange="state.end=this.value"></div>
-    </div>
-    <div class="dtoggle ${state.teasing?'on':''}" onclick="state.teasing=!state.teasing;this.classList.toggle('on')"><span class="dtoggle-sw"></span> 시작 전 티징(예고) 발송 포함</div>`,
-    valid:()=>true,nl:'다음 →'},
-  {kicker:'STEP 4 · 조건',q:()=>'추가 조건이<br>있나요?',sub:'복수 선택 가능 · 없으면 바로 생성하세요.',
+  {kicker:'STEP 3 · 조건',q:()=>'추가 조건이<br>있나요?',sub:'복수 선택 가능 · 없으면 바로 생성하세요.',
     body:()=>`<div class="cond-grid">${CONDS.map(o=>`<div class="cond ${state.opts.includes(o.v)?'sel':''}" onclick="tog('${o.v}')"><div class="ck"></div>${o.l}</div>`).join('')}</div>`,
     valid:()=>true,nl:'✨ 플로우 생성'},
 ];
@@ -675,7 +634,7 @@ function renderBrandBar(){
     +`<label class="bb-color"><input type="color" value="${escAttr(state.brandColor||'#0066cc')}" oninput="setBrandColor(this.value)"><span>대표색</span></label>`
     +`<span class="bb-hint">이름·버튼·강조색이 이 브랜드로 바뀝니다</span>`;
 }
-function setBrandName(v){ state.brand=v; const t=document.getElementById('sn-title'); if(t) t.innerHTML=`${escHtml(state.brand||'브랜드')} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`; renderFlow(); renderScreenTable(); }
+function setBrandName(v){ state.brand=v; const t=document.getElementById('sn-title'); if(t) t.innerHTML=`${escHtml(state.brand||'브랜드')} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`; renderFlow(); }
 function setBrandColor(v){ state.brandColor=v; renderFlow(); }
 
 /* ════════ 버클 화면 애셋 라이브러리 (편집 시 여기서 고름) ════════ */
@@ -690,7 +649,7 @@ let _uid=0;
 function flowKey(){ return 'vjb-flow-'+(state.brand||'x')+'|'+(state.ev||'x'); }
 function saveFlow(){ try{ localStorage.setItem(flowKey(),JSON.stringify({screens:FLOW.screens,branches:FLOW.branches})); }catch(e){} }
 function loadSavedFlow(){ try{ const o=JSON.parse(localStorage.getItem(flowKey())||'null'); if(o&&Array.isArray(o.screens)&&o.screens.length){ FLOW.screens=o.screens; if(Array.isArray(o.branches)) FLOW.branches=o.branches; } }catch(e){} }
-function afterEdit(){ saveFlow(); renderMeta(); renderLegend(); renderFlow(); renderScreenTable(); renderJSON(); renderOps(); }
+function afterEdit(){ saveFlow(); renderMeta(); renderLegend(); renderFlow(); }
 function newScreen(t){ const id='u'+(_uid++); return {id,n:(TYPE_META[t]||{}).st||t,a:TYPE_ACTION[t]||'참여',t,p:{},slot:'s_'+id}; }
 function addScreen(idx,t){ FLOW.screens.splice(idx,0,newScreen(t)); afterEdit(); toast('화면을 추가했어요'); }
 function swapScreen(idx,t){ const s=FLOW.screens[idx]; if(!s)return; s.t=t; s.n=(TYPE_META[t]||{}).st||t; s.a=TYPE_ACTION[t]||s.a; afterEdit(); toast('화면을 교체했어요'); }
@@ -876,7 +835,7 @@ function renderResult(){
   loadSavedFlow();
   document.getElementById('sn-title').innerHTML=`${state.brand} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`;
   state.photoSlots=loadPhotos(); state.tasks=loadTasks();
-  renderMeta(); renderBrandBar(); renderLegend(); renderFlow(); renderScreenTable(); renderBranchesStates(); renderJSON(); renderSched(); renderOps();
+  renderMeta(); renderBrandBar(); renderLegend(); renderFlow();
   document.getElementById('stage-wizard').classList.add('hidden');
   document.getElementById('stage-result').classList.remove('hidden');
   document.getElementById('result-actions').classList.remove('hidden');
