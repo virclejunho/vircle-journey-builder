@@ -640,7 +640,7 @@ function renderFlow(){
   const f=FLOW;
   let html=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
-    const up=!IMG_SLOTS.includes(s.t)?'':photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
+    const up='';/* +사진 버튼 제거 — 사진은 카드 클릭→편집 모달에서 올림 */
     const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
     html+=`<div class="group" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
@@ -650,7 +650,7 @@ function renderFlow(){
   f.branches.forEach(b=>{
     const fromIdx=f.screens.findIndex(s=>s.id===b.from);
     const indent=Math.max(0,fromIdx)*(140+50);
-    const up=!IMG_SLOTS.includes(b.t)?'':photoOf(b.slot)?`<button class="card-upload" onclick="pickSlot('${b.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${b.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${b.slot}')">＋ 사진</button>`;
+    const up='';/* +사진 버튼 제거 — 분기 사진도 카드 클릭→편집 모달에서 올림 */
     const bTools=`<div class="card-tools"><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
     html+=`<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ ${escHtml(b.cond)}</div><div class="group"><div class="g-lbl branch">${escHtml(b.n)}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${escHtml(b.cap)}</div>`:''}</div></div>`;
   });
