@@ -351,6 +351,17 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 .ef-row input{width:100%;font-family:var(--sans);font-size:15px;padding:10px 12px;border:1px solid var(--hairline);border-radius:10px;color:var(--ink);}
 .ef-row input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 1.5px var(--primary);}
 .ef-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
+/* 큰 편집 화면 (사진·문구 자유 수정 + 실시간 미리보기) */
+.ed-grid{display:flex;gap:28px;align-items:flex-start;}
+.ed-preview{flex:none;width:248px;position:sticky;top:0;}
+.ed-pv{width:248px;height:471px;overflow:hidden;border-radius:34px;margin:0 auto;}
+.ed-pv .phone{transform:scale(1.7714);transform-origin:top left;box-shadow:none;border:1px solid var(--hairline);}
+.ed-pv-cap{text-align:center;font-size:12px;color:var(--fine);margin-top:12px;}
+.ed-form{flex:1;min-width:0;}
+.ed-photo{display:flex;align-items:center;gap:11px;margin:0 0 18px;padding:12px;background:#f7f7f8;border-radius:13px;}
+.ed-photo-thumb{width:46px;height:46px;border-radius:9px;background:#e6e6e9 center/cover no-repeat;flex:none;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ed-photo .btn-ghost-pill{flex:none;}
+@media(max-width:700px){ .ed-grid{flex-direction:column;} .ed-preview{width:100%;position:static;} }
 .phone.real{padding:0;overflow:hidden;background:#000;}
 .phone.real::before{display:none;}
 .screen-img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;}
@@ -367,8 +378,8 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   <div class="modal-head"><h3 id="pk-title">화면 추가 · 버클 화면 애셋</h3><button class="x" onclick="closePicker()">×</button></div>
   <div class="modal-body" id="pk-body"></div>
 </div></div>
-<div class="modal-bg hidden" id="edit-modal"><div class="modal" style="max-width:440px;">
-  <div class="modal-head"><h3>화면 내용 수정</h3><button class="x" onclick="closeEdit()">×</button></div>
+<div class="modal-bg hidden" id="edit-modal"><div class="modal" style="max-width:740px;">
+  <div class="modal-head"><h3>화면 수정 — 사진·문구를 바꿔보세요</h3><button class="x" onclick="closeEdit()">×</button></div>
   <div class="modal-body" id="ed-body"></div>
 </div></div>
 
@@ -409,7 +420,8 @@ const TYPE_META={
   checkin_done:{st:'체크인/사용 완료',comp:'Checkin/Complete'},
   share:{st:'공유하기',comp:'Share/CTA/Basic'},
 };
-const IMG_SLOTS=['landing','coupon','photocard_sel','photocard_issued','reward','warranty_issue','lounge_home','reward_tier','msg_alimtalk','msg_friendtalk','participate','luckydraw','winner','rsvp_apply','share'];
+/* 이미지(슬롯)를 렌더하는 화면 = ＋사진 업로드 가능 화면 (SCR에서 slotImg/kkChat 쓰는 타입과 일치) */
+const IMG_SLOTS=['crm_entry','landing','msg_alimtalk','msg_friendtalk','auth_kakao','signup','lounge_home','participate','luckydraw','photocard_sel','photocard_issued','warranty_issue','reward_tier','reward','rsvp_apply','share'];
 /* 화면은 브랜드 중립 템플릿(SCR)으로 렌더 — 특정 고객사 캡처/이미지를 쓰지 않는다.
    각 업체가 폼(필드)·＋사진으로 자기 브랜드 화면을 만든다. */
 
@@ -468,7 +480,7 @@ let _pickTarget=null;
 function _fileInput(){ let el=document.getElementById('photo-input'); if(!el){el=document.createElement('input');el.type='file';el.accept='image/*';el.id='photo-input';el.style.display='none';el.onchange=_onPick;document.body.appendChild(el);} return el; }
 function pickSlot(slot){ _pickTarget=slot; _fileInput().click(); }
 function removeSlot(slot){ delete state.photoSlots[slot]; savePhotos(); renderFlow(); toast('사진을 제거했어요'); }
-function _onPick(e){ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{ state.photoSlots[_pickTarget]=ev.target.result; e.target.value=''; savePhotos(); renderFlow(); toast('이 화면에 제품 사진을 적용했어요'); }; r.readAsDataURL(f); }
+function _onPick(e){ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{ state.photoSlots[_pickTarget]=ev.target.result; e.target.value=''; savePhotos(); renderFlow(); if(!document.getElementById('edit-modal').classList.contains('hidden')) edLive(); toast('이 화면에 제품 사진을 적용했어요'); }; r.readAsDataURL(f); }
 function photoKey(){ return 'vjb-photos-'+(state.brand||'x')+'|'+(state.ev||'x'); }
 function savePhotos(){ try{ localStorage.setItem(photoKey(),JSON.stringify(state.photoSlots)); }catch(e){ /* 용량 초과 시 세션 내 유지만 */ } }
 function loadPhotos(){ try{ const o=JSON.parse(localStorage.getItem(photoKey())||'null'); if(o&&typeof o==='object') return o; }catch(e){} return {}; }
@@ -603,7 +615,7 @@ function renderFlow(){
   const f=FLOW;
   let html=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
-    const up=photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
+    const up=!IMG_SLOTS.includes(s.t)?'':photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
     const tools=`<div class="card-tools"><button class="ed" title="이 화면의 문장·내용 수정" onclick="openEdit(${i})">✎ 수정</button><button title="화면 교체" onclick="openPicker('swap',${i})">⇄</button><button title="왼쪽으로" onclick="moveScreen(${i},-1)">‹</button><button title="오른쪽으로" onclick="moveScreen(${i},1)">›</button><button class="del" title="삭제" onclick="deleteScreen(${i})">×</button></div>`;
     html+=`<div class="group" style="animation-delay:${i*.05}s">${tools}<div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
@@ -613,7 +625,7 @@ function renderFlow(){
   f.branches.forEach(b=>{
     const fromIdx=f.screens.findIndex(s=>s.id===b.from);
     const indent=Math.max(0,fromIdx)*(140+50);
-    const up=photoOf(b.slot)?`<button class="card-upload" onclick="pickSlot('${b.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${b.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${b.slot}')">＋ 사진</button>`;
+    const up=!IMG_SLOTS.includes(b.t)?'':photoOf(b.slot)?`<button class="card-upload" onclick="pickSlot('${b.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${b.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${b.slot}')">＋ 사진</button>`;
     html+=`<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="b-tag">↘ ${b.cond}</div><div class="group"><div class="g-lbl branch">${b.n}</div><div class="g-phones">${phone(b.t,{brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${b.cap}</div>`:''}</div></div>`;
   });
   document.getElementById('flow-col').innerHTML=html;
@@ -692,15 +704,33 @@ function fieldsFor(t){ return FIELDS[t]||['title','desc','cta']; }
 let _edIdx=0;
 function openEdit(idx){
   _edIdx=idx; const s=FLOW.screens[idx]; if(!s)return; const p=s.p||{};
-  let html=`<p style="font-size:12.5px;color:var(--fine);line-height:1.5;margin:0 0 16px;"><b style="color:var(--ink);">${(TYPE_META[s.t]||{}).st||s.t}</b> 화면 폼 — 채우면 <b style="color:var(--ink);">${escAttr(state.brand||'이 브랜드')}</b>의 화면이 됩니다.</p>`;
-  html+=`<div class="ef-row"><label>화면 이름 (플로우 라벨)</label><input id="ed-n" value="${escAttr(s.n)}"></div>`;
-  fieldsFor(s.t).forEach(k=>{ html+=`<div class="ef-row"><label>${FIELD_LABEL[k]||k}</label><input id="ed-${k}" value="${escAttr(p[k]||'')}" placeholder="(비우면 기본값)"></div>`; });
-  if(IMG_SLOTS.includes(s.t)) html+=`<p style="font-size:12px;color:var(--fine);margin:-2px 0 12px;">🖼 이미지는 카드의 <b>＋ 사진</b> 버튼으로 올립니다.</p>`;
-  html+=`<div class="ef-actions"><button class="btn-ghost-pill sm" onclick="closeEdit()">취소</button><button class="btn-pill" onclick="saveEdit()">저장</button></div>`;
-  document.getElementById('ed-body').innerHTML=html;
+  let form=`<p style="font-size:12.5px;color:var(--fine);line-height:1.5;margin:0 0 16px;"><b style="color:var(--ink);">${(TYPE_META[s.t]||{}).st||s.t}</b> — 사진·문구를 바꾸면 왼쪽 미리보기에 바로 반영됩니다.</p>`;
+  if(IMG_SLOTS.includes(s.t)){
+    const u=photoOf(s.slot);
+    form+=`<div class="ed-photo"><div class="ed-photo-thumb" id="ed-photo-thumb" style="background-image:${u?`url('${u}')`:'none'};">${u?'':'🖼'}</div>`
+      +`<div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:var(--ink);">제품 사진</div><div style="font-size:11px;color:var(--fine);">이 화면에 들어갈 이미지</div></div>`
+      +`<button class="btn-ghost-pill sm" onclick="edPickPhoto()">${u?'교체':'＋ 올리기'}</button>`
+      +`<button class="btn-ghost-pill sm" id="ed-photo-rm" style="display:${u?'':'none'};" onclick="edRemovePhoto()">제거</button></div>`;
+  }
+  form+=`<div class="ef-row"><label>화면 이름 (플로우 라벨)</label><input id="ed-n" value="${escAttr(s.n)}" oninput="edLive()"></div>`;
+  fieldsFor(s.t).forEach(k=>{ form+=`<div class="ef-row"><label>${FIELD_LABEL[k]||k}</label><input id="ed-${k}" value="${escAttr(p[k]||'')}" placeholder="(비우면 기본값)" oninput="edLive()"></div>`; });
+  form+=`<div class="ef-actions"><button class="btn-ghost-pill sm" onclick="closeEdit()">취소</button><button class="btn-pill" onclick="saveEdit()">저장</button></div>`;
+  document.getElementById('ed-body').innerHTML=`<div class="ed-grid"><div class="ed-preview"><div class="ed-pv" id="ed-pv"></div><div class="ed-pv-cap">미리보기</div></div><div class="ed-form">${form}</div></div>`;
+  edLive();
   document.getElementById('edit-modal').classList.remove('hidden');
   setTimeout(()=>document.getElementById('ed-n')?.focus(),50);
 }
+/* 실시간 미리보기 — 현재 입력값으로 큰 화면을 다시 그린다 */
+function edLive(){
+  const s=FLOW.screens[_edIdx]; if(!s)return; const p={...(s.p||{})};
+  fieldsFor(s.t).forEach(k=>{ const el=document.getElementById('ed-'+k); if(el){ const v=(el.value||'').trim(); if(v) p[k]=v; else delete p[k]; } });
+  p.slot=s.slot; p.brand=state.brand;
+  const pv=document.getElementById('ed-pv'); if(pv) pv.innerHTML=phone(s.t,p);
+  const th=document.getElementById('ed-photo-thumb'); if(th){ const u=photoOf(s.slot); th.style.backgroundImage=u?`url('${u}')`:'none'; th.textContent=u?'':'🖼'; }
+  const rm=document.getElementById('ed-photo-rm'); if(rm) rm.style.display=photoOf(s.slot)?'':'none';
+}
+function edPickPhoto(){ const s=FLOW.screens[_edIdx]; if(s) pickSlot(s.slot); }
+function edRemovePhoto(){ const s=FLOW.screens[_edIdx]; if(s){ delete state.photoSlots[s.slot]; savePhotos(); renderFlow(); edLive(); toast('사진을 제거했어요'); } }
 function closeEdit(){ document.getElementById('edit-modal').classList.add('hidden'); }
 function saveEdit(){
   const s=FLOW.screens[_edIdx]; if(!s)return;
