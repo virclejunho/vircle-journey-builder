@@ -122,7 +122,8 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .p-cap{font-size:12px;color:var(--muted-on-dark);margin-top:9px;}
 
 /* 폰 */
-.phone{width:140px;height:266px;background:#fff;border-radius:24px;padding:11px;display:flex;flex-direction:column;gap:6px;position:relative;text-align:center;box-shadow:var(--shadow-product);transition:transform .2s;}
+.phone{width:140px;height:266px;background:#fff;border-radius:20px;padding:11px;overflow:hidden;display:flex;flex-direction:column;gap:6px;position:relative;text-align:center;box-shadow:var(--shadow-product);transition:transform .2s;}
+.phone.img{padding:0;}
 .phone:hover{transform:translateY(-5px);}
 .phone::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:99px;background:#e5e5ea;}
 .ptag{font-size:8.5px;font-weight:700;letter-spacing:.04em;color:var(--fine);text-transform:uppercase;margin-top:6px;}
@@ -132,11 +133,11 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .ptitle{font-size:12px;font-weight:600;color:var(--ink);line-height:1.35;}
 .ptext{font-size:10px;color:var(--ink-muted);line-height:1.45;}
 .pbtn{margin-top:auto;width:100%;background:var(--ink);color:#fff;font-size:10px;font-weight:600;border-radius:9999px;padding:8px 4px;}
-.pbtn.blue{background:var(--primary);}.pbtn.kakao{background:var(--kakao);color:#191600;}
+.pbtn.blue{background:var(--brand,var(--primary));}.pbtn.kakao{background:var(--kakao);color:#191600;}
 .pbtn.outline{background:transparent;color:var(--ink);border:1px solid var(--hairline);}
 .qr-box{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px;background:#fff;border:1px solid #eee;border-radius:7px;margin:6px auto 0;}
 .qr-box i{background:#1d1d1f;border-radius:1px;aspect-ratio:1;}.qr-box i.o{background:transparent;}
-.vmark{width:46px;height:46px;border-radius:50%;background:var(--primary);margin:10px auto 0;display:flex;align-items:center;justify-content:center;}
+.vmark{width:46px;height:46px;border-radius:50%;background:var(--brand,var(--primary));margin:10px auto 0;display:flex;align-items:center;justify-content:center;}
 .vmark span{color:#fff;font-size:11px;font-weight:700;}
 .badge.g{display:inline-block;font-size:9px;font-weight:600;color:#1A7A3A;background:#E6F4EA;border-radius:9999px;padding:2px 9px;}
 .tog-row{display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#666;background:#f5f5f7;border-radius:6px;padding:5px 7px;}
@@ -217,6 +218,37 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 .dtoggle.on .dtoggle-sw::after{transform:translateX(17px);}
 /* 카드 이미지 업로드 */
 .card-hero{height:44px;border-radius:8px;background-size:cover;background-position:center;margin-bottom:4px;}
+/* ===== 실제 버클 화면 충실 재현 키트 ===== */
+.sc{display:flex;flex-direction:column;height:100%;width:100%;font-size:10px;color:var(--ink);overflow:hidden;}
+.sc .pimg{margin:0;}
+.sc-pad{display:flex;flex-direction:column;height:100%;padding:11px;gap:6px;}
+.sc-stat{display:flex;justify-content:space-between;align-items:center;padding:5px 11px 1px;font-size:8px;font-weight:600;}
+.sc-stat .r{letter-spacing:.5px;}
+.sc-lhead{display:flex;align-items:center;gap:5px;padding:5px 8px;background:#fff;border-bottom:1px solid #efefef;font-size:8px;color:#999;}
+.sc-lhead b{color:#333;font-weight:600;font-size:8.5px;}
+.sc-lhead .kk{width:13px;height:13px;border-radius:50%;background:var(--kakao);}
+.sc-h{font-size:13px;font-weight:700;line-height:1.3;color:var(--ink);}
+.sc-h.on-dark{color:#fff;}
+.sc-sub{font-size:9px;color:#8e8e93;line-height:1.45;}
+.sc-sheet{margin-top:auto;background:#fff;border-radius:15px 15px 0 0;padding:11px;box-shadow:0 -3px 14px -6px rgba(0,0,0,.16);display:flex;flex-direction:column;gap:5px;}
+.sc-cta{width:100%;text-align:center;font-size:10px;font-weight:700;border-radius:11px;padding:9px 4px;}
+.sc-cta.dark{background:var(--ink);color:#fff;}
+.sc-cta.kakao{background:var(--kakao);color:#191600;}
+.sc-cta.brand{background:var(--brand,var(--primary));color:#fff;}
+.sc-cta.ghost{background:transparent;color:#8e8e93;font-weight:600;padding:5px;}
+.sc-cta.outline{background:transparent;border:1px solid #ddd;color:var(--ink);}
+.sc-agree{background:#f5f5f7;border-radius:9px;padding:7px;display:flex;flex-direction:column;gap:5px;}
+.sc-agree .ar{display:flex;align-items:center;gap:5px;font-size:8.5px;color:#777;}
+.sc-agree .ar .ck{color:var(--brand,var(--primary));font-weight:800;}
+.sc-card{background:#fff;border:1px solid #eee;border-radius:10px;padding:8px;font-size:8.5px;color:#666;line-height:1.5;}
+.sc-row{display:flex;justify-content:space-between;align-items:center;padding:7px 2px;border-top:1px solid #f0f0f0;font-size:9px;}
+.sc-tag{font-size:7.5px;font-weight:600;border-radius:99px;padding:2px 7px;background:#f0f0f2;color:#666;}
+.sc-kkhead{display:flex;align-items:center;gap:4px;padding:6px 8px;background:#fff;font-size:9px;font-weight:600;color:#222;border-bottom:1px solid #f0f0f0;}
+.sc-kkbody{background:#b2c7d9;flex:1;padding:8px 7px;display:flex;flex-direction:column;gap:4px;overflow:hidden;}
+.sc-kkbubble{background:#fff;border-radius:3px 12px 12px 12px;padding:7px;font-size:8.5px;color:#333;line-height:1.5;}
+.sc-kkprof{display:flex;align-items:center;gap:3px;font-size:8px;color:#555;margin-bottom:3px;}
+.sc-kkbtn{margin-top:6px;text-align:center;background:#f2f2f4;border-radius:6px;padding:6px;font-size:8.5px;color:#333;font-weight:600;}
+.sc-kkfoot{font-size:7px;color:#9aa;text-align:right;margin-top:4px;}
 .card-upload{margin-top:10px;font-family:var(--sans);font-size:11.5px;font-weight:600;color:var(--muted-on-dark);background:rgba(255,255,255,.1);border:none;border-radius:9999px;padding:5px 12px;cursor:pointer;}
 .card-upload:hover{background:rgba(255,255,255,.2);color:#fff;}
 /* 일정 & 할 일 (편집 가능) */
@@ -274,8 +306,9 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   </div></div>
   <div class="tile t-dark"><div class="tile-inner" style="padding-top:40px;">
     <div class="legend" id="legend"></div>
+    <div class="brand-bar" id="brand-bar"></div>
     <div class="canvas"><div class="flow-col" id="flow-col"></div></div>
-    <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;">각 화면 카드 아래 <b style="color:#fff;font-weight:600;">＋ 사진</b> 버튼으로 화면마다 제품 이미지를 따로 올릴 수 있어요.</p>
+    <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;">화면을 <b style="color:#fff;font-weight:600;">✎ 수정 · ⇄ 교체 · ＋ 추가 · × 삭제</b> — 추가/교체는 <b style="color:#fff;font-weight:600;">버클 화면 애셋</b>에서 고릅니다. 화면별 사진은 <b style="color:#fff;font-weight:600;">＋ 사진</b>. <button class="btn-ghost-pill sm" style="margin-left:8px;border-color:rgba(255,255,255,.45);color:#fff;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
   </div></div>
 
   <div class="tile t-parchment"><div class="tile-inner">
@@ -318,40 +351,101 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   </footer>
 </div>
 
+<style>
+/* 플로우 편집기 + 애셋 피커 */
+.card-tools{display:flex;gap:4px;justify-content:center;margin-bottom:8px;opacity:.45;transition:opacity .12s;}
+.group:hover .card-tools{opacity:1;}
+.card-tools button{width:23px;height:23px;border-radius:7px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;}
+.card-tools button:hover{background:rgba(255,255,255,.22);}
+.card-tools button.del:hover{background:#c0392b;border-color:#c0392b;}
+.ins-col{display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:40px;}
+.ins-col .arr{margin:0;padding:0;}
+.ins-btn{width:26px;height:26px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.45);background:transparent;color:var(--primary-on-dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex:0 0 auto;}
+.ins-btn:hover{background:var(--primary-on-dark);color:#fff;border-style:solid;}
+.ins-btn.edge{align-self:flex-start;margin-top:40px;margin-right:6px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:500;padding:24px;}
+.modal-bg.hidden{display:none;}
+.modal{background:#fff;border-radius:20px;max-width:900px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);}
+.modal-head{position:sticky;top:0;background:#fff;display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--hairline);z-index:1;}
+.modal-head h3{font-size:18px;font-weight:600;letter-spacing:-.015em;flex:1;color:var(--ink);}
+.modal-head .x{width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,.05);font-size:17px;cursor:pointer;color:var(--ink);}
+.modal-body{padding:20px 22px 24px;}
+.pk-section{font-size:13px;font-weight:600;color:var(--fine);margin:18px 0 10px;letter-spacing:.02em;}
+.pk-section:first-child{margin-top:0;}
+.picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:12px;}
+.pk-cell{border:1px solid var(--hairline);border-radius:14px;padding:8px 4px;cursor:pointer;text-align:center;transition:border-color .12s,box-shadow .12s;background:#fafafa;}
+.pk-cell:hover{border-color:var(--primary);box-shadow:0 0 0 1.5px var(--primary);}
+.pk-thumb{height:150px;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;pointer-events:none;}
+.pk-thumb .phone{transform:scale(.55);transform-origin:top center;box-shadow:0 6px 16px -6px rgba(0,0,0,.3);}
+.pk-name{font-size:12px;font-weight:600;margin-top:2px;letter-spacing:-.01em;color:var(--ink);}
+.pk-act{font-size:10px;font-weight:600;border-radius:9999px;padding:2px 8px;display:inline-block;margin-top:5px;}
+.ef-row{margin-bottom:13px;}
+.ef-row label{display:block;font-size:12px;font-weight:600;color:var(--fine);margin-bottom:6px;}
+.ef-row input{width:100%;font-family:var(--sans);font-size:15px;padding:10px 12px;border:1px solid var(--hairline);border-radius:10px;color:var(--ink);}
+.ef-row input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 1.5px var(--primary);}
+.ef-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
+.phone.real{padding:0;overflow:hidden;background:#000;}
+.phone.real::before{display:none;}
+.screen-img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;}
+.brand-bar{display:flex;align-items:center;gap:12px;margin:0 0 22px;flex-wrap:wrap;}
+.brand-bar .bb-lbl{font-size:11px;font-weight:700;color:var(--muted-on-dark);letter-spacing:.06em;text-transform:uppercase;}
+.brand-bar .bb-name{font-size:14px;font-weight:600;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:9px;padding:7px 13px;max-width:220px;font-family:var(--sans);}
+.brand-bar .bb-name:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.14);}
+.brand-bar .bb-color{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted-on-dark);cursor:pointer;}
+.brand-bar .bb-color input{width:34px;height:28px;border:1px solid rgba(255,255,255,.28);border-radius:7px;padding:2px;background:transparent;cursor:pointer;}
+.brand-bar .bb-hint{font-size:11.5px;color:rgba(255,255,255,.5);}
+</style>
+
+<div class="modal-bg hidden" id="picker-modal"><div class="modal">
+  <div class="modal-head"><h3 id="pk-title">화면 추가 · 버클 화면 애셋</h3><button class="x" onclick="closePicker()">×</button></div>
+  <div class="modal-body" id="pk-body"></div>
+</div></div>
+<div class="modal-bg hidden" id="edit-modal"><div class="modal" style="max-width:440px;">
+  <div class="modal-head"><h3>화면 내용 수정</h3><button class="x" onclick="closeEdit()">×</button></div>
+  <div class="modal-body" id="ed-body"></div>
+</div></div>
+
 <div id="toast">완료!</div>
 
 <script>
 /* ════════ Atomic Action 컬러 ════════ */
-const AC={진입:'#0066cc',인증:'#C77700',가입:'#1A7A3A',참여:'#6D3FD4',당첨:'#B45309',발급:'#0E8A6E',예약:'#3B6FE0',체크인:'#C0356B',공유:'#7C3AED',리워드:'#2A7A52',분기:'#8a8a8e'};
+const AC={진입:'#0066cc',인증:'#C77700',가입:'#1A7A3A',참여:'#6D3FD4',당첨:'#B45309',발급:'#0E8A6E',예약:'#3B6FE0',체크인:'#C0356B',공유:'#7C3AED',리워드:'#2A7A52',메시지:'#7A5AF0',분기:'#8a8a8e'};
 
 /* ════════ Screen Type → Figma Component 매핑 ════════ */
 const TYPE_META={
   qr_entry:{st:'QR 진입',comp:'Entry/QR/Offline'},
   crm_entry:{st:'CRM 진입',comp:'Entry/CRM/Online'},
   landing:{st:'캠페인 랜딩',comp:'Entry/Campaign/Landing'},
-  auth_phone:{st:'휴대폰 인증',comp:'Auth/Phone/Basic'},
-  auth_kakao:{st:'카카오 인증',comp:'Auth/Kakao/Basic'},
-  signup:{st:'약관 동의',comp:'Signup/Agreement/Basic'},
-  luckydraw:{st:'럭키드로우 응모',comp:'Participation/LuckyDraw/Form'},
+  msg_alimtalk:{st:'알림톡(정보성)',comp:'Message/Alimtalk/Info'},
+  msg_friendtalk:{st:'친구톡(광고성)',comp:'Message/Friendtalk/Ad'},
+  auth_kakao:{st:'카카오 로그인/가입',comp:'Auth/Kakao/Login'},
+  auth_phone:{st:'휴대폰 인증(선택)',comp:'Auth/Phone/Basic'},
+  signup:{st:'약관·멤버십 동의',comp:'Signup/Agreement/Basic'},
+  lounge_home:{st:'라운지 홈',comp:'Lounge/Home/Member'},
+  participate:{st:'참여 인터랙션',comp:'Participation/Interact/Form'},
+  luckydraw:{st:'럭키드로우/랜덤박스',comp:'Participation/LuckyDraw/Form'},
   winner:{st:'당첨 결과',comp:'Result/LuckyDraw/Winner'},
   loser:{st:'미당첨 결과',comp:'Result/LuckyDraw/Loser'},
-  coupon:{st:'쿠폰 발급',comp:'Reward/Coupon/Issued'},
-  ticket:{st:'티켓 발급',comp:'Reward/Ticket/Issued'},
-  photocard_sel:{st:'포토카드 선택',comp:'Participation/Photocard/Select'},
-  photocard_issued:{st:'포토카드 발급',comp:'Reward/Photocard/Issued'},
-  reserve:{st:'날짜·시간 선택',comp:'Reservation/DateTime/Select'},
-  reserve_done:{st:'예약 완료',comp:'Reservation/Complete'},
-  reserve_full:{st:'예약 마감·대기',comp:'Reservation/Full/Waitlist'},
-  checkin_qr:{st:'체크인 QR',comp:'Checkin/QR/Scan'},
-  checkin_done:{st:'체크인 완료',comp:'Checkin/Complete'},
-  survey:{st:'설문 응답',comp:'Participation/Survey/Form'},
-  raffle:{st:'래플 응모',comp:'Participation/Raffle/Entry'},
-  firstcome_fail:{st:'선착순 마감',comp:'Result/FirstCome/Closed'},
-  share:{st:'공유 CTA',comp:'Share/CTA/Basic'},
+  photocard_sel:{st:'포토카드 선택/사진등록',comp:'Participation/Photocard/Select'},
+  photocard_issued:{st:'포토카드 생성완료',comp:'Reward/Photocard/Issued'},
+  coupon:{st:'쿠폰 발급/상세',comp:'Reward/Coupon/Detail'},
+  coupon_box:{st:'라운지 쿠폰함',comp:'Coupon/Box/List'},
+  warranty_issue:{st:'보증서 발급',comp:'Warranty/Issue/Card'},
+  ticket:{st:'티켓/교환권',comp:'Reward/Ticket/Issued'},
+  reward_tier:{st:'단계별 사은품',comp:'Reward/Tier/Gift'},
   reward:{st:'리워드 안내',comp:'Reward/Guide/Basic'},
-  member_fail:{st:'참여 불가',comp:'Gate/MemberOnly/Blocked'},
+  rsvp_apply:{st:'RSVP 신청',comp:'Reservation/RSVP/Apply'},
+  rsvp_detail:{st:'RSVP 상세·QR',comp:'Reservation/RSVP/QR'},
+  reserve_done:{st:'예약 완료',comp:'Reservation/Complete'},
+  checkin_qr:{st:'체크인 QR/쿠폰사용',comp:'Checkin/QR/Scan'},
+  admin_scan:{st:'관리자 QR 스캔',comp:'Checkin/Admin/Scan'},
+  checkin_done:{st:'체크인/사용 완료',comp:'Checkin/Complete'},
+  share:{st:'공유하기',comp:'Share/CTA/Basic'},
 };
-const IMG_SLOTS=['landing','coupon','photocard_sel','photocard_issued','reward'];
+const IMG_SLOTS=['landing','coupon','photocard_sel','photocard_issued','reward','warranty_issue','lounge_home','reward_tier','msg_alimtalk','msg_friendtalk','participate','luckydraw','winner','rsvp_apply','share'];
+/* 화면은 폼으로 채우는 템플릿으로 렌더 — 특정 고객사 캡처를 직접 쓰지 않는다.
+   demo/assets/screens/*.png 는 "이런 형태" 참고용 예시일 뿐, 자동 렌더하지 않음.
+   업체는 각 화면 폼(필드)을 채워 자기 브랜드 화면을 생성한다. */
 
 /* ════════ 폰 화면 렌더러 ════════ */
 function photoOf(slot){ return state.photoSlots[slot] || ''; }
@@ -370,27 +464,53 @@ const SCR={
   luckydraw:(s)=>`<div class="ptag">참여 · 럭키드로우</div><div class="pimg" style="height:74px;font-size:24px;">🎰</div><div class="ptitle" style="margin-top:5px;">${s.title||'럭키드로우'}</div><div class="ptext">${s.desc||'1일 1회 응모'}</div><div class="pbtn blue">${s.cta||'응모하기'}</div>`,
   winner:(s)=>`<div class="ptag">당첨</div><div style="font-size:24px;margin-top:14px;">🎉</div><div class="ptitle" style="margin-top:5px;">당첨됐어요!</div><div style="background:#E6F4EA;border-radius:7px;padding:6px;font-size:9px;color:#1A7A3A;margin-top:6px;">${s.prize||'🎁 경품/쿠폰'}</div><div class="pbtn blue">혜택 받기</div>`,
   loser:()=>`<div class="ptag">미당첨</div><div style="font-size:22px;margin-top:16px;">😢</div><div class="ptitle" style="margin-top:7px;">아쉽네요</div><div class="ptext" style="margin-top:4px;">내일 다시<br>도전하세요!</div><div class="pbtn outline">재도전하기</div>`,
-  coupon:(s)=>`<div class="ptag">발급 · 쿠폰</div>${slotImg(s.slot,'height:56px;margin-top:6px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'쿠폰'}</div><div class="ptext">${s.sub||'유효기간 내 사용'}</div><div class="pbtn">${s.cta||'사용하기'}</div>`,
+  coupon:(s)=>`<div class="ptag">발급 · 쿠폰</div>${slotImg(s.slot,'height:48px;margin-top:6px;')}<div style="font-size:16px;font-weight:800;color:var(--brand);margin-top:5px;">${s.benefit||'up to 60%'}</div><div class="ptitle" style="margin-top:1px;">${s.title||'쿠폰'}</div><div class="ptext">${s.validity||s.sub||'유효기간 내 사용'}</div>${s.condition?`<div style="font-size:8px;color:#999;margin-top:2px;">${s.condition}</div>`:''}<div style="margin-top:4px;"><span class="badge g" style="font-size:8px;">${s.channel||'자사몰'}</span></div><div class="pbtn blue">${s.cta||'사용하기'}</div>`,
   ticket:()=>`<div class="ptag">발급 · 티켓</div>${QR(56)}<div class="ptitle" style="margin-top:5px;">입장 티켓</div><div class="ptext">QR로 입장</div>`,
   photocard_sel:(s)=>`<div class="ptag">참여 · 포토카드</div>${slotImg(s.slot,'height:84px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'포토카드 선택'}</div><div class="pbtn blue">선택하기</div>`,
   photocard_issued:(s)=>`<div class="ptag">발급 · 포토카드</div>${slotImg(s.slot,'height:92px;')}<div class="ptitle" style="margin-top:5px;">발급 완료</div><div class="pbtn blue">저장 / 공유</div>`,
-  reserve:()=>`<div class="ptag">예약</div><div class="ptitle" style="margin-top:10px;">날짜 선택</div><div style="background:#f5f5f7;border-radius:7px;padding:8px;font-size:9px;color:#888;margin-top:6px;line-height:1.9;">📅 날짜 선택<br>⏰ 시간 선택</div><div class="pbtn blue">예약 확정</div>`,
+  rsvp_apply:(s)=>`<div class="ptag">예약 · RSVP</div>${slotImg(s.slot,'height:54px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'초대합니다'}</div><div style="background:#f5f5f7;border-radius:7px;padding:7px;font-size:9px;color:#666;margin-top:6px;line-height:1.7;">📅 ${s.schedule||'일정·장소 안내'}</div><div class="pbtn blue">${s.cta||'RSVP 신청'}</div>`,
+  rsvp_detail:(s)=>`<div class="ptag">예약 · 입장 QR</div><div class="ptitle" style="margin-top:8px;">${s.guestName||'OOO님'}</div><div class="ptext" style="margin-bottom:6px;">${s.schedule||'입장 정보'}</div>${QR(56)}<div class="pbtn outline" style="margin-top:6px;">${s.cta||'입장 QR 보기'}</div>`,
   reserve_done:()=>`<div class="ptag">예약 완료</div><div style="font-size:22px;margin-top:16px;">✅</div><div class="ptitle" style="margin-top:7px;">예약 완료!</div><div class="ptext" style="margin-top:4px;">리마인드<br>발송 예정</div><div class="pbtn">확인</div>`,
-  reserve_full:()=>`<div class="ptag">예약 마감</div><div style="font-size:22px;margin-top:14px;">📵</div><div class="ptitle" style="margin-top:7px;">예약 마감</div><div class="ptext" style="margin-top:4px;">대기 신청을<br>남겨드릴게요</div><div class="pbtn outline">알림 신청</div>`,
+  admin_scan:(s)=>`<div class="ptag">체크인 · 관리자</div><div style="border:2px dashed var(--brand);border-radius:10px;height:70px;display:flex;align-items:center;justify-content:center;margin-top:8px;font-size:22px;">📷</div><div class="ptext" style="margin-top:6px;">${s.title||'고객 QR을 스캔하세요'}</div><div class="pbtn blue">${s.cta||'QR 인증하기'}</div>`,
   checkin_qr:()=>`<div class="ptag">체크인 · QR</div>${QR(60)}<div class="ptext" style="margin-top:5px;">직원에게 보여주세요</div><div class="pbtn">입장하기</div>`,
   checkin_done:()=>`<div class="ptag">체크인 완료</div><div style="font-size:22px;margin-top:14px;">✅</div><div class="ptitle" style="margin-top:7px;">입장 완료!</div><div style="margin-top:6px;"><span class="badge g">체크인 완료</span></div><div class="pbtn blue">리워드 받기</div>`,
   survey:()=>`<div class="ptag">참여 · 설문</div><div class="ptitle" style="margin-top:8px;">취향 선택</div><div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;width:100%;">${['A. 선택지 1','B. 선택지 2','C. 선택지 3'].map(t=>`<div style="background:#f5f5f7;border-radius:7px;padding:6px 8px;font-size:9.5px;color:#666;">${t}</div>`).join('')}</div><div class="pbtn">다음</div>`,
-  raffle:(s)=>`<div class="ptag">참여 · 래플</div><div style="font-size:26px;font-weight:700;color:var(--primary);margin-top:14px;">#${s.num||'????'}</div><div class="ptext" style="margin-top:5px;">${s.desc||'응모 완료'}</div><div style="background:#E8F0FE;border-radius:7px;padding:6px;font-size:9px;color:var(--primary);margin-top:5px;">${s.date||'당첨 발표: D+7'}</div>`,
-  firstcome_fail:()=>`<div class="ptag">선착순 마감</div><div style="font-size:22px;margin-top:14px;">⏰</div><div class="ptitle" style="margin-top:7px;">마감됐어요</div><div class="ptext" style="margin-top:4px;">다음 기회를<br>기다려주세요</div><div class="pbtn outline">알림 받기</div>`,
-  share:()=>`<div class="ptag">공유</div><div style="font-size:22px;margin-top:14px;">🔗</div><div class="ptitle" style="margin-top:5px;">친구 초대</div><div class="ptext" style="margin-top:4px;">공유하면<br>추가 혜택!</div><div class="pbtn kakao">카카오 공유</div>`,
-  reward:(s)=>`<div class="ptag">리워드</div>${slotImg(s.slot,'height:58px;margin-top:6px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'리워드'}</div><div class="ptext">${s.desc||'혜택 안내'}</div><div class="pbtn blue">받기</div>`,
-  member_fail:()=>`<div class="ptag">참여 불가</div><div style="font-size:22px;margin-top:14px;">🚫</div><div class="ptitle" style="margin-top:7px;">참여 불가</div><div class="ptext" style="margin-top:4px;">구매자만<br>참여 가능해요</div>`,
+  share:(s)=>`<div class="ptag">공유</div>${slotImg(s.slot,'height:48px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'친구 초대'}</div><div class="ptext" style="margin-top:4px;">${s.desc||'공유하면 추가 혜택!'}</div><div class="pbtn kakao">${s.cta||'카카오 공유'}</div>`,
+  reward:(s)=>`<div class="ptag">리워드</div>${slotImg(s.slot,'height:58px;margin-top:6px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'리워드'}</div><div class="ptext">${s.desc||'혜택 안내'}</div><div class="pbtn blue">${s.cta||'받기'}</div>`,
+  participate:(s)=>`<div class="ptag">참여</div>${slotImg(s.slot,'height:58px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'참여하기'}</div><div class="ptext">${s.desc||'이벤트에 참여하고 혜택을 받으세요'}</div>${s.hint?`<div style="background:#FFF7E6;border-radius:6px;padding:5px;font-size:9px;color:#B45309;margin-top:5px;">HINT! ${s.hint}</div>`:''}<div class="pbtn blue">${s.cta||'다음'}</div>`,
+  lounge_home:(s)=>`<div class="ptag">라운지 · 홈</div><div style="background:var(--brand);color:#fff;border-radius:9px;padding:10px;width:100%;text-align:left;margin-top:7px;"><div style="font-size:8px;letter-spacing:.1em;opacity:.85;">MEMBERS</div><div style="font-size:13px;font-weight:700;margin-top:2px;">${s.brand||'BRAND'}</div></div><div class="ptitle" style="margin-top:6px;">${s.title||'환영합니다'}</div><div style="display:flex;gap:5px;margin-top:7px;width:100%;">${(s.menuItems||'쿠폰함 · 보증서 · 혜택').split('·').map(m=>`<div style="flex:1;background:#f5f5f7;border-radius:7px;padding:8px 3px;font-size:8.5px;color:#444;text-align:center;">${m.trim()}</div>`).join('')}</div>`,
+  coupon_box:(s)=>`<div class="ptag">발급 · 쿠폰함</div><div class="ptitle" style="margin-top:6px;">${s.title||'내 쿠폰함'}</div><div style="width:100%;margin-top:6px;">${(s.couponList||'웰컴 쿠폰 · 감사 쿠폰').split('·').map(c=>`<div style="background:#f5f5f7;border-radius:7px;padding:7px 9px;font-size:9.5px;color:#444;margin-top:5px;display:flex;justify-content:space-between;align-items:center;"><span>${c.trim()}</span><span style="color:var(--brand);font-weight:600;">사용</span></div>`).join('')}</div>`,
+  warranty_issue:(s)=>`<div class="ptag">발급 · 보증서</div><div style="border:1.5px solid var(--brand);border-radius:11px;padding:12px 10px;margin-top:8px;width:100%;text-align:center;"><div style="font-size:8px;letter-spacing:.12em;color:var(--brand);font-weight:700;">CERTIFICATE</div><div style="font-size:13px;font-weight:700;margin-top:4px;">${s.title||'정품 보증서'}</div><div style="font-size:8.5px;color:#999;margin-top:2px;">${s.brand||'BRAND'}</div><div style="font-size:9px;color:#666;margin-top:6px;">${s.validity||'보증기간 1년'}</div><div style="font-size:18px;margin-top:5px;">✅</div></div><div class="pbtn blue">${s.cta||'보증서 확인'}</div>`,
+  reward_tier:(s)=>`<div class="ptag">리워드 · 단계별</div>${slotImg(s.slot,'height:46px;')}<div class="ptitle" style="margin-top:5px;">${s.title||'POP-UP GIFT'}</div><div style="width:100%;margin-top:5px;">${(s.tiers||'5만원↑ A / 15만원↑ B / 20만원↑ C').split('/').map(t=>`<div style="background:#f5f5f7;border-radius:6px;padding:5px 8px;font-size:9px;color:#555;margin-top:4px;text-align:left;">🎁 ${t.trim()}</div>`).join('')}</div>`,
+  msg_alimtalk:(s)=>`<div class="ptag">메시지 · 알림톡</div><div style="font-size:8px;color:#999;align-self:flex-start;margin:4px 0 3px;">${s.brand||'브랜드'} <span style="background:#eee;border-radius:4px;padding:1px 4px;">정보성</span></div><div style="background:#fff;border:1px solid #e3e3e6;border-radius:10px;padding:9px;width:100%;text-align:left;">${slotImg(s.slot,'height:40px;margin-bottom:5px;')}<div style="font-size:10px;font-weight:600;">${s.msgKind||'쿠폰 리마인드'}</div><div style="font-size:9px;color:#555;margin-top:3px;line-height:1.5;">${s.body||'쿠폰이 곧 만료됩니다'}</div><div class="pbtn" style="margin-top:7px;">${s.cta||'쿠폰 확인하기'}</div></div>${s.timing?`<div style="font-size:8px;color:#aaa;margin-top:4px;">⏱ ${s.timing}</div>`:''}`,
+  msg_friendtalk:(s)=>`<div class="ptag">메시지 · 친구톡</div><div style="font-size:8px;color:#999;align-self:flex-start;margin:4px 0 3px;">${s.brand||'브랜드'} <span style="background:#FEF0C7;color:#B45309;border-radius:4px;padding:1px 4px;">광고성</span></div><div style="background:#fff;border:1px solid #e3e3e6;border-radius:10px;padding:9px;width:100%;text-align:left;">${slotImg(s.slot,'height:52px;margin-bottom:5px;')}<div style="font-size:10px;font-weight:600;">${s.title||'단독 혜택 안내'}</div>${s.benefit?`<div style="font-size:12px;font-weight:800;color:var(--brand);margin-top:1px;">${s.benefit}</div>`:''}${s.body?`<div style="font-size:9px;color:#555;margin-top:3px;">${s.body}</div>`:''}<div class="pbtn blue" style="margin-top:7px;">${s.cta||'혜택 보기'}</div></div>${s.segment?`<div style="font-size:8px;color:#aaa;margin-top:4px;">🎯 ${s.segment}</div>`:''}`,
+};
+/* 실제 버클 화면 캡처 (라이브 라운지 + 실제 이벤트 export). 카드는 이 이미지를 그대로 보여준다.
+   라이브 캡처(공개 라운지)= 카카오 로그인·라운지 홈 / 실제 이벤트 export = 랜딩·사진등록·포토카드.
+   그 외(약관·쿠폰·보증서·메시지 등 로그인 게이트 화면)은 아직 캡처 못 해 스키매틱 폴백. */
+const ASSET={
+  /* 🟢 라이브 캡처 (공개 라운지 app.vircle.co.kr) */
+  auth_kakao:'assets/screens/live/auth_kakao.png',
+  lounge_home:'assets/screens/live/lounge_home.png',
+  /* 실제 이벤트 export (포토카드 캠페인) */
+  landing:'assets/screens/frame_landing.png',
+  photocard_sel:'assets/screens/photo_register.png',
+  photocard_issued:'assets/screens/photocard_issued.png',
+  /* 버클 화면 재료 (콘솔과 동일한 소스 디자인) */
+  crm_entry:'assets/screens/console/msg_welcome.png',
+  msg_alimtalk:'assets/screens/console/msg_alimtalk.png',
+  msg_friendtalk:'assets/screens/console/msg_friendtalk.png',
+  signup:'assets/screens/console/agree.png',
+  coupon:'assets/screens/console/coupon.png',
+  coupon_box:'assets/screens/console/coupon_box.png',
+  warranty_issue:'assets/screens/console/warranty.png',
 };
 function phone(type,props={}){
+  const slot=props.slot, up=slot?photoOf(slot):'';
+  const img=up||ASSET[type];
+  if(img) return `<div class="phone img" style="--brand:${state.brandColor||'#0066cc'}"><img class="screen-img" src="${img}" alt="" loading="lazy"></div>`;
   const fn=SCR[type]; const inner=fn?fn(props):`<div class="ptext" style="margin-top:20px;">${type}</div>`;
-  const slot=props.slot, url=slot?photoOf(slot):'';
-  const hero=(url && !IMG_SLOTS.includes(type))?`<div class="card-hero" style="background-image:url('${url}')"></div>`:'';
-  return `<div class="phone">${hero}${inner}</div>`;
+  return `<div class="phone" style="--brand:${state.brandColor||'#0066cc'}">${inner}</div>`;
 }
 
 /* ════════ 사진 업로드 (화면별) ════════ */
@@ -403,40 +523,54 @@ function savePhotos(){ try{ localStorage.setItem(photoKey(),JSON.stringify(state
 function loadPhotos(){ try{ const o=JSON.parse(localStorage.getItem(photoKey())||'null'); if(o&&typeof o==='object') return o; }catch(e){} return {}; }
 
 /* ════════ 상태 ════════ */
-const state={ brand:'', ch:null, ev:null, opts:[], start:'', end:'', teasing:true, photoSlots:{}, tasks:[] };
+const state={ brand:'', brandColor:'#0066cc', ch:null, ev:null, opts:[], start:'', end:'', teasing:true, photoSlots:{}, tasks:[] };
 
 /* ════════ 이벤트 정의 ════════ */
 const EV={
   lucky:{n:'럭키드로우',e:'🎰',screens:[
     {id:'m1',n:'럭키드로우 응모',a:'참여',t:'luckydraw',p:{title:'럭키드로우',desc:'1일 1회 응모',cta:'응모하기'}},
     {id:'m2',n:'당첨 결과',a:'당첨',t:'winner',p:{prize:'🎁 경품/쿠폰'}},
-    {id:'m3',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'당첨 쿠폰',sub:'7일 유효',cta:'사용하기'}},
-  ],branches:[{from:'m2',cond:'미당첨',n:'미당첨 화면',t:'loser',cap:'재도전 유도'}]},
+    {id:'m3',n:'쿠폰 자동 지급',a:'발급',t:'coupon',p:{title:'당첨 쿠폰',benefit:'10%',validity:'7일 유효',channel:'자사몰',cta:'사용하기'}},
+    {id:'m4',n:'라운지 쿠폰함',a:'발급',t:'coupon_box',p:{title:'내 쿠폰함',couponList:'당첨 쿠폰 · 웰컴 쿠폰'}},
+  ],branches:[
+    {from:'m1',cond:'미당첨',n:'미당첨 화면',t:'loser',cap:'재도전 유도'},
+    {from:'m2',cond:'팝업 종료 후 D+7',n:'감사 쿠폰 알림톡',t:'msg_alimtalk',cap:'자사몰 재유입'},
+  ]},
   rsvp:{n:'RSVP / 초대',e:'📅',screens:[
-    {id:'m1',n:'날짜·시간 선택',a:'예약',t:'reserve'},
+    {id:'m1',n:'RSVP 신청',a:'예약',t:'rsvp_apply',p:{title:'VIP 초대',schedule:'5/23 · 미래빌딩점',cta:'RSVP 신청'}},
     {id:'m2',n:'예약 완료',a:'예약',t:'reserve_done'},
-    {id:'m3',n:'입장 티켓 발급',a:'발급',t:'ticket'},
-  ],branches:[{from:'m1',cond:'예약 마감',n:'예약 마감',t:'reserve_full'}]},
-  photocard:{n:'포토카드',e:'📸',screens:[
-    {id:'m1',n:'포토카드 선택',a:'참여',t:'photocard_sel',p:{title:'카드 선택'}},
-    {id:'m2',n:'포토카드 발급',a:'발급',t:'photocard_issued'},
+    {id:'m3',n:'입장 QR',a:'예약',t:'rsvp_detail',p:{guestName:'OOO님',schedule:'5/23 18:00',cta:'입장 QR 보기'}},
+    {id:'m4',n:'관리자 QR 스캔',a:'체크인',t:'admin_scan',p:{title:'고객 QR을 스캔하세요',cta:'QR 인증하기'}},
+    {id:'m5',n:'입장 승인 완료',a:'체크인',t:'checkin_done'},
   ],branches:[]},
+  photocard:{n:'포토카드',e:'📸',screens:[
+    {id:'m1',n:'포토카드 선택/사진등록',a:'참여',t:'photocard_sel',p:{title:'사진을 등록해 주세요',cta:'사진 업로드'}},
+    {id:'m2',n:'포토카드 생성완료',a:'리워드',t:'photocard_issued',p:{title:'포토카드를 저장하고 혜택을 받아보세요!',cta:'랜덤 선물 받기'}},
+    {id:'m3',n:'인증 전용 쿠폰',a:'발급',t:'coupon',p:{title:'포토카드 인증 쿠폰',benefit:'랜덤 선물',validity:'기간 내 사용',channel:'오프라인',cta:'쿠폰 확인'}},
+  ],branches:[{from:'m2',cond:'인스타 공유',n:'공유하기',t:'share',cap:'UGC 확산'}]},
   coupon:{n:'쿠폰 발급',e:'🏷️',screens:[
-    {id:'m1',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'웰컴 쿠폰',sub:'즉시 사용 가능',cta:'사용하기'}},
+    {id:'m1',n:'쿠폰 발급/상세',a:'발급',t:'coupon',p:{title:'웰컴 쿠폰',benefit:'up to 60%',validity:'04.01 - 04.11',channel:'자사몰',cta:'사용하기'}},
+    {id:'m2',n:'쿠폰 지급 알림톡',a:'메시지',t:'msg_alimtalk',p:{msgKind:'쿠폰 지급 안내',body:'쿠폰이 발급되었어요',cta:'쿠폰 확인하기',timing:'발급 즉시'}},
+    {id:'m3',n:'라운지 쿠폰함',a:'발급',t:'coupon_box',p:{title:'내 쿠폰함',couponList:'웰컴 쿠폰'}},
+  ],branches:[]},
+  warranty:{n:'보증서 발급',e:'🛡️',screens:[
+    {id:'m1',n:'보증서 발급',a:'발급',t:'warranty_issue',p:{title:'정품 보증서',validity:'보증기간 1년',cta:'보증서 확인'}},
+    {id:'m2',n:'보증서 발급 알림톡',a:'메시지',t:'msg_alimtalk',p:{msgKind:'보증서 발급 안내',body:'정품 보증서가 발급되었어요',cta:'보증서 보기',timing:'구매 직후'}},
+    {id:'m3',n:'라운지 홈',a:'가입',t:'lounge_home',p:{title:'환영합니다',menuItems:'쿠폰함 · 보증서 · 혜택'}},
+  ],branches:[{from:'m1',cond:'발신 주체(브랜드/버클)',n:'친구톡 안내',t:'msg_friendtalk',cap:'발신 채널 분기'}]},
+  reward_tier:{n:'단계별 사은품',e:'🎁',screens:[
+    {id:'m1',n:'단계별 사은품',a:'리워드',t:'reward_tier',p:{title:'POP-UP EXCLUSIVE GIFT',tiers:'5만원↑ A / 15만원↑ B / 20만원↑ C / 25만원↑ D'}},
+    {id:'m2',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'사은품 쿠폰',benefit:'사은품 증정',validity:'행사 기간',channel:'오프라인',cta:'사용하기'}},
   ],branches:[]},
   checkin:{n:'오프라인 체크인',e:'📍',screens:[
-    {id:'m1',n:'체크인 QR',a:'체크인',t:'checkin_qr'},
+    {id:'m1',n:'체크인 QR',a:'체크인',t:'checkin_qr',p:{title:'직원에게 보여주세요',cta:'입장하기'}},
     {id:'m2',n:'체크인 완료',a:'체크인',t:'checkin_done'},
-    {id:'m3',n:'리워드 안내',a:'리워드',t:'reward',p:{title:'방문 리워드',desc:'방문 감사 혜택'}},
+    {id:'m3',n:'방문 리워드',a:'리워드',t:'reward',p:{title:'방문 리워드',desc:'방문 감사 혜택',cta:'받기'}},
   ],branches:[]},
   survey:{n:'설문/취향 수집',e:'📝',screens:[
-    {id:'m1',n:'설문 응답',a:'참여',t:'survey'},
-    {id:'m2',n:'리워드 안내',a:'리워드',t:'reward',p:{title:'참여 감사 혜택',desc:'설문 완료 리워드'}},
-    {id:'m3',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'감사 쿠폰',sub:'7일 유효'}},
-  ],branches:[]},
-  raffle:{n:'래플 이벤트',e:'🎲',screens:[
-    {id:'m1',n:'래플 응모',a:'참여',t:'raffle',p:{num:'????',desc:'래플 응모 완료',date:'당첨 발표: D+7'}},
-    {id:'m2',n:'응모 완료',a:'당첨',t:'winner',p:{prize:'🎁 래플 경품 (추첨)'}},
+    {id:'m1',n:'설문 참여',a:'참여',t:'participate',p:{title:'취향을 알려주세요',desc:'간단한 설문에 참여하고 혜택을 받으세요',cta:'다음'}},
+    {id:'m2',n:'리워드 안내',a:'리워드',t:'reward',p:{title:'참여 감사 혜택',desc:'설문 완료 리워드',cta:'받기'}},
+    {id:'m3',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'감사 쿠폰',benefit:'5%',validity:'7일 유효',channel:'자사몰',cta:'사용하기'}},
   ],branches:[]},
 };
 
@@ -448,12 +582,12 @@ function buildFlow(){
   const entry=off
     ?{id:'e1',n:'QR 진입',a:'진입',t:'qr_entry',cap:'매장/팝업 입구'}
     :{id:'e1',n:'CRM 발송',a:'진입',t:'crm_entry',p:{ch:'친구톡',title:'이벤트 안내',cta:'참여하기'},cap:'친구톡/알림톡'};
-  const auth={id:'e2',n:'본인 인증',a:'인증',t:'auth_phone'};
+  const auth={id:'e2',n:'카카오 로그인',a:'인증',t:'auth_kakao',p:{title:'로그인하고 혜택받기',cta:'카카오톡으로 시작'}};
   let main=[entry,auth];
-  if(hasSu) main.push({id:'e3',n:'약관 동의',a:'가입',t:'signup'});
+  if(hasSu) main.push({id:'e3',n:'약관·멤버십 동의',a:'가입',t:'signup'});
 
-  let branches=[{from:'e2',cond:'비회원',n:'가입 안내',t:'signup',cap:'회원가입 유도'}];
-  if(hasMo) branches.push({from:'e2',cond:'구매자 아님',n:'참여 불가',t:'member_fail'});
+  let branches=[{from:'e2',cond:'비회원',n:'가입 안내',t:'signup',cap:'라운지 회원가입 유도'}];
+  if(hasMo) branches.push({from:'e2',cond:'구매 이력 없음',n:'가입 후 둘러보기',t:'signup',cap:'비구매자도 라운지 가입 유도'});
 
   const ev=EV[state.ev]||EV.coupon;
   let screens=[...main,...ev.screens.map(s=>({...s}))];
@@ -462,7 +596,7 @@ function buildFlow(){
     const idx=screens.findIndex(s=>s.a==='발급'||s.a==='리워드');
     if(idx>-1) screens.splice(idx,0,{id:'ck',n:'현장 체크인',a:'체크인',t:'checkin_qr'});
   }
-  if(hasFc && state.ev==='coupon') branches.push({from:'m1',cond:'선착순 마감',n:'선착순 마감',t:'firstcome_fail'});
+  /* 선착순 마감은 별도 화면 없이 상태값(분기)으로만 표현 — renderBranchesStates */
   branches=[...branches,...ev.branches];
   // 슬롯 id 부여 (화면별 사진 업로드 — 모든 카드)
   screens.forEach(s=>{ s.slot='s_'+s.id; });
@@ -471,11 +605,13 @@ function buildFlow(){
 }
 
 /* ════════ 위저드 ════════ */
-const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'photocard',l:'📸 포토카드 발급'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향 수집'},{v:'raffle',l:'🎲 래플 이벤트'}];
+const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'photocard',l:'📸 포토카드'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'warranty',l:'🛡️ 보증서 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향'},{v:'reward_tier',l:'🎁 단계별 사은품'}];
 const CONDS=[{v:'signup',l:'회원가입 필요'},{v:'member_only',l:'구매자만 참여'},{v:'firstcome',l:'선착순 제한'},{v:'share',l:'공유 기능 포함'},{v:'checkin',l:'체크인 필요'}];
 const STEPS=[
   {kicker:'VIRCLE JOURNEY BUILDER',q:()=>'안녕하세요 👋<br>어떤 브랜드의<br>캠페인인가요?',sub:'브랜드명만 입력하면 바로 시작합니다. 로그인·가입은 없어요.',
-    body:()=>`<div class="brand-box"><label>BRAND NAME</label><input type="text" id="fb" value="${state.brand}" placeholder="예: 미세키서울" oninput="state.brand=this.value" onkeydown="if(event.key==='Enter')nextStep()"></div>`,
+    body:()=>`<div class="brand-box"><label>BRAND NAME</label><input type="text" id="fb" value="${state.brand}" placeholder="예: 미세키서울" oninput="state.brand=this.value" onkeydown="if(event.key==='Enter')nextStep()">
+      <label style="margin-top:20px;">대표 색 (브랜드 컬러)</label>
+      <div style="display:flex;align-items:center;gap:12px;"><input type="color" id="fc" value="${state.brandColor||'#0066cc'}" oninput="state.brandColor=this.value" style="width:48px;height:36px;border:1px solid var(--hairline);border-radius:9px;padding:2px;background:#fff;cursor:pointer;"><span style="font-size:13px;color:var(--fine);font-weight:400;letter-spacing:0;">화면의 버튼·강조색에 적용돼요</span></div></div>`,
     valid:()=>state.brand.trim()!=='',nl:'시작하기 →',enter:()=>setTimeout(()=>document.getElementById('fb')?.focus(),60)},
   {kicker:'STEP 1 · 진입',q:()=>'온라인 캠페인인가요,<br>오프라인 캠페인인가요?',sub:'진입 화면이 달라져요.',
     body:()=>`<div class="chan-grid">
@@ -521,11 +657,13 @@ function generate(){
 let FLOW=null;
 function renderFlow(){
   const f=FLOW;
-  let html=`<div class="flow-row">`;
+  let html=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
     const up=`<button class="card-upload" onclick="pickSlot('${s.slot}')">${photoOf(s.slot)?'🖼 사진 교체':'＋ 사진'}</button>`;
-    html+=`<div class="group" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${s.n}</div><div class="g-phones">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${s.cap}</div>`:''}</div>`;
-    if(i<f.screens.length-1) html+=`<div class="arr">→</div>`;
+    const tools=`<div class="card-tools"><button title="내용 수정" onclick="openEdit(${i})">✎</button><button title="화면 교체" onclick="openPicker('swap',${i})">⇄</button><button title="왼쪽으로" onclick="moveScreen(${i},-1)">‹</button><button title="오른쪽으로" onclick="moveScreen(${i},1)">›</button><button class="del" title="삭제" onclick="deleteScreen(${i})">×</button></div>`;
+    html+=`<div class="group" style="animation-delay:${i*.05}s">${tools}<div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
+    const last=i===f.screens.length-1;
+    html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
   });
   html+=`</div>`;
   f.branches.forEach(b=>{
@@ -540,6 +678,93 @@ function renderLegend(){
   const acts=[...new Set(FLOW.screens.map(s=>s.a))];
   document.getElementById('legend').innerHTML=acts.map(a=>`<span class="lg"><i style="background:${AC[a]}"></i>${a}</span>`).join('');
 }
+function renderMeta(){
+  const ch=state.ch==='offline'?'🏪 오프라인':'📱 온라인';
+  document.getElementById('meta').innerHTML=[`${FLOW.emoji} <b>${FLOW.name}</b>`,ch,`화면 <b>${FLOW.screens.length}개</b>`,`분기 <b>${FLOW.branches.length}개</b>`,state.opts.length?`조건 <b>${state.opts.length}개</b>`:''].filter(Boolean).map(h=>`<span class="chip">${h}</span>`).join('');
+}
+/* 라이브 브랜딩 — 어느 업체든 자기 이름·색으로 즉시 리브랜드 */
+function renderBrandBar(){
+  const el=document.getElementById('brand-bar'); if(!el) return;
+  el.innerHTML=`<span class="bb-lbl">브랜딩</span>`
+    +`<input class="bb-name" value="${escAttr(state.brand)}" oninput="setBrandName(this.value)" placeholder="브랜드명">`
+    +`<label class="bb-color"><input type="color" value="${escAttr(state.brandColor||'#0066cc')}" oninput="setBrandColor(this.value)"><span>대표색</span></label>`
+    +`<span class="bb-hint">이름·버튼·강조색이 이 브랜드로 바뀝니다</span>`;
+}
+function setBrandName(v){ state.brand=v; const t=document.getElementById('sn-title'); if(t) t.innerHTML=`${escHtml(state.brand||'브랜드')} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`; renderFlow(); renderScreenTable(); }
+function setBrandColor(v){ state.brandColor=v; renderFlow(); }
+
+/* ════════ 버클 화면 애셋 라이브러리 (편집 시 여기서 고름) ════════ */
+const TYPE_ACTION={qr_entry:'진입',crm_entry:'진입',landing:'진입',msg_alimtalk:'메시지',msg_friendtalk:'메시지',auth_kakao:'인증',auth_phone:'인증',signup:'가입',lounge_home:'가입',participate:'참여',luckydraw:'참여',winner:'당첨',loser:'당첨',photocard_sel:'참여',photocard_issued:'리워드',coupon:'발급',coupon_box:'발급',warranty_issue:'발급',ticket:'발급',reward_tier:'리워드',reward:'리워드',rsvp_apply:'예약',rsvp_detail:'예약',reserve_done:'예약',checkin_qr:'체크인',admin_scan:'체크인',checkin_done:'체크인',share:'공유'};
+const LIB_ORDER=['진입','메시지','인증','가입','참여','당첨','발급','예약','체크인','공유','리워드'];
+function libByAction(){ const m={}; Object.keys(TYPE_META).forEach(t=>{ const a=TYPE_ACTION[t]||'기타'; (m[a]=m[a]||[]).push(t); }); return m; }
+function hex2rgba(h,a){ const n=parseInt(h.slice(1),16); return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; }
+function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+/* ════════ 플로우 영속 + 편집 ════════ */
+let _uid=0;
+function flowKey(){ return 'vjb-flow-'+(state.brand||'x')+'|'+(state.ev||'x'); }
+function saveFlow(){ try{ localStorage.setItem(flowKey(),JSON.stringify({screens:FLOW.screens,branches:FLOW.branches})); }catch(e){} }
+function loadSavedFlow(){ try{ const o=JSON.parse(localStorage.getItem(flowKey())||'null'); if(o&&Array.isArray(o.screens)&&o.screens.length){ FLOW.screens=o.screens; if(Array.isArray(o.branches)) FLOW.branches=o.branches; } }catch(e){} }
+function afterEdit(){ saveFlow(); renderMeta(); renderLegend(); renderFlow(); renderScreenTable(); renderJSON(); renderOps(); }
+function newScreen(t){ const id='u'+(_uid++); return {id,n:(TYPE_META[t]||{}).st||t,a:TYPE_ACTION[t]||'참여',t,p:{},slot:'s_'+id}; }
+function addScreen(idx,t){ FLOW.screens.splice(idx,0,newScreen(t)); afterEdit(); toast('화면을 추가했어요'); }
+function swapScreen(idx,t){ const s=FLOW.screens[idx]; if(!s)return; s.t=t; s.n=(TYPE_META[t]||{}).st||t; s.a=TYPE_ACTION[t]||s.a; afterEdit(); toast('화면을 교체했어요'); }
+function deleteScreen(idx){ if(FLOW.screens.length<=1){toast('최소 1개 화면은 필요해요');return;} FLOW.screens.splice(idx,1); afterEdit(); }
+function moveScreen(idx,dir){ const j=idx+dir; if(j<0||j>=FLOW.screens.length)return; const a=FLOW.screens; const tmp=a[idx];a[idx]=a[j];a[j]=tmp; afterEdit(); }
+function resetFlow(){ if(!confirm('편집한 플로우를 버리고 자동 생성 상태로 되돌릴까요?'))return; try{localStorage.removeItem(flowKey());}catch(e){} FLOW=buildFlow(); afterEdit(); toast('자동 생성 상태로 복원했어요'); }
+
+/* ════════ 애셋 피커 ════════ */
+let _pkMode='add',_pkIdx=0;
+function openPicker(mode,idx){
+  _pkMode=mode; _pkIdx=idx;
+  document.getElementById('pk-title').textContent=(mode==='swap'?'화면 교체':'화면 추가')+' · 버클 화면 애셋';
+  const lib=libByAction(); let html='';
+  LIB_ORDER.forEach(a=>{ const ts=lib[a]; if(!ts)return;
+    html+=`<div class="pk-section">${a}</div><div class="picker-grid">`+ts.map(t=>`<div class="pk-cell" onclick="pickComponent('${t}')"><div class="pk-thumb">${phone(t,{brand:state.brand})}</div><div class="pk-name">${(TYPE_META[t]||{}).st||t}</div><div class="pk-act" style="background:${hex2rgba(AC[a]||'#888',.12)};color:${AC[a]||'#888'}">${a}</div></div>`).join('')+`</div>`;
+  });
+  document.getElementById('pk-body').innerHTML=html;
+  document.getElementById('picker-modal').classList.remove('hidden');
+}
+function closePicker(){ document.getElementById('picker-modal').classList.add('hidden'); }
+function pickComponent(t){ closePicker(); if(_pkMode==='swap') swapScreen(_pkIdx,t); else addScreen(_pkIdx,t); }
+
+/* ════════ 화면 내용 수정 ════════ */
+/* 화면 타입별 폼 — 업체가 채우면 자기 브랜드 화면이 된다 */
+const FIELD_LABEL={title:'제목 / 헤드라인',desc:'설명',body:'본문',cta:'버튼 문구',sub:'서브텍스트',prize:'경품 / 혜택',benefit:'혜택 / 할인 / 경품',validity:'유효기간 / 보증기간',condition:'사용조건',channel:'사용 채널 / 매장',segment:'수신 세그먼트',timing:'발송 타이밍',ch:'발송 채널',msgType:'메시지 유형(정보성/광고성)',msgKind:'세부 유형',agreeItems:'동의 항목',menuItems:'메뉴 항목',couponList:'쿠폰 목록',tiers:'구간별 사은품',hint:'힌트',schedule:'일정 · 장소',guestName:'예약자명',num:'응모번호',date:'발표일'};
+const FIELDS={
+  qr_entry:['title','desc'], crm_entry:['ch','msgType','title','body','cta','timing','segment'], landing:['title','desc','cta'],
+  msg_alimtalk:['msgKind','body','cta','timing'], msg_friendtalk:['msgKind','title','body','benefit','cta','segment'],
+  auth_kakao:['title','desc','cta'], auth_phone:['title'], signup:['title','agreeItems','desc','cta'], lounge_home:['title','menuItems'],
+  participate:['title','desc','hint','cta'], luckydraw:['title','desc','cta'],
+  winner:['title','prize','cta'], loser:['title','desc','cta'],
+  photocard_sel:['title','cta'], photocard_issued:['title','cta'],
+  coupon:['title','benefit','validity','condition','channel','cta'], coupon_box:['title','couponList'],
+  warranty_issue:['title','desc','validity','cta'], ticket:['title','desc'], reward_tier:['title','tiers'], reward:['title','desc','cta'],
+  rsvp_apply:['title','desc','schedule','cta'], rsvp_detail:['guestName','schedule','cta'], reserve_done:['title','desc'],
+  checkin_qr:['title','desc','cta'], admin_scan:['title','cta'], checkin_done:['title','cta'],
+  share:['title','desc','cta'],
+};
+function fieldsFor(t){ return FIELDS[t]||['title','desc','cta']; }
+let _edIdx=0;
+function openEdit(idx){
+  _edIdx=idx; const s=FLOW.screens[idx]; if(!s)return; const p=s.p||{};
+  let html=`<p style="font-size:12.5px;color:var(--fine);line-height:1.5;margin:0 0 16px;"><b style="color:var(--ink);">${(TYPE_META[s.t]||{}).st||s.t}</b> 화면 폼 — 채우면 <b style="color:var(--ink);">${escAttr(state.brand||'이 브랜드')}</b>의 화면이 됩니다.</p>`;
+  html+=`<div class="ef-row"><label>화면 이름 (플로우 라벨)</label><input id="ed-n" value="${escAttr(s.n)}"></div>`;
+  fieldsFor(s.t).forEach(k=>{ html+=`<div class="ef-row"><label>${FIELD_LABEL[k]||k}</label><input id="ed-${k}" value="${escAttr(p[k]||'')}" placeholder="(비우면 기본값)"></div>`; });
+  if(IMG_SLOTS.includes(s.t)) html+=`<p style="font-size:12px;color:var(--fine);margin:-2px 0 12px;">🖼 이미지는 카드의 <b>＋ 사진</b> 버튼으로 올립니다.</p>`;
+  html+=`<div class="ef-actions"><button class="btn-ghost-pill sm" onclick="closeEdit()">취소</button><button class="btn-pill" onclick="saveEdit()">저장</button></div>`;
+  document.getElementById('ed-body').innerHTML=html;
+  document.getElementById('edit-modal').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('ed-n')?.focus(),50);
+}
+function closeEdit(){ document.getElementById('edit-modal').classList.add('hidden'); }
+function saveEdit(){
+  const s=FLOW.screens[_edIdx]; if(!s)return;
+  const n=document.getElementById('ed-n'); if(n) s.n=n.value.trim()||s.n;
+  s.p=s.p||{};
+  fieldsFor(s.t).forEach(k=>{ const el=document.getElementById('ed-'+k); if(el){ const v=el.value.trim(); if(v) s.p[k]=v; else delete s.p[k]; } });
+  closeEdit(); afterEdit(); toast('화면 폼을 저장했어요');
+}
 function renderScreenTable(){
   const all=[...FLOW.screens.map(s=>({...s,branch:false})),...FLOW.branches.map(b=>({n:b.n,a:'분기',t:b.t,branch:true}))];
   document.getElementById('screen-rows').innerHTML=all.map((s,i)=>{
@@ -552,11 +777,14 @@ function renderBranchesStates(){
   const st=['인증 성공 / 실패'];
   if(state.opts.includes('signup')||types.has('signup')) st.push('회원 / 비회원');
   if(state.opts.includes('member_only')) st.push('구매자 / 비구매자');
+  if(types.has('msg_alimtalk')||types.has('msg_friendtalk')||types.has('crm_entry')) st.push('정보성(알림톡) / 광고성(친구톡)');
+  if(types.has('msg_friendtalk')||types.has('crm_entry')) st.push('VIP·충성 / 일반 세그먼트');
   if(types.has('winner')||types.has('loser')) st.push('당첨 / 미당첨');
-  if(types.has('reserve')) st.push('예약 가능 / 예약 마감');
+  if(types.has('rsvp_apply')||types.has('rsvp_detail')) st.push('예약 가능 / 예약 마감');
   if(state.opts.includes('firstcome')) st.push('선착순 가능 / 마감');
-  if([...types].some(t=>t.startsWith('checkin'))) st.push('체크인 전 / 체크인 완료');
-  if(types.has('coupon')) st.push('쿠폰 사용 전 / 사용 완료');
+  if([...types].some(t=>t.startsWith('checkin'))||types.has('admin_scan')) st.push('체크인 전 / 체크인 완료');
+  if(types.has('coupon')||types.has('coupon_box')) st.push('쿠폰 사용 전 / 사용 완료');
+  if(types.has('warranty_issue')) st.push('보증서 발급 전 / 발급 완료');
   document.getElementById('states').innerHTML=st.map(s=>`<span class="state-chip">${s}</span>`).join('');
   document.getElementById('branches').innerHTML=FLOW.branches.length
     ? FLOW.branches.map(b=>`<div class="branch-item"><span class="bc">${b.cond}</span><span class="barrow">→</span><span>${b.n}</span></div>`).join('')
@@ -586,7 +814,7 @@ function opsList(){
   if(types.has('coupon')) items.push('쿠폰 수량·재고·유효기간 설정');
   if(types.has('ticket')) items.push('티켓 발급 수량·입장 검증 방식');
   if(acts.has('당첨')||state.opts.includes('firstcome')) items.push('당첨자 선정 방식 확정 (즉시/추첨/선착순)');
-  if(types.has('reserve')) items.push('예약 가능 시간·정원 설정');
+  if(types.has('rsvp_apply')) items.push('RSVP 일정·장소·정원 설정');
   if(acts.has('체크인')) items.push('현장 스태프 QR/NFC 확인 절차');
   if(state.opts.includes('member_only')) items.push('구매자/회원 자격 판별 기준');
   if(state.opts.includes('share')) items.push('공유 리워드 지급 기준·중복 방지');
@@ -626,7 +854,7 @@ function seedTasks(){
   add('전체 플로우 리허설 · QA','both','~D-3');
   add(state.ch==='offline'?'현장 QR·동선·스태프 점검':'CRM 발송 카피·모수 확정','brand','D-1');
   add('오픈 — 발송 / 진입 시작','vircle','D-day');
-  if(types.has('reserve')) add('예약 현황 모니터링·리마인드','vircle','D-day');
+  if(types.has('rsvp_apply')) add('RSVP 현황 모니터링·리마인드','vircle','D-day');
   add('종료 — 미사용 쿠폰/세그먼트 추출','vircle','마감일');
   add('성과 측정 · 리뷰','vircle','D+7');
   return seeds.map(s=>({id:'t'+(_tid++),label:s.label,owner:s.owner,date:relToDate(s.rel),done:false}));
@@ -660,11 +888,10 @@ function removeTask(id){ state.tasks=state.tasks.filter(t=>t.id!==id); saveTasks
 
 function renderResult(){
   FLOW=buildFlow();
+  loadSavedFlow();
   document.getElementById('sn-title').innerHTML=`${state.brand} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`;
-  const ch=state.ch==='offline'?'🏪 오프라인':'📱 온라인';
-  document.getElementById('meta').innerHTML=[`${FLOW.emoji} <b>${FLOW.name}</b>`,ch,`화면 <b>${FLOW.screens.length}개</b>`,`분기 <b>${FLOW.branches.length}개</b>`,state.opts.length?`조건 <b>${state.opts.length}개</b>`:''].filter(Boolean).map(h=>`<span class="chip">${h}</span>`).join('');
   state.photoSlots=loadPhotos(); state.tasks=loadTasks();
-  renderLegend(); renderFlow(); renderScreenTable(); renderBranchesStates(); renderJSON(); renderSched(); renderOps();
+  renderMeta(); renderBrandBar(); renderLegend(); renderFlow(); renderScreenTable(); renderBranchesStates(); renderJSON(); renderSched(); renderOps();
   document.getElementById('stage-wizard').classList.add('hidden');
   document.getElementById('stage-result').classList.remove('hidden');
   document.getElementById('result-actions').classList.remove('hidden');
