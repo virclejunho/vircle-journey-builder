@@ -932,18 +932,22 @@ function renderResult(){
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
 function restart(){ if(confirm('처음부터 다시 만들까요? (입력 내용이 초기화됩니다)')){ location.href=location.pathname; } }
 function downloadPDF(){
-  // 결과 전체를 A4 가로 한 페이지에 맞게 동적 스케일 (분기 많을수록 더 축소)
+  // 콘텐츠 비율에 따라 가로/세로 A4 중 더 크게 들어가는 방향을 자동 선택 (여백 최소화)
   const stage=document.getElementById('stage-result'), fc=document.getElementById('flow-col');
-  let scale=1;
+  let scale=1, landscape=true;
   if(stage&&fc){ const fw=fc.scrollWidth; let th=stage.offsetHeight;
     // 인쇄 시 숨겨지는 요소 높이 차감(brand-bar·legend·meta·안내문) → 과대측정 보정
     ['#meta','.legend','.brand-bar'].forEach(sel=>{const e=stage.querySelector(sel); if(e) th-=e.offsetHeight;});
     const note=stage.querySelector('.t-dark .tile-inner>p'); if(note) th-=note.offsetHeight;
-    // A4 가로 인쇄영역(8mm 여백, 96dpi) ≈ 1040×716, 상단 서브내비·여백 ~70 제외
-    scale=Math.min(1, 1040/(fw+40), (716-70)/Math.max(th,1));
-    scale=Math.max(.3, scale); }
+    th=Math.max(th,1); const cw=fw+40, reserve=64;
+    // 인쇄영역(8mm 여백,96dpi): 가로 1040×716 / 세로 716×1040
+    const sL=Math.min(1040/cw,(716-reserve)/th), sP=Math.min(716/cw,(1040-reserve)/th);
+    landscape=sL>=sP;
+    scale=Math.max(.3, Math.min(1, landscape?sL:sP)); }
   document.documentElement.style.setProperty('--pdf-scale', scale.toFixed(3));
-  toast('인쇄 창에서 "PDF로 저장" 선택 · 가로·배경그래픽 켜기 권장');
+  let ps=document.getElementById('pdf-page-style'); if(!ps){ps=document.createElement('style');ps.id='pdf-page-style';document.head.appendChild(ps);}
+  ps.textContent='@media print{@page{size:A4 '+(landscape?'landscape':'portrait')+';margin:8mm;}}';
+  toast('인쇄 창에서 "PDF로 저장" 선택 · 배경 그래픽 켜기 권장 (방향 자동)');
   setTimeout(()=>window.print(),500);
 }
 function copyJSON(){ const j=JSON.stringify(figmaJSON(),null,2); navigator.clipboard.writeText(j).then(()=>toast('Figma 배치용 JSON을 복사했어요')).catch(()=>toast('복사 실패 — JSON 박스에서 직접 선택해 주세요')); }
