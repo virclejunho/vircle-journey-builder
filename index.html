@@ -110,8 +110,10 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 
 /* 플로우 (다크 스테이지) */
 .canvas{overflow-x:auto;padding:6px 0 12px;}
-.flow-col{display:inline-flex;flex-direction:column;min-width:max-content;}
-.flow-row{display:inline-flex;align-items:flex-start;}
+.flow-col{display:inline-flex;flex-direction:column;min-width:max-content;position:relative;}
+#branch-svg{position:absolute;top:0;left:0;pointer-events:none;z-index:0;overflow:visible;}
+.flow-row{display:inline-flex;align-items:flex-start;position:relative;z-index:1;}
+.b-tag .b-from{color:#fff;font-weight:600;}
 .group{text-align:center;animation:rise .6s ease both;}
 .g-lbl{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:-.01em;border-radius:9999px;padding:5px 14px;margin-bottom:14px;color:#fff;}
 .g-lbl.branch{background:#8a8a8e;}
@@ -642,7 +644,7 @@ function renderFlow(){
   f.screens.forEach((s,i)=>{
     const up='';/* +사진 버튼 제거 — 사진은 카드 클릭→편집 모달에서 올림 */
     const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
-    html+=`<div class="group" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
+    html+=`<div class="group" data-sid="${s.id}" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
   });
@@ -652,9 +654,27 @@ function renderFlow(){
     const indent=Math.max(0,fromIdx)*(140+50);
     const up='';/* +사진 버튼 제거 — 분기 사진도 카드 클릭→편집 모달에서 올림 */
     const bTools=`<div class="card-tools"><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
-    html+=`<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ ${escHtml(b.cond)}</div><div class="group"><div class="g-lbl branch">${escHtml(b.n)}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${escHtml(b.cap)}</div>`:''}</div></div>`;
+    html+=`<div class="flow-row branch-row" data-bid="${b.id}" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ <span class="b-from">${escHtml((f.screens[fromIdx]||{}).n||'화면')}</span> · ${escHtml(b.cond)}</div><div class="group"><div class="g-lbl branch">${escHtml(b.n)}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${escHtml(b.cap)}</div>`:''}</div></div>`;
   });
-  document.getElementById('flow-col').innerHTML=html;
+  document.getElementById('flow-col').innerHTML='<svg id="branch-svg"></svg>'+html;
+  requestAnimationFrame(drawBranchConnectors);
+}
+/* 출발 카드 → 분기 카드 연결선(엘보) — 어디서 갈라졌는지 시각화 */
+function drawBranchConnectors(){
+  const col=document.getElementById('flow-col'), svg=document.getElementById('branch-svg'); if(!col||!svg)return;
+  const W=col.scrollWidth, H=col.scrollHeight; svg.setAttribute('width',W); svg.setAttribute('height',H); svg.style.width=W+'px'; svg.style.height=H+'px';
+  const cr=col.getBoundingClientRect(), sl=col.scrollLeft, st=col.scrollTop;
+  const brand=state.brandColor||'#0066cc';
+  const pt=el=>{ const r=el.getBoundingClientRect(); return {l:r.left-cr.left+sl, t:r.top-cr.top+st, b:r.bottom-cr.top+st, cx:r.left+r.width/2-cr.left+sl}; };
+  let p='';
+  (FLOW.branches||[]).forEach(b=>{
+    const src=col.querySelector('.group[data-sid="'+b.from+'"]'), row=col.querySelector('.branch-row[data-bid="'+b.id+'"]'); if(!src||!row)return;
+    const s=pt(src), r=pt(row);
+    const x1=s.cx, y1=s.b-4, x2=r.l+9, y2=r.t+13;
+    p+=`<path d="M ${x1} ${y1} V ${y2-12} Q ${x1} ${y2} ${Math.min(x1+12,x2)} ${y2} H ${x2}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="5 4" opacity=".5"/>`;
+    p+=`<circle cx="${x1}" cy="${y1}" r="3.5" fill="${brand}"/>`;
+  });
+  svg.innerHTML=p;
 }
 function renderLegend(){
   const acts=[...new Set(FLOW.screens.map(s=>s.a))];
