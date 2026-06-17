@@ -119,7 +119,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .g-phones.editable{cursor:pointer;}
 .g-phones.editable .phone{transition:transform .15s cubic-bezier(.2,.7,.3,1),box-shadow .15s;}
 .g-phones.editable:hover .phone{transform:translateY(-4px);box-shadow:0 16px 40px -12px rgba(0,0,0,.55),0 0 0 2px var(--brand,var(--primary));}
-.g-phones.editable::after{content:'✎ 수정';position:absolute;top:9px;left:50%;transform:translateX(-50%) translateY(-6px);background:rgba(20,20,22,.82);color:#fff;font-size:10.5px;font-weight:600;letter-spacing:.01em;padding:4px 11px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:4;white-space:nowrap;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+.g-phones.editable::after{content:'클릭하여 수정';position:absolute;top:9px;left:50%;transform:translateX(-50%) translateY(-6px);background:rgba(20,20,22,.82);color:#fff;font-size:10.5px;font-weight:600;letter-spacing:.01em;padding:4px 11px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:4;white-space:nowrap;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
 .g-phones.editable:hover::after{opacity:1;transform:translateX(-50%) translateY(0);}
 .modal-bg:not(.hidden) .modal{animation:modalIn .18s cubic-bezier(.2,.7,.3,1);}
 @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
@@ -325,13 +325,15 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 
 <style>
 /* 플로우 편집기 + 애셋 피커 */
-.card-tools{display:flex;gap:4px;justify-content:center;margin-bottom:8px;opacity:.75;transition:opacity .12s;}
-.group:hover .card-tools{opacity:1;}
-.card-tools button{width:23px;height:23px;border-radius:7px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;}
-.card-tools button.ed{width:auto;padding:0 9px;font-size:10.5px;font-weight:600;gap:3px;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);}
-.card-tools button.ed:hover{background:var(--brand,var(--primary));border-color:transparent;}
-.card-tools button:hover{background:rgba(255,255,255,.22);}
-.card-tools button.del:hover{background:#c0392b;border-color:#c0392b;}
+.card-tools{display:flex;gap:5px;justify-content:center;margin-bottom:9px;opacity:0;transform:translateY(3px);transition:opacity .15s,transform .15s;}
+.group:hover .card-tools,.card-tools:focus-within{opacity:1;transform:none;}
+@media(hover:none){.card-tools{opacity:.7;transform:none;}}
+.card-tools button{width:28px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:background .12s,transform .08s,border-color .12s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.card-tools button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;}
+.card-tools button:hover{background:rgba(255,255,255,.95);color:#1d1d1f;border-color:transparent;}
+.card-tools button:active{transform:scale(.9);}
+.card-tools button.del:hover{background:#e5484d;color:#fff;border-color:transparent;}
+.card-tools button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
 .ins-col{display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:40px;}
 .ins-col .arr{margin:0;padding:0;}
 .ins-btn{width:26px;height:26px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.45);background:transparent;color:var(--primary-on-dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex:0 0 auto;}
@@ -473,6 +475,14 @@ const SCR={
 /* 카드는 특정 업체 캡처가 아니라 "버클 화면을 만들기 위한 브랜드 중립 템플릿"을 렌더한다.
    실제 버클 디자인 언어(라운지 헤더·카카오 바텀시트·카톡 셸·풀폭 CTA)를 재현하되
    브랜드명/색/카피/이미지는 폼·＋사진으로 각 업체가 채운다. 클라이언트 캡처는 쓰지 않는다. */
+/* Lucide 계열 라인 아이콘 (이모지 글리프 대신 SVG — UI UX Pro Max §4 no-emoji-icons) */
+const ICN={
+  swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
+  left:'<path d="m15 18-6-6 6-6"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
+  trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>'
+};
+function ic(n){ return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICN[n]||''}</svg>`; }
 const statbar=(c='#1d1d1f')=>`<div class="sc-stat" style="color:${c}"><span>9:41</span><span class="r">▪▪▪ ᯤ ▭</span></div>`;
 const lhead=(b)=>`<div class="sc-lhead">✕&nbsp;‹&nbsp;<b>${b||'브랜드'} ㅣ 라운지</b>&nbsp;›<span class="kk"></span></div>`;
 const bmark=(n=14)=>`<span style="display:inline-flex;width:${n}px;height:${n}px;border-radius:4px;background:var(--brand,var(--primary));flex:none;"></span>`;
@@ -623,7 +633,7 @@ function renderFlow(){
   let html=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
     const up=!IMG_SLOTS.includes(s.t)?'':photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
-    const tools=`<div class="card-tools"><button class="ed" title="이 화면의 문장·내용 수정" onclick="openEdit(${i})">✎ 수정</button><button title="화면 교체" onclick="openPicker('swap',${i})">⇄</button><button title="왼쪽으로" onclick="moveScreen(${i},-1)">‹</button><button title="오른쪽으로" onclick="moveScreen(${i},1)">›</button><button class="del" title="삭제" onclick="deleteScreen(${i})">×</button></div>`;
+    const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
     html+=`<div class="group" style="animation-delay:${i*.05}s">${tools}<div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
@@ -672,7 +682,7 @@ function afterEdit(){ saveFlow(); renderMeta(); renderLegend(); renderFlow(); }
 function newScreen(t){ const id='u'+(_uid++); return {id,n:(TYPE_META[t]||{}).st||t,a:TYPE_ACTION[t]||'참여',t,p:{},slot:'s_'+id}; }
 function addScreen(idx,t){ FLOW.screens.splice(idx,0,newScreen(t)); afterEdit(); toast('화면을 추가했어요'); }
 function swapScreen(idx,t){ const s=FLOW.screens[idx]; if(!s)return; s.t=t; s.n=(TYPE_META[t]||{}).st||t; s.a=TYPE_ACTION[t]||s.a; afterEdit(); toast('화면을 교체했어요'); }
-function deleteScreen(idx){ if(FLOW.screens.length<=1){toast('최소 1개 화면은 필요해요');return;} FLOW.screens.splice(idx,1); afterEdit(); }
+function deleteScreen(idx){ if(FLOW.screens.length<=1){toast('최소 1개 화면은 필요해요');return;} const s=FLOW.screens[idx]; if(!confirm(`'${(s&&s.n)||'이 화면'}'을(를) 삭제할까요?`))return; FLOW.screens.splice(idx,1); afterEdit(); }
 function moveScreen(idx,dir){ const j=idx+dir; if(j<0||j>=FLOW.screens.length)return; const a=FLOW.screens; const tmp=a[idx];a[idx]=a[j];a[j]=tmp; afterEdit(); }
 function resetFlow(){ if(!confirm('편집한 플로우와 업로드한 사진을 버리고 자동 생성 상태로 되돌릴까요?'))return; try{localStorage.removeItem(flowKey());}catch(e){} state.photoSlots={}; try{localStorage.removeItem(photoKey());}catch(e){} FLOW=buildFlow(); afterEdit(); toast('자동 생성 상태로 복원했어요'); }
 
