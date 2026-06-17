@@ -669,10 +669,15 @@ function drawBranchConnectors(){
   let p='';
   (FLOW.branches||[]).forEach(b=>{
     const src=col.querySelector('.group[data-sid="'+b.from+'"]'), row=col.querySelector('.branch-row[data-bid="'+b.id+'"]'); if(!src||!row)return;
-    const s=pt(src), r=pt(row);
-    const x1=s.cx, y1=s.b-4, x2=r.l+9, y2=r.t+13;
-    p+=`<path d="M ${x1} ${y1} V ${y2-12} Q ${x1} ${y2} ${Math.min(x1+12,x2)} ${y2} H ${x2}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="5 4" opacity=".5"/>`;
+    const tag=row.querySelector('.b-tag')||row;
+    const s=pt(src), r=pt(tag);
+    const x1=s.cx, y1=s.b-2;          // 출발 카드 하단 중앙
+    const y2=(r.t+r.b)/2, x2=r.l-4;   // ↘ 라벨 왼쪽 중앙(끝점)
+    const cr2=Math.min(11, Math.abs(y2-y1)/2, Math.max(2,Math.abs(x2-x1)));
+    const dir=x2<x1?-1:1;
+    p+=`<path d="M ${x1} ${y1} V ${y2-cr2} Q ${x1} ${y2} ${x1+dir*cr2} ${y2} H ${x2}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/>`;
     p+=`<circle cx="${x1}" cy="${y1}" r="3.5" fill="${brand}"/>`;
+    p+=`<circle cx="${x2}" cy="${y2}" r="2.5" fill="${brand}"/>`;
   });
   svg.innerHTML=p;
 }
