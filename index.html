@@ -111,7 +111,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 /* 플로우 (다크 스테이지) */
 .canvas{overflow-x:auto;padding:6px 0 12px;}
 .flow-col{display:inline-flex;flex-direction:column;min-width:max-content;}
-.flow-row{display:inline-flex;align-items:center;}
+.flow-row{display:inline-flex;align-items:flex-start;}
 .group{text-align:center;animation:rise .6s ease both;}
 .g-lbl{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:-.01em;border-radius:9999px;padding:5px 14px;margin-bottom:14px;color:#fff;}
 .g-lbl.branch{background:#8a8a8e;}
@@ -341,11 +341,11 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 .card-tools button:active{transform:scale(.9);}
 .card-tools button.del:hover{background:#e5484d;color:#fff;border-color:transparent;}
 .card-tools button:focus-visible{outline:2px solid var(--brand,var(--primary));outline-offset:2px;}
-.ins-col{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.ins-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;margin-top:38px;height:266px;}
 .ins-col .arr{margin:0;padding:0;}
 .ins-btn{width:26px;height:26px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.45);background:transparent;color:var(--primary-on-dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex:0 0 auto;}
 .ins-btn:hover{background:var(--primary-on-dark);color:#fff;border-style:solid;}
-.ins-btn.edge{align-self:center;margin-right:6px;}
+.ins-btn.edge{align-self:flex-start;margin-top:158px;margin-right:6px;}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:500;padding:24px;}
 .modal-bg.hidden{display:none;}
 .modal{background:#fff;border-radius:20px;max-width:900px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);}
@@ -487,7 +487,8 @@ const ICN={
   swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
   left:'<path d="m15 18-6-6 6-6"/>',
   right:'<path d="m9 18 6-6-6-6"/>',
-  trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>'
+  trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>',
+  branch:'<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>'
 };
 function ic(n){ return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICN[n]||''}</svg>`; }
 const statbar=(c='#1d1d1f')=>`<div class="sc-stat" style="color:${c}"><span>9:41</span><span class="r">▪▪▪ ᯤ ▭</span></div>`;
@@ -587,7 +588,7 @@ function buildFlow(){
   branches=[...branches,...ev.branches];
   // 슬롯 id 부여 (화면별 사진 업로드 — 모든 카드)
   screens.forEach(s=>{ s.slot='s_'+s.id; });
-  branches.forEach((b,i)=>{ b.slot='sb_'+i; });
+  branches.forEach((b,i)=>{ b.slot='sb_'+i; b.id=b.id||'b'+i; b.p=b.p||{}; });
   return {name:ev.n,emoji:ev.e,screens,branches};
 }
 
@@ -640,7 +641,7 @@ function renderFlow(){
   let html=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
     const up=!IMG_SLOTS.includes(s.t)?'':photoOf(s.slot)?`<button class="card-upload" onclick="pickSlot('${s.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${s.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${s.slot}')">＋ 사진</button>`;
-    const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
+    const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
     html+=`<div class="group" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
     const last=i===f.screens.length-1;
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
@@ -650,7 +651,8 @@ function renderFlow(){
     const fromIdx=f.screens.findIndex(s=>s.id===b.from);
     const indent=Math.max(0,fromIdx)*(140+50);
     const up=!IMG_SLOTS.includes(b.t)?'':photoOf(b.slot)?`<button class="card-upload" onclick="pickSlot('${b.slot}')">🖼 교체</button><button class="card-upload" onclick="removeSlot('${b.slot}')">✕ 제거</button>`:`<button class="card-upload" onclick="pickSlot('${b.slot}')">＋ 사진</button>`;
-    html+=`<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="b-tag">↘ ${b.cond}</div><div class="group"><div class="g-lbl branch">${b.n}</div><div class="g-phones">${phone(b.t,{brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${b.cap}</div>`:''}</div></div>`;
+    const bTools=`<div class="card-tools"><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
+    html+=`<div class="flow-row branch-row" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ ${escHtml(b.cond)}</div><div class="group"><div class="g-lbl branch">${escHtml(b.n)}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${escHtml(b.cap)}</div>`:''}</div></div>`;
   });
   document.getElementById('flow-col').innerHTML=html;
 }
@@ -690,6 +692,8 @@ function newScreen(t){ const id='u'+(_uid++); return {id,n:(TYPE_META[t]||{}).st
 function addScreen(idx,t){ FLOW.screens.splice(idx,0,newScreen(t)); afterEdit(); toast('화면을 추가했어요'); }
 function swapScreen(idx,t){ const s=FLOW.screens[idx]; if(!s)return; s.t=t; s.n=(TYPE_META[t]||{}).st||t; s.a=TYPE_ACTION[t]||s.a; afterEdit(); toast('화면을 교체했어요'); }
 function deleteScreen(idx){ if(FLOW.screens.length<=1){toast('최소 1개 화면은 필요해요');return;} const s=FLOW.screens[idx]; if(!confirm(`'${(s&&s.n)||'이 화면'}'을(를) 삭제할까요?`))return; FLOW.screens.splice(idx,1); afterEdit(); }
+function addBranch(idx,t){ const from=FLOW.screens[idx]; if(!from)return; const id='bu'+(_uid++); FLOW.branches.push({id,from:from.id,cond:'추가 조건',n:(TYPE_META[t]||{}).st||t,t,p:{},slot:'sb_'+id}); afterEdit(); setTimeout(()=>openEditBranch(id),60); toast('분기를 추가했어요 · 조건을 입력하세요'); }
+function deleteBranch(id){ const b=FLOW.branches.find(x=>x.id===id); if(b&&!confirm(`분기 '${b.cond||''}'를 삭제할까요?`))return; FLOW.branches=FLOW.branches.filter(x=>x.id!==id); afterEdit(); toast('분기를 삭제했어요'); }
 function moveScreen(idx,dir){ const j=idx+dir; if(j<0||j>=FLOW.screens.length)return; const a=FLOW.screens; const tmp=a[idx];a[idx]=a[j];a[j]=tmp; afterEdit(); }
 function resetFlow(){ if(!confirm('편집한 플로우와 업로드한 사진을 버리고 자동 생성 상태로 되돌릴까요?'))return; try{localStorage.removeItem(flowKey());}catch(e){} state.photoSlots={}; try{localStorage.removeItem(photoKey());}catch(e){} FLOW=buildFlow(); afterEdit(); toast('자동 생성 상태로 복원했어요'); }
 
@@ -697,7 +701,7 @@ function resetFlow(){ if(!confirm('편집한 플로우와 업로드한 사진을
 let _pkMode='add',_pkIdx=0;
 function openPicker(mode,idx){
   _pkMode=mode; _pkIdx=idx;
-  document.getElementById('pk-title').textContent=(mode==='swap'?'화면 교체':'화면 추가')+' · 버클 화면 애셋';
+  document.getElementById('pk-title').textContent=(mode==='swap'?'화면 교체':mode==='branch'?'분기 화면 추가':'화면 추가')+' · 버클 화면 애셋';
   const lib=libByAction(); let html='';
   LIB_ORDER.forEach(a=>{ const ts=lib[a]; if(!ts)return;
     html+=`<div class="pk-section">${a}</div><div class="picker-grid">`+ts.map(t=>`<div class="pk-cell" onclick="pickComponent('${t}')"><div class="pk-thumb">${phone(t,{brand:state.brand})}</div><div class="pk-name">${(TYPE_META[t]||{}).st||t}</div><div class="pk-act" style="background:${hex2rgba(AC[a]||'#888',.12)};color:${AC[a]||'#888'}">${a}</div></div>`).join('')+`</div>`;
@@ -706,7 +710,7 @@ function openPicker(mode,idx){
   document.getElementById('picker-modal').classList.remove('hidden');
 }
 function closePicker(){ document.getElementById('picker-modal').classList.add('hidden'); }
-function pickComponent(t){ closePicker(); if(_pkMode==='swap') swapScreen(_pkIdx,t); else addScreen(_pkIdx,t); }
+function pickComponent(t){ closePicker(); if(_pkMode==='swap') swapScreen(_pkIdx,t); else if(_pkMode==='branch') addBranch(_pkIdx,t); else addScreen(_pkIdx,t); }
 
 /* ════════ 화면 내용 수정 ════════ */
 /* 화면 타입별 폼 — 업체가 채우면 자기 브랜드 화면이 된다 */
@@ -725,10 +729,13 @@ const FIELDS={
   share:['title','desc','cta'],
 };
 function fieldsFor(t){ return FIELDS[t]||['title','desc','cta']; }
-let _edIdx=0;
-function openEdit(idx){
-  _edIdx=idx; const s=FLOW.screens[idx]; if(!s)return; const p=s.p||{};
-  let form=`<p style="font-size:12.5px;color:var(--fine);line-height:1.5;margin:0 0 16px;"><b style="color:var(--ink);">${(TYPE_META[s.t]||{}).st||s.t}</b> — 사진·문구를 바꾸면 왼쪽 미리보기에 바로 반영됩니다.</p>`;
+let _edObj=null,_edKind='screen';
+function openEdit(idx){ const s=FLOW.screens[idx]; if(!s)return; _edObj=s; _edKind='screen'; _edRender(); }
+function openEditBranch(id){ const b=FLOW.branches.find(x=>x.id===id); if(!b)return; _edObj=b; _edKind='branch'; _edRender(); }
+function _edRender(){
+  const s=_edObj; if(!s)return; const p=s.p||{}; const isBranch=_edKind==='branch';
+  let form=`<p style="font-size:12.5px;color:var(--fine);line-height:1.5;margin:0 0 16px;"><b style="color:var(--ink);">${(TYPE_META[s.t]||{}).st||s.t}</b>${isBranch?` <span style="color:var(--brand,var(--primary));font-weight:600;">· 분기</span>`:''} — 사진·문구를 바꾸면 왼쪽 미리보기에 바로 반영됩니다.</p>`;
+  if(isBranch) form+=`<div class="ef-row"><label>분기 조건 (↘ 라벨)</label><input id="ed-cond" value="${escAttr(s.cond||'')}" placeholder="예: 미당첨 · 비회원 · 선착순 마감" oninput="edLive()"></div>`;
   if(IMG_SLOTS.includes(s.t)){
     const u=photoOf(s.slot);
     form+=`<div class="ed-photo"><div class="ed-photo-thumb" id="ed-photo-thumb" style="background-image:${u?`url('${u}')`:'none'};">${u?'':'🖼'}</div>`
@@ -738,30 +745,31 @@ function openEdit(idx){
   }
   form+=`<div class="ef-row"><label>화면 이름 (플로우 라벨)</label><input id="ed-n" value="${escAttr(s.n)}" oninput="edLive()"></div>`;
   fieldsFor(s.t).forEach(k=>{ form+=`<div class="ef-row"><label>${FIELD_LABEL[k]||k}</label><input id="ed-${k}" value="${escAttr(p[k]||'')}" placeholder="(비우면 기본값)" oninput="edLive()"></div>`; });
-  form+=`<div class="ef-actions"><button class="btn-ghost-pill sm" onclick="closeEdit()">취소</button><button class="btn-pill" onclick="saveEdit()">저장</button></div>`;
+  form+=`<div class="ef-actions">${isBranch?`<button class="btn-ghost-pill sm" style="margin-right:auto;color:#e5484d;border-color:#e5484d;" onclick="closeEdit();deleteBranch('${s.id}')">분기 삭제</button>`:''}<button class="btn-ghost-pill sm" onclick="closeEdit()">취소</button><button class="btn-pill" onclick="saveEdit()">저장</button></div>`;
   document.getElementById('ed-body').innerHTML=`<div class="ed-grid"><div class="ed-preview"><div class="ed-pv" id="ed-pv"></div><div class="ed-pv-cap">미리보기</div></div><div class="ed-form">${form}</div></div>`;
   edLive();
   document.getElementById('edit-modal').classList.remove('hidden');
-  setTimeout(()=>document.getElementById('ed-n')?.focus(),50);
+  setTimeout(()=>document.getElementById(isBranch?'ed-cond':'ed-n')?.focus(),50);
 }
 /* 실시간 미리보기 — 현재 입력값으로 큰 화면을 다시 그린다 */
 function edLive(){
-  const s=FLOW.screens[_edIdx]; if(!s)return; const p={...(s.p||{})};
+  const s=_edObj; if(!s)return; const p={...(s.p||{})};
   fieldsFor(s.t).forEach(k=>{ const el=document.getElementById('ed-'+k); if(el){ const v=(el.value||'').trim(); if(v) p[k]=v; else delete p[k]; } });
   p.slot=s.slot; p.brand=state.brand;
   const pv=document.getElementById('ed-pv'); if(pv) pv.innerHTML=phone(s.t,p);
   const th=document.getElementById('ed-photo-thumb'); if(th){ const u=photoOf(s.slot); th.style.backgroundImage=u?`url('${u}')`:'none'; th.textContent=u?'':'🖼'; }
   const rm=document.getElementById('ed-photo-rm'); if(rm) rm.style.display=photoOf(s.slot)?'':'none';
 }
-function edPickPhoto(){ const s=FLOW.screens[_edIdx]; if(s) pickSlot(s.slot); }
-function edRemovePhoto(){ const s=FLOW.screens[_edIdx]; if(s){ delete state.photoSlots[s.slot]; savePhotos(); renderFlow(); edLive(); toast('사진을 제거했어요'); } }
+function edPickPhoto(){ const s=_edObj; if(s) pickSlot(s.slot); }
+function edRemovePhoto(){ const s=_edObj; if(s){ delete state.photoSlots[s.slot]; savePhotos(); renderFlow(); edLive(); toast('사진을 제거했어요'); } }
 function closeEdit(){ document.getElementById('edit-modal').classList.add('hidden'); }
 function saveEdit(){
-  const s=FLOW.screens[_edIdx]; if(!s)return;
+  const s=_edObj; if(!s)return;
   const n=document.getElementById('ed-n'); if(n) s.n=n.value.trim()||s.n;
+  if(_edKind==='branch'){ const c=document.getElementById('ed-cond'); if(c) s.cond=c.value.trim()||s.cond; }
   s.p=s.p||{};
   fieldsFor(s.t).forEach(k=>{ const el=document.getElementById('ed-'+k); if(el){ const v=el.value.trim(); if(v) s.p[k]=v; else delete s.p[k]; } });
-  closeEdit(); afterEdit(); toast('화면 폼을 저장했어요');
+  closeEdit(); afterEdit(); toast(_edKind==='branch'?'분기를 저장했어요':'화면 폼을 저장했어요');
 }
 function renderScreenTable(){
   const all=[...FLOW.screens.map(s=>({...s,branch:false})),...FLOW.branches.map(b=>({n:b.n,a:'분기',t:b.t,branch:true}))];
