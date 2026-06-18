@@ -201,14 +201,16 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   @page{size:A4 landscape;margin:8mm;}
   body{background:#fff;}.global-nav{display:none!important;}.sub-nav{position:static;}
   .sn-actions,#stage-wizard{display:none!important;}
-  .tile-inner{padding:8px 10px;}.t-dark{background:#fff;color:var(--ink);}.sec-head{margin-bottom:6px!important;}.tile{margin:0!important;}
+  .tile-inner{max-width:none!important;margin:0!important;padding:8px 12px!important;}.t-dark{background:#fff;color:var(--ink);}.sec-head{margin-bottom:6px!important;}.tile{margin:0!important;}
   .t-dark .g-lbl{filter:none;}.t-dark .arr{color:var(--primary);}.t-dark .p-cap,.t-dark .lg,.t-dark .hint{color:var(--ink-muted);}.t-dark .sec-head h2{color:var(--ink);}
-  #stage-result{zoom:var(--pdf-scale,1);}
-  .canvas{overflow:visible;display:flex;justify-content:center;}.flow-col{min-width:0;}.flow-row{flex-wrap:nowrap;}
+  .flow-col{zoom:var(--pdf-scale,1);}
+  .canvas{overflow:visible;display:flex;justify-content:flex-start;}.flow-col{min-width:0;}.flow-row{flex-wrap:nowrap;}
   .group{animation:none!important;opacity:1!important;}
   #toast{display:none!important;}
   .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn{display:none!important;}
   .t-dark .tile-inner>p{display:none!important;}
+  footer{max-width:none!important;margin:0!important;padding:12px 12px 4px!important;}
+  .t-dark .tile-inner{padding-top:10px!important;}
   .g-phones.editable::after{display:none!important;}
   .tile-inner.tight{padding-bottom:0;}
   .phone{box-shadow:none;border:1px solid var(--hairline);}.phone:hover{transform:none;}
@@ -935,13 +937,12 @@ function downloadPDF(){
   // 콘텐츠 비율에 따라 가로/세로 A4 중 더 크게 들어가는 방향을 자동 선택 (여백 최소화)
   const stage=document.getElementById('stage-result'), fc=document.getElementById('flow-col');
   let scale=1, landscape=true;
-  if(stage&&fc){ const fw=fc.scrollWidth; let th=stage.offsetHeight;
-    // 인쇄 시 숨겨지는 요소 높이 차감(brand-bar·legend·meta·안내문) → 과대측정 보정
-    ['#meta','.legend','.brand-bar'].forEach(sel=>{const e=stage.querySelector(sel); if(e) th-=e.offsetHeight;});
-    const note=stage.querySelector('.t-dark .tile-inner>p'); if(note) th-=note.offsetHeight;
-    th=Math.max(th,1); const cw=fw+40, reserve=64;
+  if(stage&&fc){ const flowW=fc.scrollWidth, flowH=Math.max(fc.scrollHeight,1);
+    // 플로우(flow-col)만 축소하고 헤더/푸터는 원본 크기 유지 → 헤더/푸터 고정높이(chrome)만 제외
+    const chrome=160, cw=flowW+24;
     // 인쇄영역(8mm 여백,96dpi): 가로 1040×716 / 세로 716×1040
-    const sL=Math.min(1040/cw,(716-reserve)/th), sP=Math.min(716/cw,(1040-reserve)/th);
+    const fit=(pw,ph)=>Math.min(pw/cw,(ph-chrome)/flowH);
+    const sL=fit(1040,716), sP=fit(716,1040);
     landscape=sL>=sP;
     scale=Math.max(.3, Math.min(1, landscape?sL:sP)); }
   document.documentElement.style.setProperty('--pdf-scale', scale.toFixed(3));
