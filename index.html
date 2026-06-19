@@ -509,6 +509,11 @@ const ASSET={
   'msg-warranty-brand':{n:'보증서 메시지 (브랜드)',a:'메시지'},
   'msg-warranty-vircle':{n:'보증서 메시지 (버클채널)',a:'메시지'},
   'warranty-issue':{n:'보증서 발급',a:'발급'},
+  'rsvp-issue':{n:'RSVP 카드 (발급)',a:'예약',f:'rsvp-issue.png'},
+  'rsvp-enter':{n:'RSVP 입장 카드',a:'예약',f:'rsvp-enter.png'},
+  'rsvp-qr':{n:'입장 QR 제시',a:'예약',f:'rsvp-qr.png'},
+  'rsvp-scan':{n:'직원 QR 스캔',a:'체크인',f:'rsvp-scan.png'},
+  'rsvp-verified':{n:'입장 인증 완료',a:'체크인',f:'rsvp-verified.png'},
 };
 function isAsset(t){ return typeof t==='string' && t.indexOf('asset:')===0; }
 function assetSlug(t){ return t.slice(6); }
@@ -575,8 +580,8 @@ const bmark=(n=14)=>`<span style="display:inline-flex;width:${n}px;height:${n}px
 function kkChat(s,o){ return `<div class="sc" style="background:#b2c7d9;"><div class="sc-kkhead">‹ <b>${s.brand||'브랜드'}</b> <span style="color:#1d9bf0;">✓</span></div><div class="sc-kkbody"><div class="sc-kkbubble"><div class="sc-kkprof">${bmark(13)} ${s.brand||'브랜드'}${o.badge?` <span style="background:${o.badge==='광고성'?'#FEF0C7':'#eee'};color:${o.badge==='광고성'?'#B45309':'#777'};border-radius:3px;padding:0 3px;">${o.badge}</span>`:''}</div>${o.imgH?slotImg(s.slot,'height:'+o.imgH+'px;border-radius:6px;margin-bottom:5px;'):''}<div style="font-weight:600;">${o.kind}</div>${o.benefit?`<div style="font-weight:800;color:var(--brand);">${o.benefit}</div>`:''}${o.body?`<div style="margin-top:3px;color:#555;">${o.body}</div>`:''}<div class="sc-kkbtn"${o.brandBtn?' style="background:var(--brand);color:#fff;"':''}>${o.cta}</div><div class="sc-kkfoot">수신거부 ㅣ 톡 ㅣ 채널 차단</div></div>${o.seg?`<div style="font-size:7px;color:#5a6b7a;align-self:flex-start;">🎯 ${o.seg}</div>`:''}${o.timing?`<div style="font-size:7px;color:#5a6b7a;align-self:flex-start;">⏱ ${o.timing}</div>`:''}</div></div>`; }
 function phone(type,props={}){
   if(isAsset(type)){
-    const slug=assetSlug(type);
-    return `<div class="phone real" style="--brand:${state.brandColor||'#0066cc'}"><img class="screen-img" src="${ASSET_BASE}${slug}.svg" alt="${escAttr((ASSET[slug]||{}).n||slug)}" loading="lazy"></div>`;
+    const slug=assetSlug(type), a=ASSET[slug]||{}, file=a.f||(slug+'.svg');
+    return `<div class="phone real" style="--brand:${state.brandColor||'#0066cc'}"><img class="screen-img" src="${ASSET_BASE}${file}" alt="${escAttr(a.n||slug)}" loading="lazy"></div>`;
   }
   const fn=SCR[type]; const inner=fn?fn(props):`<div class="sc-pad"><div class="sc-sub" style="margin-top:30px;text-align:center;">${type}</div></div>`;
   return `<div class="phone" style="--brand:${state.brandColor||'#0066cc'}">${inner}</div>`;
@@ -609,11 +614,11 @@ const EV={
     {from:'m2',cond:'팝업 종료 후 D+7',n:'감사 쿠폰 알림톡',t:'msg_alimtalk',cap:'자사몰 재유입'},
   ]},
   rsvp:{n:'RSVP / 초대',e:'📅',screens:[
-    {id:'m1',n:'RSVP 신청',a:'예약',t:'rsvp_apply',p:{title:'VIP 초대',schedule:'5/23 · 미래빌딩점',cta:'RSVP 신청'}},
-    {id:'m2',n:'예약 완료',a:'예약',t:'reserve_done'},
-    {id:'m3',n:'입장 QR',a:'예약',t:'rsvp_detail',p:{guestName:'OOO님',schedule:'5/23 18:00',cta:'입장 QR 보기'}},
-    {id:'m4',n:'관리자 QR 스캔',a:'체크인',t:'admin_scan',p:{title:'고객 QR을 스캔하세요',cta:'QR 인증하기'}},
-    {id:'m5',n:'입장 승인 완료',a:'체크인',t:'checkin_done'},
+    {id:'m1',n:'RSVP 카드 (발급)',a:'예약',t:'asset:rsvp-issue'},
+    {id:'m2',n:'RSVP 입장 카드',a:'예약',t:'asset:rsvp-enter'},
+    {id:'m3',n:'입장 QR 제시',a:'예약',t:'asset:rsvp-qr'},
+    {id:'m4',n:'직원 QR 스캔',a:'체크인',t:'asset:rsvp-scan'},
+    {id:'m5',n:'입장 인증 완료',a:'체크인',t:'asset:rsvp-verified'},
   ],branches:[]},
   photocard:{n:'포토카드',e:'📸',screens:[
     {id:'m1',n:'포토카드 선택/사진등록',a:'참여',t:'photocard_sel',p:{title:'사진을 등록해 주세요',cta:'사진 업로드'}},
