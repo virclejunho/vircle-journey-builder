@@ -94,7 +94,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .tile-inner.tight{padding:52px 28px 32px;}
 .t-canvas{background:var(--canvas);}
 .t-parchment{background:var(--parchment);}
-.t-dark{background:var(--tile-1);color:var(--on-dark);}
+.t-dark{background:#ffffff;color:var(--ink);--on-dark:var(--ink);--muted-on-dark:var(--fine);--primary-on-dark:var(--primary);}
 .meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:34px;}
 .chip{background:var(--cardbg);border:1px solid var(--hairline);border-radius:9999px;font-size:14px;font-weight:400;padding:8px 16px;color:var(--ink-muted);}
 .chip b{color:var(--ink);font-weight:600;}
@@ -119,7 +119,7 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 /* 핑크 주석(상단) — 실제 화면 레퍼런스의 "방문 고객 데이터 수집 단계" 같은 메모. 높이 고정으로 폰 정렬 유지 */
 .g-note{height:14px;line-height:14px;margin-bottom:8px;font-size:10px;font-weight:700;letter-spacing:-.01em;color:var(--flow-pink);text-align:center;white-space:nowrap;overflow:visible;}
 /* 회색 필 라벨(하단) — 화면 이름 + 원자기능 색 도트 */
-.g-name{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:9999px;padding:5px 13px;margin-top:13px;font-size:11.5px;font-weight:600;letter-spacing:-.01em;max-width:170px;}
+.g-name{display:inline-flex;align-items:center;gap:6px;background:#f0f0f2;border:1px solid #e2e2e9;color:var(--ink);border-radius:9999px;padding:5px 13px;margin-top:13px;font-size:11.5px;font-weight:600;letter-spacing:-.01em;max-width:170px;}
 .g-name i{width:7px;height:7px;border-radius:50%;flex:none;}
 .g-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .g-lbl{display:none;}
@@ -140,29 +140,29 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .p-cap{font-size:12px;color:var(--muted-on-dark);margin-top:9px;}
 /* 플로우 타이틀/서브 (레퍼런스 상단 헤더) */
 .flow-head{margin:0 0 26px;max-width:760px;}
-.flow-title{font-size:clamp(20px,2.4vw,28px);font-weight:700;letter-spacing:-.02em;color:#fff;outline:none;border-radius:6px;display:inline-block;min-width:40px;}
+.flow-title{font-size:clamp(20px,2.4vw,28px);font-weight:700;letter-spacing:-.02em;color:var(--ink);outline:none;border-radius:6px;display:inline-block;min-width:40px;}
 .flow-title:focus{box-shadow:0 0 0 2px var(--flow-pink);}
 .flow-sub{font-size:13.5px;font-weight:400;color:var(--muted-on-dark);line-height:1.5;margin-top:8px;outline:none;border-radius:6px;}
 .flow-sub:focus{box-shadow:0 0 0 2px var(--flow-pink);}
-.flow-title:empty:before{content:attr(data-ph);color:rgba(255,255,255,.32);}
-.flow-sub:empty:before{content:attr(data-ph);color:rgba(255,255,255,.3);}
+.flow-title:empty:before{content:attr(data-ph);color:rgba(0,0,0,.3);}
+.flow-sub:empty:before{content:attr(data-ph);color:rgba(0,0,0,.28);}
 /* 마케팅 인사이트 패널 (한 줄 설명 밑) */
-.flow-insights{margin-top:16px;max-width:740px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;}
+.flow-insights{margin-top:16px;max-width:740px;background:#f7f7f8;border:1px solid #e6e6ea;border-radius:14px;padding:14px 16px;}
 .fi-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--flow-pink);margin-bottom:11px;}
-.fi-cnt{color:var(--muted-on-dark);font-weight:400;font-size:11px;}
+.fi-cnt{color:var(--fine);font-weight:400;font-size:11px;}
 .fi-ask{display:flex;gap:8px;}
-.fi-ask input{flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:9px 12px;color:#fff;font-family:var(--sans);font-size:13px;outline:none;}
-.fi-ask input::placeholder{color:rgba(255,255,255,.4);}
+.fi-ask input{flex:1;min-width:0;background:#fff;border:1px solid #d2d2d7;border-radius:9px;padding:9px 12px;color:var(--ink);font-family:var(--sans);font-size:13px;outline:none;}
+.fi-ask input::placeholder{color:rgba(0,0,0,.38);}
 .fi-ask input:focus{border-color:var(--flow-pink);}
 .fi-ask button{flex:none;background:var(--flow-pink);color:#fff;border:none;border-radius:9px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;}
 .fi-ask button:active{transform:scale(.96);}
 .fi-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}
-.fi-chip{font-size:11px;color:var(--muted-on-dark);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:4px 11px;cursor:pointer;}
-.fi-chip:hover{color:#fff;border-color:var(--flow-pink);}
+.fi-chip{font-size:11px;color:var(--fine);background:#f0f0f2;border:1px solid #e2e2e9;border-radius:99px;padding:4px 11px;cursor:pointer;}
+.fi-chip:hover{color:var(--ink);border-color:var(--flow-pink);background:#fff;}
 .fi-ans{margin-top:13px;}
-.fi-lead{font-size:12.5px;color:#fff;margin-bottom:6px;line-height:1.5;}
-.fi-case{font-size:11.5px;color:var(--muted-on-dark);line-height:1.6;padding:8px 0;border-top:1px solid rgba(255,255,255,.08);}
-.fi-case b{color:#fff;}.fi-case .ind{color:var(--primary-on-dark);font-size:10.5px;}
+.fi-lead{font-size:12.5px;color:var(--ink);margin-bottom:6px;line-height:1.5;}
+.fi-case{font-size:11.5px;color:var(--fine);line-height:1.6;padding:8px 0;border-top:1px solid #ededed;}
+.fi-case b{color:var(--ink);}.fi-case .ind{color:var(--primary);font-size:10.5px;}
 .fi-case a{color:var(--flow-pink);text-decoration:none;font-size:10.5px;white-space:nowrap;}
 .fi-empty{font-size:12px;color:var(--muted-on-dark);line-height:1.5;}
 
@@ -247,7 +247,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   .canvas{overflow:visible;display:flex;justify-content:flex-start;}.flow-col{min-width:0;}.flow-row{flex-wrap:nowrap;}
   .group{animation:none!important;opacity:1!important;}
   #toast{display:none!important;}
-  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn,.slot-cue,.flow-insights{display:none!important;}
+  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn,.slot-cue,.flow-insights,#insights-mount{display:none!important;}
   .flow-title{color:var(--ink)!important;box-shadow:none!important;}
   .flow-sub{color:var(--ink-muted)!important;box-shadow:none!important;}
   .flow-sub:empty,.flow-title:empty{display:none!important;}
@@ -390,7 +390,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
     <div class="legend" id="legend"></div>
     <div class="brand-bar" id="brand-bar"></div>
     <div class="canvas"><div class="flow-col" id="flow-col"></div></div>
-    <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;"><b style="color:#fff;font-weight:600;">카드를 클릭</b>하면 사진·문구를 수정해요 · 카드 위 아이콘으로 <b style="color:#fff;font-weight:600;">교체·이동·삭제</b> · 화면 사이 <b style="color:#fff;font-weight:600;">＋</b>로 추가. <button class="btn-ghost-pill sm" style="margin-left:8px;border-color:rgba(255,255,255,.45);color:#fff;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
+    <p style="font-size:12.5px;color:var(--fine);margin-top:18px;"><b style="color:var(--ink);font-weight:600;">카드를 클릭</b>하면 사진·문구를 수정해요 · 카드 위 아이콘으로 <b style="color:var(--ink);font-weight:600;">교체·이동·삭제</b> · 화면 사이 <b style="color:var(--ink);font-weight:600;">＋</b>로 추가. <button class="btn-ghost-pill sm" style="margin-left:8px;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
     <div id="insights-mount" style="margin-top:30px;"></div>
   </div></div>
 
@@ -457,11 +457,11 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 .screen-img{width:100%;height:100%;object-fit:contain;display:block;border-radius:inherit;background:#fff;}
 .brand-bar{display:flex;align-items:center;gap:12px;margin:0 0 22px;flex-wrap:wrap;}
 .brand-bar .bb-lbl{font-size:11px;font-weight:700;color:var(--muted-on-dark);letter-spacing:.06em;text-transform:uppercase;}
-.brand-bar .bb-name{font-size:14px;font-weight:600;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:9px;padding:7px 13px;max-width:220px;font-family:var(--sans);}
-.brand-bar .bb-name:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.14);}
+.brand-bar .bb-name{font-size:14px;font-weight:600;color:var(--ink);background:#fff;border:1px solid #d2d2d7;border-radius:9px;padding:7px 13px;max-width:220px;font-family:var(--sans);}
+.brand-bar .bb-name:focus{outline:none;border-color:var(--primary);background:#fff;}
 .brand-bar .bb-color{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted-on-dark);cursor:pointer;}
-.brand-bar .bb-color input{width:34px;height:28px;border:1px solid rgba(255,255,255,.28);border-radius:7px;padding:2px;background:transparent;cursor:pointer;}
-.brand-bar .bb-hint{font-size:11.5px;color:rgba(255,255,255,.5);}
+.brand-bar .bb-color input{width:34px;height:28px;border:1px solid #d2d2d7;border-radius:7px;padding:2px;background:#fff;cursor:pointer;}
+.brand-bar .bb-hint{font-size:11.5px;color:var(--fine);}
 </style>
 
 <div class="modal-bg hidden" id="picker-modal"><div class="modal">
@@ -1176,9 +1176,9 @@ function downloadSVG(){
   css=css.split(']]>').join(']] >');   // CDATA 조기종료 방지
   const inner=new XMLSerializer().serializeToString(clone);   // XML well-formed (<br> 등 void 태그 자동 정리)
   const fo=`<foreignObject x="0" y="0" width="${W}" height="${H}">`
-    +`<div xmlns="http://www.w3.org/1999/xhtml" style="--brand:${state.brandColor||'#0066cc'};padding:${PAD}px;background:#272729;width:${W}px;box-sizing:border-box;font-family:-apple-system,system-ui,'Pretendard Variable',Pretendard,sans-serif;">`
+    +`<div xmlns="http://www.w3.org/1999/xhtml" style="--brand:${state.brandColor||'#0066cc'};padding:${PAD}px;background:#ffffff;width:${W}px;box-sizing:border-box;font-family:-apple-system,system-ui,'Pretendard Variable',Pretendard,sans-serif;">`
     +`<style><![CDATA[\n${css}\n]]></style>${inner}</div></foreignObject>`;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#272729"/>${fo}</svg>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#ffffff"/>${fo}</svg>`;
   const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${(state.brand||'campaign')}-여정플로우.svg`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   toast('SVG로 내려받았어요 (브라우저에서 열어 확인)');
