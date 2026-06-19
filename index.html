@@ -514,6 +514,10 @@ const ASSET={
   'rsvp-qr':{n:'입장 QR 제시',a:'예약',f:'rsvp-qr.png'},
   'rsvp-scan':{n:'직원 QR 스캔',a:'체크인',f:'rsvp-scan.png'},
   'rsvp-verified':{n:'입장 인증 완료',a:'체크인',f:'rsvp-verified.png'},
+  'ld-randombox':{n:'랜덤박스 긁기',a:'참여'},
+  'ld-winner':{n:'당첨 화면',a:'당첨'},
+  'ld-loser':{n:'미당첨 화면',a:'당첨'},
+  'ld-coupon':{n:'당첨 쿠폰 상세',a:'발급'},
 };
 function isAsset(t){ return typeof t==='string' && t.indexOf('asset:')===0; }
 function assetSlug(t){ return t.slice(6); }
@@ -603,15 +607,13 @@ const state={ brand:'', brandColor:'#0066cc', ch:null, ev:null, opts:[], start:'
 /* ════════ 이벤트 정의 ════════ */
 const EV={
   lucky:{n:'럭키드로우',e:'🎰',screens:[
-    {id:'m1',n:'럭키드로우 응모',a:'참여',t:'luckydraw',p:{title:'럭키드로우',scratch:'여기를 긁어보세요!',desc:'1일 1회 응모',cta:'응모하기'}},
-    {id:'m2',n:'당첨 결과',a:'당첨',t:'winner',p:{title:'축하합니다!<br>경품에 당첨되셨어요',prize:'15% 할인 쿠폰',sub:'오프라인 팝업'}},
-    {id:'m3',n:'라운지 쿠폰함',a:'발급',t:'coupon_box',p:{title:'내 쿠폰함',couponList:'당첨 쿠폰 · 웰컴 쿠폰'}},
-    {id:'m4',n:'쿠폰 상세',a:'발급',t:'coupon',p:{title:'당첨 쿠폰',benefit:'15% 할인',validity:'기간 내 사용',channel:'오프라인',condition:'팝업 방문 고객 전용 쿠폰입니다',cta:'쿠폰 사용'}},
-    {id:'m5',n:'직원 확인',a:'체크인',t:'checkin_qr',p:{title:'직원에게 보여주세요',desc:'쿠폰 사용을 위해 보여주세요',cta:'사용하기'}},
-    {id:'m6',n:'직원 확인 PIN',a:'체크인',t:'admin_pin',p:{title:'매장 직원이<br>비밀번호를 눌러주세요'}},
+    {id:'m1',n:'랜덤박스 긁기',a:'참여',t:'asset:ld-randombox'},
+    {id:'m2',n:'당첨 화면',a:'당첨',t:'asset:ld-winner'},
+    {id:'m3',n:'당첨 쿠폰 상세',a:'발급',t:'asset:ld-coupon'},
+    {id:'m4',n:'라운지 쿠폰함',a:'발급',t:'asset:coupon-box'},
   ],branches:[
-    {from:'m1',cond:'미당첨',n:'미당첨 화면',t:'loser',cap:'재도전 유도'},
-    {from:'m2',cond:'팝업 종료 후 D+7',n:'감사 쿠폰 알림톡',t:'msg_alimtalk',cap:'자사몰 재유입'},
+    {from:'m1',cond:'미당첨',n:'미당첨 화면',t:'asset:ld-loser',cap:'재도전 유도'},
+    {from:'m2',cond:'팝업 종료 후 D+7',n:'감사 쿠폰 알림톡',t:'asset:msg-coupon',cap:'자사몰 재유입'},
   ]},
   rsvp:{n:'RSVP / 초대',e:'📅',screens:[
     {id:'m1',n:'RSVP 카드 (발급)',a:'예약',t:'asset:rsvp-issue'},
