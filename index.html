@@ -508,6 +508,13 @@ const ASSET={
   'rsvp-scan':{n:'직원 QR 스캔',a:'체크인',f:'rsvp-scan.png',cat:'RSVP·입장'},
   'rsvp-verified':{n:'입장 인증 완료',a:'체크인',f:'rsvp-verified.png',cat:'RSVP·입장'},
   'invite':{n:'초대장 (MY OWN TREASURE)',a:'예약',cat:'RSVP·입장'},
+  'pc-upload':{n:'사진 등록',a:'참여',cat:'포토카드'},
+  'pc-album':{n:'사진 앨범 선택',a:'참여',cat:'포토카드'},
+  'pc-photo':{n:'촬영/사진 보정',a:'참여',cat:'포토카드'},
+  'pc-preview':{n:'사진 등록 완료 (프레임)',a:'참여',cat:'포토카드'},
+  'pc-issued':{n:'포토카드 생성완료',a:'리워드',cat:'포토카드'},
+  'pc-issued-login':{n:'포토카드 완료 (로그인)',a:'인증',cat:'포토카드'},
+  'pc-issued-agree':{n:'포토카드 완료 (약관)',a:'가입',cat:'포토카드'},
   'coupon-box':{n:'라운지 쿠폰함',a:'발급',cat:'쿠폰·발급'},
   'coupon-mall-photo':{n:'자사몰 쿠폰 (사진O)',a:'발급',cat:'쿠폰·발급'},
   'coupon-mall-nophoto':{n:'자사몰 쿠폰 (사진X)',a:'발급',cat:'쿠폰·발급'},
@@ -523,7 +530,7 @@ const ASSET={
   'msg-warranty-vircle':{n:'보증서 메시지 (버클채널)',a:'메시지',cat:'메시지·CRM'},
   'msg-friend':{n:'친구톡 메시지',a:'메시지',cat:'메시지·CRM'},
 };
-const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','쿠폰·발급','보증서','메시지·CRM'];
+const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','포토카드','쿠폰·발급','보증서','메시지·CRM'];
 function isAsset(t){ return typeof t==='string' && t.indexOf('asset:')===0; }
 function assetSlug(t){ return t.slice(6); }
 function screenName(t){ return isAsset(t)?((ASSET[assetSlug(t)]||{}).n||t):((TYPE_META[t]||{}).st||t); }
@@ -628,10 +635,13 @@ const EV={
     {id:'m5',n:'입장 인증 완료',a:'체크인',t:'asset:rsvp-verified'},
   ],branches:[]},
   photocard:{n:'포토카드',e:'📸',screens:[
-    {id:'m1',n:'포토카드 선택/사진등록',a:'참여',t:'photocard_sel',p:{title:'사진을 등록해 주세요',cta:'사진 업로드'}},
-    {id:'m2',n:'포토카드 생성완료',a:'리워드',t:'photocard_issued',p:{title:'포토카드를 저장하고 혜택을 받아보세요!',cta:'랜덤 선물 받기'}},
-    {id:'m3',n:'인증 전용 쿠폰',a:'발급',t:'coupon',p:{title:'포토카드 인증 쿠폰',benefit:'랜덤 선물',validity:'기간 내 사용',channel:'오프라인',cta:'쿠폰 확인'}},
-  ],branches:[{from:'m2',cond:'인스타 공유',n:'공유하기',t:'share',cap:'UGC 확산'}]},
+    {id:'m1',n:'사진 등록',a:'참여',t:'asset:pc-upload'},
+    {id:'m2',n:'사진 앨범 선택',a:'참여',t:'asset:pc-album'},
+    {id:'m3',n:'사진 등록 완료',a:'참여',t:'asset:pc-preview'},
+    {id:'m4',n:'포토카드 생성완료',a:'리워드',t:'asset:pc-issued'},
+  ],branches:[
+    {from:'m4',cond:'비회원 · 혜택 받기',n:'포토카드 완료 (로그인)',t:'asset:pc-issued-login',cap:'혜택 수령 로그인'},
+  ]},
   coupon:{n:'쿠폰 발급',e:'🏷️',screens:[
     {id:'m1',n:'쿠폰 지급 메시지',a:'메시지',t:'asset:msg-coupon'},
     {id:'m2',n:'자사몰 쿠폰',a:'발급',t:'asset:coupon-mall-photo'},
