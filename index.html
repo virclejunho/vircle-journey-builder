@@ -831,8 +831,9 @@ function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')
 /* ════════ 플로우 영속 + 편집 ════════ */
 let _uid=0;
 function flowKey(){ return 'vjb-flow-'+(state.brand||'x')+'|'+(state.ev||'x'); }
-function saveFlow(){ try{ localStorage.setItem(flowKey(),JSON.stringify({screens:FLOW.screens,branches:FLOW.branches,flowTitle:state.flowTitle,flowSub:state.flowSub})); }catch(e){} }
-function loadSavedFlow(){ try{ const o=JSON.parse(localStorage.getItem(flowKey())||'null'); if(o&&Array.isArray(o.screens)&&o.screens.length){ FLOW.screens=o.screens; if(Array.isArray(o.branches)) FLOW.branches=o.branches; if(typeof o.flowTitle==='string') state.flowTitle=o.flowTitle; if(typeof o.flowSub==='string') state.flowSub=o.flowSub; } }catch(e){} }
+const FLOW_VER=2;  /* 실제화면 매핑 반영 — 이 버전 미만 저장본은 폐기하고 새 기본값으로 */
+function saveFlow(){ try{ localStorage.setItem(flowKey(),JSON.stringify({v:FLOW_VER,screens:FLOW.screens,branches:FLOW.branches,flowTitle:state.flowTitle,flowSub:state.flowSub})); }catch(e){} }
+function loadSavedFlow(){ try{ const o=JSON.parse(localStorage.getItem(flowKey())||'null'); if(o&&o.v===FLOW_VER&&Array.isArray(o.screens)&&o.screens.length){ FLOW.screens=o.screens; if(Array.isArray(o.branches)) FLOW.branches=o.branches; if(typeof o.flowTitle==='string') state.flowTitle=o.flowTitle; if(typeof o.flowSub==='string') state.flowSub=o.flowSub; } else if(o){ try{localStorage.removeItem(flowKey());}catch(e){} } }catch(e){} }
 function afterEdit(){ saveFlow(); renderMeta(); renderLegend(); renderFlow(); }
 function newScreen(t){ const id='u'+(_uid++); return {id,n:screenName(t),a:screenAction(t),t,p:{},slot:'s_'+id}; }
 function addScreen(idx,t){ FLOW.screens.splice(idx,0,newScreen(t)); afterEdit(); toast('화면을 추가했어요'); }
