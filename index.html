@@ -133,6 +133,10 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .branch-row{margin-top:14px;}
 .b-tag{color:var(--flow-pink);font-size:13px;font-weight:600;padding-top:46px;padding-right:10px;white-space:nowrap;}
 .b-tag .b-from{color:#fff;}
+/* 분기 lane — 가로로 안 겹치는 분기끼리 같은 단에 모아 세로 압축 */
+.br-lane{position:relative;height:330px;margin-top:18px;}
+.br-item{position:absolute;top:0;width:140px;}
+.br-item .g-note{cursor:pointer;}
 .p-cap{font-size:12px;color:var(--muted-on-dark);margin-top:9px;}
 /* 플로우 타이틀/서브 (레퍼런스 상단 헤더) */
 .flow-head{margin:0 0 26px;max-width:760px;}
@@ -491,6 +495,7 @@ const IMG_SLOTS=['crm_entry','landing','msg_alimtalk','msg_friendtalk','auth_kak
 /* 화면은 두 종류: ①SCR 템플릿(폼으로 채우는 편집형) ②ASSET 실제 화면(Figma export SVG, K-SWISS 레퍼런스 — 담당자 승인하에 실사용 예시로 그대로 노출). */
 const ASSET_BASE='assets/screens/';
 const ASSET={
+  'qr-entry':{n:'오프라인 QR 진입',a:'진입',cat:'진입·라운지'},
   'lounge-home-pre':{n:'라운지 홈 (가입 전)',a:'가입',cat:'진입·라운지'},
   'lounge-home-post':{n:'라운지 홈 (가입 완료)',a:'가입',cat:'진입·라운지'},
   'kakao-login':{n:'카카오 로그인/회원가입',a:'인증',cat:'진입·라운지'},
@@ -687,7 +692,7 @@ function buildFlow(){
   const o=state.opts;
   const hasSu=o.includes('signup'), hasMo=o.includes('member_only'), hasFc=o.includes('firstcome'), hasSh=o.includes('share'), hasCk=o.includes('checkin');
   const entry=off
-    ?{id:'e1',n:'QR 진입',a:'진입',t:'qr_entry',cap:'매장/팝업 입구'}
+    ?{id:'e1',n:'QR 진입',a:'진입',t:'asset:qr-entry',cap:'매장/팝업 입구'}
     :{id:'e1',n:'CRM 발송',a:'진입',t:'crm_entry',p:{ch:'친구톡',title:'이벤트 안내',cta:'참여하기'},cap:'친구톡/알림톡'};
   const auth={id:'e2',n:'카카오 로그인/회원가입',a:'인증',t:'asset:kakao-login'};
   let main=[entry,auth];
@@ -768,12 +773,19 @@ function renderFlow(){
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
   });
   html+=`</div>`;
-  f.branches.forEach(b=>{
-    const fromIdx=f.screens.findIndex(s=>s.id===b.from);
-    const indent=Math.max(0,fromIdx)*(140+50);
-    const bnote=b.note||'';
-    const bTools=`<div class="card-tools"><button title="분기 수정" aria-label="분기 수정" onclick="event.stopPropagation();openEditBranch('${b.id}')">${ic('edit')}</button><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
-    html+=`<div class="flow-row branch-row" data-bid="${b.id}" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ <span class="b-from">${escHtml((f.screens[fromIdx]||{}).n||'화면')}</span> · ${escHtml(b.cond)}</div><div class="group"><div class="g-note">${bnote?'✱ '+escHtml(bnote):''}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div><div class="g-name"><i style="background:${AC['분기']}"></i><span>${escHtml(b.n)}</span></div></div></div>`;
+  /* 분기 lane-packing: 가로로 안 겹치는 분기끼리 같은 단에 모아 세로 계단 압축 */
+  const STEP=140+50, LEAD=32;
+  const bMeta=f.branches.map(b=>{ const fi=Math.max(0,f.screens.findIndex(s=>s.id===b.from)); return {b,fi,indent:fi*STEP}; });
+  const lanes=[];
+  bMeta.forEach(m=>{ let L=0; while((lanes[L]||[]).some(x=>Math.abs(x.indent-m.indent)<150)) L++; (lanes[L]=lanes[L]||[]).push(m); });
+  lanes.forEach(lane=>{
+    let row='<div class="br-lane">';
+    lane.forEach(({b,indent})=>{
+      const bTools=`<div class="card-tools"><button title="분기 수정" aria-label="분기 수정" onclick="event.stopPropagation();openEditBranch('${b.id}')">${ic('edit')}</button><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
+      row+=`<div class="br-item" data-bid="${b.id}" style="left:${LEAD+indent}px"><div class="g-note" onclick="openEditBranch('${b.id}')" title="분기 조건 수정">↘ ${escHtml(b.cond)}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div><div class="g-name"><i style="background:${AC['분기']}"></i><span>${escHtml(b.n)}</span></div></div>`;
+    });
+    row+='</div>';
+    html+=row;
   });
   document.getElementById('flow-col').innerHTML='<svg id="branch-svg"></svg>'+html;
   requestAnimationFrame(drawBranchConnectors);
@@ -787,16 +799,18 @@ function drawBranchConnectors(){
   const pt=el=>{ const r=el.getBoundingClientRect(); return {l:r.left-cr.left+sl, t:r.top-cr.top+st, b:r.bottom-cr.top+st, cx:r.left+r.width/2-cr.left+sl}; };
   let p='';
   (FLOW.branches||[]).forEach(b=>{
-    const src=col.querySelector('.group[data-sid="'+b.from+'"]'), row=col.querySelector('.branch-row[data-bid="'+b.id+'"]'); if(!src||!row)return;
-    const tgt=row.querySelector('.g-phones')||row.querySelector('.group')||row;
+    const src=col.querySelector('.group[data-sid="'+b.from+'"]'), item=col.querySelector('.br-item[data-bid="'+b.id+'"]'); if(!src||!item)return;
+    const tgt=item.querySelector('.g-phones')||item;
     const s=pt(src), r=pt(tgt);
     const x1=s.cx, y1=s.b-2;          // 출발 카드 하단 중앙
-    const x2=r.l-8, y2=r.t+20;        // 분기 카드 왼쪽 상단(끝점) → 오른쪽으로 휨
-    const cr2=Math.min(13, Math.abs(y2-y1)/2, Math.max(2,Math.abs(x2-x1)));
-    const dir=x2<x1?-1:1;
-    p+=`<path d="M ${x1} ${y1} V ${y2-cr2} Q ${x1} ${y2} ${x1+dir*cr2} ${y2} H ${x2-dir*5}" fill="none" stroke="${pink}" stroke-width="2.2" stroke-linecap="round"/>`;
+    const x2=r.cx, y2=r.t-5;          // 분기 카드 상단 중앙
+    const dx=x2-x1; let d;
+    if(Math.abs(dx)<4){ d=`M ${x1} ${y1} L ${x2} ${y2}`; }
+    else { const dir=dx<0?-1:1, cr2=Math.min(12,Math.abs(dx)/2), midY=y2-16;
+      d=`M ${x1} ${y1} V ${midY-cr2} Q ${x1} ${midY} ${x1+dir*cr2} ${midY} H ${x2-dir*cr2} Q ${x2} ${midY} ${x2} ${midY+cr2} L ${x2} ${y2}`; }
+    p+=`<path d="${d}" fill="none" stroke="${pink}" stroke-width="2.2" stroke-linecap="round"/>`;
     p+=`<circle cx="${x1}" cy="${y1}" r="3.4" fill="${pink}"/>`;
-    p+=`<path d="M ${x2} ${y2} l ${-dir*7} -4.2 v 8.4 z" fill="${pink}"/>`;  // 분기 카드 향한 화살촉
+    p+=`<path d="M ${x2} ${y2+3} l -4.5 -7 h 9 z" fill="${pink}"/>`;  // 분기 카드로 내려가는 화살촉
   });
   svg.innerHTML=p;
 }
