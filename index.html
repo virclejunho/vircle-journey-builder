@@ -146,6 +146,25 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .flow-sub:focus{box-shadow:0 0 0 2px var(--flow-pink);}
 .flow-title:empty:before{content:attr(data-ph);color:rgba(255,255,255,.32);}
 .flow-sub:empty:before{content:attr(data-ph);color:rgba(255,255,255,.3);}
+/* 마케팅 인사이트 패널 (한 줄 설명 밑) */
+.flow-insights{margin-top:16px;max-width:740px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;}
+.fi-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--flow-pink);margin-bottom:11px;}
+.fi-cnt{color:var(--muted-on-dark);font-weight:400;font-size:11px;}
+.fi-ask{display:flex;gap:8px;}
+.fi-ask input{flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:9px 12px;color:#fff;font-family:var(--sans);font-size:13px;outline:none;}
+.fi-ask input::placeholder{color:rgba(255,255,255,.4);}
+.fi-ask input:focus{border-color:var(--flow-pink);}
+.fi-ask button{flex:none;background:var(--flow-pink);color:#fff;border:none;border-radius:9px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;}
+.fi-ask button:active{transform:scale(.96);}
+.fi-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}
+.fi-chip{font-size:11px;color:var(--muted-on-dark);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:4px 11px;cursor:pointer;}
+.fi-chip:hover{color:#fff;border-color:var(--flow-pink);}
+.fi-ans{margin-top:13px;}
+.fi-lead{font-size:12.5px;color:#fff;margin-bottom:6px;line-height:1.5;}
+.fi-case{font-size:11.5px;color:var(--muted-on-dark);line-height:1.6;padding:8px 0;border-top:1px solid rgba(255,255,255,.08);}
+.fi-case b{color:#fff;}.fi-case .ind{color:var(--primary-on-dark);font-size:10.5px;}
+.fi-case a{color:var(--flow-pink);text-decoration:none;font-size:10.5px;white-space:nowrap;}
+.fi-empty{font-size:12px;color:var(--muted-on-dark);line-height:1.5;}
 
 /* 폰 */
 .phone{width:140px;height:266px;background:#fff;border-radius:20px;padding:0;overflow:hidden;display:flex;flex-direction:column;position:relative;text-align:left;box-shadow:var(--shadow-product);transition:transform .2s;}
@@ -228,7 +247,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   .canvas{overflow:visible;display:flex;justify-content:flex-start;}.flow-col{min-width:0;}.flow-row{flex-wrap:nowrap;}
   .group{animation:none!important;opacity:1!important;}
   #toast{display:none!important;}
-  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn,.slot-cue{display:none!important;}
+  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn,.slot-cue,.flow-insights{display:none!important;}
   .flow-title{color:var(--ink)!important;box-shadow:none!important;}
   .flow-sub{color:var(--ink-muted)!important;box-shadow:none!important;}
   .flow-sub:empty,.flow-title:empty{display:none!important;}
@@ -345,6 +364,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
     <span class="sn-title" id="sn-title">버클 화면 플로우 생성기</span>
     <div class="sn-actions hidden" id="result-actions">
       <button class="btn-ghost-pill sm" onclick="restart()">↺ 처음부터</button>
+      <button class="btn-util" onclick="downloadReport()">📄 리포트</button>
       <button class="btn-util" onclick="downloadSVG()">SVG</button>
       <button class="btn-util" onclick="downloadPDF()">PDF</button>
     </div>
@@ -546,6 +566,43 @@ const ASSET={
   'msg-friend':{n:'친구톡 메시지',a:'메시지',cat:'메시지·CRM'},
 };
 const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','포토카드','쿠폰·발급','보증서','체크인','메시지·CRM','공유'];
+
+/* ════════ 마케팅 인사이트 풀 (실제 공개 사례만 — 출처 표기·날조 금지, 소스 추가 시 항목 누적) ════════ */
+const INSIGHTS=[
+  {brand:'오늘의집',ind:'가구·인테리어 커머스',tags:['CRM','앱설치','개인화','크로스셀','푸시','카카오채널','프로모션','고관여'],sum:'모바일웹은 앱설치 유도에 집중하고, 앱 안에선 가입 직후부터 개인화 추천·크로스셀을 제공. 스크랩 상품 가격하락 같은 행동기반 자동 푸시와 카카오톡 채널 대규모 프로모션 안내를 병행. 고관여 상품 특성상 다층 터치포인트 전략이 돋보임.',src:'야무JIN 성장일기',url:'https://brunch.co.kr/@yamujiin/29'},
+  {brand:'마켓컬리',ind:'새벽배송 커머스',tags:['CRM','회원가입','띠배너','장바구니','앱푸시','프로모션','브랜드톤','알림톡','LMS'],sum:'회원가입 유도(띠배너·장바구니)와 상품추천·앱푸시를 운영. 개인화보다 대규모 프로모션 비중이 더 컸고, 전문몰(지그재그·29CM)이 개인화 CRM에 더 활발하다고 평가. 모든 접점에서 일관된 브랜드 톤이 강점.',src:'야무JIN 성장일기',url:'https://brunch.co.kr/@yamujiin/27'},
+  {brand:'크몽',ind:'프리랜서 마켓',tags:['CRM','회원가입','고객여정','인앱메시지','개인화','수신동의','배너','전환'],sum:'가입~구매 고객여정을 단계별로 관리. 앱설치 직후 가입 유도, 행동기반 개인화 인앱메시지, 동선을 방해하지 않는 배너로 마케팅 수신 동의율을 높임. 단계별 전환 최적화가 핵심.',src:'야무JIN 성장일기',url:'https://brunch.co.kr/@yamujiin/26'},
+  {brand:'29CM',ind:'온라인 패션 커머스',tags:['CRM','앱설치','로그인팝업','회원가입','쿠폰','맞춤푸시','수신동의','프로모션','할인강조','패션'],sum:'행동기반 로그인 팝업으로 가입 유도, 미사용 쿠폰 만료·관심 브랜드 할인 등 맞춤 푸시 발송. 좋아요·팔로우 같은 행동 시 자연스럽게 마케팅 수신 동의를 유도하고, 상세페이지에서 최대 할인가를 시각적으로 강조.',src:'야무JIN 성장일기',url:'https://brunch.co.kr/@yamujiin/23'},
+  {brand:'지그재그',ind:'여성 패션 이커머스',tags:['CRM','온보딩','취향추천','회원가입','수신동의','개인화푸시','프로모션','띠배너','패션'],sum:'취향추천 → 회원가입 → 마케팅 동의로 이어지는 순차 온보딩과 개인화 앱푸시가 핵심. 높은 수준의 프로모션 페이지 디자인과 동선을 고려한 띠배너 활용이 특징.',src:'야무JIN 성장일기',url:'https://brunch.co.kr/@yamujiin/22'},
+];
+const INSIGHT_SYN={'이벤트':['프로모션'],'행사':['프로모션'],'프로모션':['프로모션'],'가입':['회원가입','온보딩'],'회원가입':['회원가입'],'온보딩':['온보딩'],'푸시':['푸시','앱푸시'],'알림':['푸시','알림톡'],'메시지':['CRM','알림톡','LMS'],'crm':['CRM'],'쿠폰':['쿠폰'],'개인화':['개인화','개인화푸시'],'동의':['수신동의'],'수신동의':['수신동의'],'패션':['패션'],'커머스':['커머스'],'배너':['배너','띠배너'],'추천':['취향추천','개인화']};
+function _ni(s){ return (s||'').toLowerCase(); }
+function scoreInsight(it,q){
+  const toks=_ni(q).split(/[\s,?.!·]+/).filter(Boolean); const exp=new Set(toks);
+  toks.forEach(t=>Object.keys(INSIGHT_SYN).forEach(k=>{ if(t.includes(_ni(k))) INSIGHT_SYN[k].forEach(v=>exp.add(_ni(v))); }));
+  const b=_ni(it.brand),i=_ni(it.ind),tg=it.tags.map(_ni).join(' '),s=_ni(it.sum); let sc=0;
+  exp.forEach(t=>{ if(!t)return; if(b.includes(t))sc+=3; if(i.includes(t))sc+=2; if(tg.includes(t))sc+=2; if(s.includes(t))sc+=1; });
+  return sc;
+}
+function queryInsights(q){ return INSIGHTS.map(it=>({it,sc:scoreInsight(it,q)})).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).map(x=>x.it); }
+function relevantInsights(){ const r=queryInsights(((FLOW&&FLOW.name)||'')+' 이벤트 프로모션 CRM 회원가입'); return (r.length?r:INSIGHTS).slice(0,3); }
+function caseHTML(it){ return `<div class="fi-case"><b>${escHtml(it.brand)}</b> <span class="ind">${escHtml(it.ind)}</span> — ${escHtml(it.sum)} <a href="${it.url}" target="_blank" rel="noopener">출처: ${escHtml(it.src)}↗</a></div>`; }
+function insightsPanelHTML(){
+  const chips=['다른 브랜드는 이벤트 어떻게 했어?','패션 브랜드 CRM 사례','회원가입·온보딩 유도','개인화 푸시 사례'];
+  return `<div class="flow-insights" id="flow-insights"><div class="fi-head">💡 마케팅 인사이트 · 유사 사례 <span class="fi-cnt">공개 사례 풀 ${INSIGHTS.length}건</span></div>`
+    +`<div class="fi-ask"><input id="fi-q" placeholder="예: 다른 브랜드는 이벤트 어떻게 했어?" onkeydown="if(event.key==='Enter')askInsights()"><button onclick="askInsights()">질문</button></div>`
+    +`<div class="fi-chips">${chips.map(c=>`<span class="fi-chip" onclick="var q=document.getElementById('fi-q');q.value=this.textContent;askInsights()">${c}</span>`).join('')}</div>`
+    +`<div class="fi-ans" id="fi-ans"><div class="fi-lead">비슷한 업계 브랜드들의 CRM·이벤트 운영 사례예요. 위에 자연어로 물어보세요.</div>${relevantInsights().map(caseHTML).join('')}</div></div>`;
+}
+function askInsights(){
+  const el=document.getElementById('fi-q'), ans=document.getElementById('fi-ans'); if(!ans)return;
+  const q=(el&&el.value||'').trim();
+  if(!q){ ans.innerHTML=`<div class="fi-lead">질문을 입력해 주세요.</div>${relevantInsights().map(caseHTML).join('')}`; return; }
+  const r=queryInsights(q);
+  ans.innerHTML = r.length
+    ? `<div class="fi-lead">“${escHtml(q)}” — 풀에서 찾은 관련 사례 ${r.length}건이에요:</div>${r.map(caseHTML).join('')}`
+    : `<div class="fi-empty">“${escHtml(q)}” 관련 사례가 아직 풀에 없어요. 다른 키워드로 물어보시거나 사례를 더 추가해 주세요. (실제 공개 사례만 답하고 지어내지 않습니다)</div>`;
+}
 function isAsset(t){ return typeof t==='string' && t.indexOf('asset:')===0; }
 function assetSlug(t){ return t.slice(6); }
 function screenName(t){ return isAsset(t)?((ASSET[assetSlug(t)]||{}).n||t):((TYPE_META[t]||{}).st||t); }
@@ -763,7 +820,7 @@ let FLOW=null;
 function renderFlow(){
   const f=FLOW;
   const title=escHtml(state.flowTitle||FLOW.name), sub=escHtml(state.flowSub||'');
-  let html=`<div class="flow-head"><div class="flow-title" contenteditable="true" spellcheck="false" data-ph="캠페인 제목을 입력하세요" onblur="setFlowTitle(this.textContent)">${title}</div><div class="flow-sub" contenteditable="true" spellcheck="false" data-ph="한 줄 설명 (선택)" onblur="setFlowSub(this.textContent)">${sub}</div></div>`;
+  let html=`<div class="flow-head"><div class="flow-title" contenteditable="true" spellcheck="false" data-ph="캠페인 제목을 입력하세요" onblur="setFlowTitle(this.textContent)">${title}</div><div class="flow-sub" contenteditable="true" spellcheck="false" data-ph="한 줄 설명 — 어떤 프로모션인지 적어보세요" onblur="setFlowSub(this.textContent)">${sub}</div>${insightsPanelHTML()}</div>`;
   html+=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
     const tools=`<div class="card-tools"><button title="문구 수정" aria-label="문구 수정" onclick="event.stopPropagation();openEdit(${i})">${ic('edit')}</button><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
@@ -1108,7 +1165,7 @@ function downloadSVG(){
   const PAD=44, W=Math.ceil(col.scrollWidth)+PAD*2, H=Math.ceil(col.scrollHeight)+PAD*2;
   const clone=col.cloneNode(true);
   // 에디터 전용 요소 제거 (툴바·삽입버튼·이미지 안내문구)
-  clone.querySelectorAll('.card-tools,.ins-btn,.slot-cue').forEach(e=>e.remove());
+  clone.querySelectorAll('.card-tools,.ins-btn,.slot-cue,.flow-insights').forEach(e=>e.remove());
   clone.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
   clone.querySelectorAll('.flow-title,.flow-sub').forEach(e=>{ if(!e.textContent.trim()) e.remove(); });
   // 동일 출처 <style> 규칙만 수집해 인라인 (CDN 폰트는 시스템 폰트로 폴백)
@@ -1123,6 +1180,32 @@ function downloadSVG(){
   const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${(state.brand||'campaign')}-여정플로우.svg`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   toast('SVG로 내려받았어요 (브라우저에서 열어 확인)');
+}
+/* ════════ 마케팅 리포트 다운로드 — 캠페인+여정+인사이트(출처 포함) 인쇄용 HTML ════════ */
+function downloadReport(){
+  if(!FLOW){ toast('플로우가 없어요'); return; }
+  const brand=state.brand||'브랜드', title=state.flowTitle||FLOW.name, sub=state.flowSub||'';
+  const steps=FLOW.screens.map((s,i)=>`<li><b>${escHtml(s.n)}</b> <span class="cmp">${escHtml(screenComp(s.t))}</span></li>`).join('');
+  const brs=FLOW.branches.map(b=>`<li>↘ <b>${escHtml(b.cond||'분기')}</b> → ${escHtml(b.n)}</li>`).join('');
+  const cases=relevantInsights().map(it=>`<div class="rc"><div class="rb">${escHtml(it.brand)} <span>${escHtml(it.ind)}</span></div><p>${escHtml(it.sum)}</p><a href="${it.url}">출처: ${escHtml(it.src)} — ${it.url}</a></div>`).join('');
+  const d=new Date(), ds=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${escHtml(brand)} 캠페인 리포트</title>
+<style>body{font-family:-apple-system,system-ui,'Pretendard Variable',Pretendard,sans-serif;max-width:760px;margin:40px auto;padding:0 24px;color:#1d1d1f;line-height:1.6;word-break:keep-all}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 6px}.promo{color:#555;font-size:15px;margin:0 0 30px}
+h2{font-size:18px;border-bottom:2px solid #eee;padding-bottom:8px;margin:34px 0 12px}
+ol,ul{padding-left:20px;margin:0}li{margin:6px 0}.cmp{color:#999;font-size:12px;font-family:ui-monospace,Menlo,monospace}
+.rc{border:1px solid #eee;border-radius:12px;padding:14px 16px;margin:12px 0}.rb{font-weight:700}.rb span{color:#2997ff;font-size:12px;font-weight:500;margin-left:6px}
+.rc p{margin:7px 0;font-size:13.5px;color:#444}.rc a{color:#F92D9B;font-size:12px;word-break:break-all;text-decoration:none}
+footer{margin-top:42px;border-top:1px solid #eee;padding-top:14px;color:#999;font-size:12px}
+@media print{body{margin:0}}</style></head><body>
+<h1>${escHtml(brand)} · ${escHtml(title)}</h1>
+<p class="promo">${escHtml(sub||'(프로모션 한 줄 설명을 입력하세요)')}</p>
+<h2>고객 여정 (${FLOW.screens.length}단계)</h2><ol>${steps}</ol>${brs?`<p style="font-weight:600;margin:14px 0 6px">분기 (${FLOW.branches.length})</p><ul>${brs}</ul>`:''}
+<h2>💡 유사 마케팅 사례 (CRM·온보딩)</h2>${cases||'<p style="color:#999">관련 사례 없음</p>'}
+<footer>VIRCLE Journey Builder · 사례 출처: 야무JIN '성장일기'(brunch) · 생성일 ${ds}<br>※ 사례 요약은 공개 글 기반이며, 수치·사실은 원문을 따릅니다.</footer>
+</body></html>`;
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'})); a.download=`${brand}-마케팅리포트.html`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('마케팅 리포트를 내려받았어요 (HTML — 열어서 인쇄/PDF 저장 가능)');
 }
 function copyJSON(){ const j=JSON.stringify(figmaJSON(),null,2); navigator.clipboard.writeText(j).then(()=>toast('Figma 배치용 JSON을 복사했어요')).catch(()=>toast('복사 실패 — JSON 박스에서 직접 선택해 주세요')); }
 function downloadJSON(){ const j=JSON.stringify(figmaJSON(),null,2); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([j],{type:'application/json'})); a.download=`${state.brand||'campaign'}-flow.json`; a.click(); URL.revokeObjectURL(a.href); toast('⬇ flow.json 내려받기'); }
