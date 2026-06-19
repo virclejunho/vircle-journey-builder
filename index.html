@@ -400,8 +400,10 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 .modal-head h3{font-size:18px;font-weight:600;letter-spacing:-.015em;flex:1;color:var(--ink);}
 .modal-head .x{width:32px;height:32px;border-radius:9px;border:none;background:rgba(0,0,0,.05);font-size:17px;cursor:pointer;color:var(--ink);}
 .modal-body{padding:20px 22px 24px;}
-.pk-section{font-size:13px;font-weight:600;color:var(--fine);margin:18px 0 10px;letter-spacing:.02em;}
+.pk-section{font-size:13px;font-weight:600;color:var(--fine);margin:16px 0 10px;letter-spacing:.02em;}
 .pk-section:first-child{margin-top:0;}
+.pk-group-lbl{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em;margin:26px 0 6px;padding-bottom:9px;border-bottom:2px solid var(--hairline);}
+.pk-group-lbl:first-child{margin-top:0;}
 .picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:12px;}
 .pk-cell{border:1px solid var(--hairline);border-radius:14px;padding:8px 4px;cursor:pointer;text-align:center;transition:border-color .12s,box-shadow .12s;background:#fafafa;}
 .pk-cell:hover{border-color:var(--primary);box-shadow:0 0 0 1.5px var(--primary);}
@@ -489,36 +491,39 @@ const IMG_SLOTS=['crm_entry','landing','msg_alimtalk','msg_friendtalk','auth_kak
 /* 화면은 두 종류: ①SCR 템플릿(폼으로 채우는 편집형) ②ASSET 실제 화면(Figma export SVG, K-SWISS 레퍼런스 — 담당자 승인하에 실사용 예시로 그대로 노출). */
 const ASSET_BASE='assets/screens/';
 const ASSET={
-  'lounge-home-pre':{n:'라운지 홈 (가입 전)',a:'가입'},
-  'lounge-home-post':{n:'라운지 홈 (가입 완료)',a:'가입'},
-  'kakao-login':{n:'카카오 로그인/회원가입',a:'인증'},
-  'kakao-signup-vircle':{n:'버클 카카오 회원가입',a:'인증'},
-  'agree-lounge':{n:'약관 동의 (라운지)',a:'가입'},
-  'agree-coupon':{n:'약관 동의 (쿠폰)',a:'가입'},
-  'agree-warranty':{n:'약관 동의 (보증서)',a:'가입'},
-  'coupon-box':{n:'라운지 쿠폰함',a:'발급'},
-  'coupon-mall-photo':{n:'자사몰 쿠폰 (사진O)',a:'발급'},
-  'coupon-mall-nophoto':{n:'자사몰 쿠폰 (사진X)',a:'발급'},
-  'coupon-offline':{n:'오프라인 쿠폰',a:'발급'},
-  'coupon-img-a':{n:'쿠폰 (이미지형 A)',a:'발급'},
-  'coupon-img-b':{n:'쿠폰 (이미지형 B)',a:'발급'},
-  'coupon-img-c':{n:'쿠폰 (이미지형 C)',a:'발급'},
-  'coupon-plain':{n:'쿠폰 (기본)',a:'발급'},
-  'msg-coupon':{n:'쿠폰 지급 메시지',a:'메시지'},
-  'msg-welcome':{n:'버클 웰컴 메시지',a:'메시지'},
-  'msg-warranty-brand':{n:'보증서 메시지 (브랜드)',a:'메시지'},
-  'msg-warranty-vircle':{n:'보증서 메시지 (버클채널)',a:'메시지'},
-  'warranty-issue':{n:'보증서 발급',a:'발급'},
-  'rsvp-issue':{n:'RSVP 카드 (발급)',a:'예약',f:'rsvp-issue.png'},
-  'rsvp-enter':{n:'RSVP 입장 카드',a:'예약',f:'rsvp-enter.png'},
-  'rsvp-qr':{n:'입장 QR 제시',a:'예약',f:'rsvp-qr.png'},
-  'rsvp-scan':{n:'직원 QR 스캔',a:'체크인',f:'rsvp-scan.png'},
-  'rsvp-verified':{n:'입장 인증 완료',a:'체크인',f:'rsvp-verified.png'},
-  'ld-randombox':{n:'랜덤박스 긁기',a:'참여'},
-  'ld-winner':{n:'당첨 화면',a:'당첨'},
-  'ld-loser':{n:'미당첨 화면',a:'당첨'},
-  'ld-coupon':{n:'당첨 쿠폰 상세',a:'발급'},
+  'lounge-home-pre':{n:'라운지 홈 (가입 전)',a:'가입',cat:'진입·라운지'},
+  'lounge-home-post':{n:'라운지 홈 (가입 완료)',a:'가입',cat:'진입·라운지'},
+  'kakao-login':{n:'카카오 로그인/회원가입',a:'인증',cat:'진입·라운지'},
+  'kakao-signup-vircle':{n:'버클 카카오 회원가입',a:'인증',cat:'진입·라운지'},
+  'agree-lounge':{n:'약관 동의 (라운지)',a:'가입',cat:'약관·가입'},
+  'agree-coupon':{n:'약관 동의 (쿠폰)',a:'가입',cat:'약관·가입'},
+  'agree-warranty':{n:'약관 동의 (보증서)',a:'가입',cat:'약관·가입'},
+  'ld-randombox':{n:'랜덤박스 긁기',a:'참여',cat:'럭키드로우'},
+  'ld-winner':{n:'당첨 화면',a:'당첨',cat:'럭키드로우'},
+  'ld-loser':{n:'미당첨 화면',a:'당첨',cat:'럭키드로우'},
+  'ld-coupon':{n:'당첨 쿠폰 상세',a:'발급',cat:'럭키드로우'},
+  'rsvp-issue':{n:'RSVP 카드 (발급)',a:'예약',f:'rsvp-issue.png',cat:'RSVP·입장'},
+  'rsvp-enter':{n:'RSVP 입장 카드',a:'예약',f:'rsvp-enter.png',cat:'RSVP·입장'},
+  'rsvp-qr':{n:'입장 QR 제시',a:'예약',f:'rsvp-qr.png',cat:'RSVP·입장'},
+  'rsvp-scan':{n:'직원 QR 스캔',a:'체크인',f:'rsvp-scan.png',cat:'RSVP·입장'},
+  'rsvp-verified':{n:'입장 인증 완료',a:'체크인',f:'rsvp-verified.png',cat:'RSVP·입장'},
+  'invite':{n:'초대장 (MY OWN TREASURE)',a:'예약',cat:'RSVP·입장'},
+  'coupon-box':{n:'라운지 쿠폰함',a:'발급',cat:'쿠폰·발급'},
+  'coupon-mall-photo':{n:'자사몰 쿠폰 (사진O)',a:'발급',cat:'쿠폰·발급'},
+  'coupon-mall-nophoto':{n:'자사몰 쿠폰 (사진X)',a:'발급',cat:'쿠폰·발급'},
+  'coupon-offline':{n:'오프라인 쿠폰',a:'발급',cat:'쿠폰·발급'},
+  'coupon-img-a':{n:'쿠폰 (이미지형 A)',a:'발급',cat:'쿠폰·발급'},
+  'coupon-img-b':{n:'쿠폰 (이미지형 B)',a:'발급',cat:'쿠폰·발급'},
+  'coupon-img-c':{n:'쿠폰 (이미지형 C)',a:'발급',cat:'쿠폰·발급'},
+  'coupon-plain':{n:'쿠폰 (기본)',a:'발급',cat:'쿠폰·발급'},
+  'warranty-issue':{n:'보증서 발급',a:'발급',cat:'보증서'},
+  'msg-coupon':{n:'쿠폰 지급 메시지',a:'메시지',cat:'메시지·CRM'},
+  'msg-welcome':{n:'버클 웰컴 메시지',a:'메시지',cat:'메시지·CRM'},
+  'msg-warranty-brand':{n:'보증서 메시지 (브랜드)',a:'메시지',cat:'메시지·CRM'},
+  'msg-warranty-vircle':{n:'보증서 메시지 (버클채널)',a:'메시지',cat:'메시지·CRM'},
+  'msg-friend':{n:'친구톡 메시지',a:'메시지',cat:'메시지·CRM'},
 };
+const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','쿠폰·발급','보증서','메시지·CRM'];
 function isAsset(t){ return typeof t==='string' && t.indexOf('asset:')===0; }
 function assetSlug(t){ return t.slice(6); }
 function screenName(t){ return isAsset(t)?((ASSET[assetSlug(t)]||{}).n||t):((TYPE_META[t]||{}).st||t); }
@@ -823,13 +828,22 @@ function openPicker(mode,idx){
   _pkMode=mode; _pkIdx=idx;
   document.getElementById('pk-title').textContent=(mode==='swap'?'화면 교체':mode==='branch'?'분기 화면 추가':'화면 추가')+' · 버클 화면 애셋';
   let html='';
-  // 실제 화면 (Figma export · K-SWISS 실사용 레퍼런스)
-  html+=`<div class="pk-section">실제 화면 · 레퍼런스 (K-SWISS 실사용 예시)</div><div class="picker-grid">`+Object.keys(ASSET).map(slug=>{ const a=ASSET[slug]; const t='asset:'+slug;
-    return `<div class="pk-cell" onclick="pickComponent('${t}')"><div class="pk-thumb">${phone(t)}</div><div class="pk-name">${a.n}</div><div class="pk-act" style="background:${hex2rgba(AC[a.a]||'#888',.12)};color:${AC[a.a]||'#888'}">${a.a}</div></div>`;
-  }).join('')+`</div>`;
+  // 실제 화면 (Figma export · 실사용 레퍼런스) — 흐름 카테고리별 분류
+  const assetCell=slug=>{ const a=ASSET[slug]; const t='asset:'+slug;
+    return `<div class="pk-cell" onclick="pickComponent('${t}')"><div class="pk-thumb">${phone(t)}</div><div class="pk-name">${a.n}</div><div class="pk-act" style="background:${hex2rgba(AC[a.a]||'#888',.12)};color:${AC[a.a]||'#888'}">${a.a}</div></div>`; };
+  html+=`<div class="pk-group-lbl">📱 실제 화면 · 레퍼런스 (실사용 예시)</div>`;
+  const shown=new Set();
+  ASSET_CATS.forEach(cat=>{
+    const slugs=Object.keys(ASSET).filter(s=>(ASSET[s].cat||'기타')===cat);
+    if(!slugs.length) return; slugs.forEach(s=>shown.add(s));
+    html+=`<div class="pk-section">${cat}</div><div class="picker-grid">`+slugs.map(assetCell).join('')+`</div>`;
+  });
+  const etc=Object.keys(ASSET).filter(s=>!shown.has(s));
+  if(etc.length) html+=`<div class="pk-section">기타</div><div class="picker-grid">`+etc.map(assetCell).join('')+`</div>`;
+  html+=`<div class="pk-group-lbl">✎ 편집형 템플릿 (폼으로 직접 작성)</div>`;
   const lib=libByAction();
   LIB_ORDER.forEach(a=>{ const ts=lib[a]; if(!ts)return;
-    html+=`<div class="pk-section">${a} · 편집형 템플릿</div><div class="picker-grid">`+ts.map(t=>`<div class="pk-cell" onclick="pickComponent('${t}')"><div class="pk-thumb">${phone(t,{brand:state.brand})}</div><div class="pk-name">${(TYPE_META[t]||{}).st||t}</div><div class="pk-act" style="background:${hex2rgba(AC[a]||'#888',.12)};color:${AC[a]||'#888'}">${a}</div></div>`).join('')+`</div>`;
+    html+=`<div class="pk-section">${a}</div><div class="picker-grid">`+ts.map(t=>`<div class="pk-cell" onclick="pickComponent('${t}')"><div class="pk-thumb">${phone(t,{brand:state.brand})}</div><div class="pk-name">${(TYPE_META[t]||{}).st||t}</div><div class="pk-act" style="background:${hex2rgba(AC[a]||'#888',.12)};color:${AC[a]||'#888'}">${a}</div></div>`).join('')+`</div>`;
   });
   document.getElementById('pk-body').innerHTML=html;
   document.getElementById('picker-modal').classList.remove('hidden');
