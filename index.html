@@ -15,6 +15,7 @@
   --on-dark:#ffffff; --muted-on-dark:#cccccc;
   --hairline:#e0e0e0; --divider-soft:#f0f0f0;
   --kakao:#FEE500;
+  --flow-pink:#F92D9B;
   --sans:-apple-system,system-ui,BlinkMacSystemFont,'Pretendard Variable',Pretendard,'Segoe UI',sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
   --shadow-product:3px 5px 30px 0 rgba(0,0,0,.22);
@@ -115,20 +116,32 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .flow-row{display:inline-flex;align-items:flex-start;position:relative;z-index:1;}
 .b-tag .b-from{color:#fff;font-weight:600;}
 .group{text-align:center;animation:rise .6s ease both;}
-.g-lbl{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:-.01em;border-radius:9999px;padding:5px 14px;margin-bottom:14px;color:#fff;}
-.g-lbl.branch{background:#8a8a8e;}
+/* 핑크 주석(상단) — 실제 화면 레퍼런스의 "방문 고객 데이터 수집 단계" 같은 메모. 높이 고정으로 폰 정렬 유지 */
+.g-note{height:14px;line-height:14px;margin-bottom:8px;font-size:10px;font-weight:700;letter-spacing:-.01em;color:var(--flow-pink);text-align:center;white-space:nowrap;overflow:visible;}
+/* 회색 필 라벨(하단) — 화면 이름 + 원자기능 색 도트 */
+.g-name{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:9999px;padding:5px 13px;margin-top:13px;font-size:11.5px;font-weight:600;letter-spacing:-.01em;max-width:170px;}
+.g-name i{width:7px;height:7px;border-radius:50%;flex:none;}
+.g-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.g-lbl{display:none;}
 .g-phones{display:flex;justify-content:center;gap:10px;position:relative;}
 .g-phones.editable{cursor:pointer;}
 .g-phones.editable .phone{transition:transform .15s cubic-bezier(.2,.7,.3,1),box-shadow .15s;}
 .g-phones.editable:hover .phone{transform:translateY(-4px);box-shadow:0 16px 40px -12px rgba(0,0,0,.55),0 0 0 2px var(--brand,var(--primary));}
-/* 편집 힌트 핀치 제거 — 호버 시 카드 리프트+상단 툴바로 대체 */
-.g-phones.editable:hover::after{opacity:1;transform:translateX(-50%) translateY(0);}
 .modal-bg:not(.hidden) .modal{animation:modalIn .18s cubic-bezier(.2,.7,.3,1);}
 @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
-.arr{align-self:center;color:var(--primary-on-dark);font-size:22px;padding:0 14px;margin-top:30px;}
+.arr{align-self:center;color:var(--flow-pink);font-size:22px;padding:0 14px;margin-top:22px;}
 .branch-row{margin-top:14px;}
-.b-tag{color:var(--primary-on-dark);font-size:13px;font-weight:600;padding-top:46px;padding-right:10px;white-space:nowrap;}
+.b-tag{color:var(--flow-pink);font-size:13px;font-weight:600;padding-top:46px;padding-right:10px;white-space:nowrap;}
+.b-tag .b-from{color:#fff;}
 .p-cap{font-size:12px;color:var(--muted-on-dark);margin-top:9px;}
+/* 플로우 타이틀/서브 (레퍼런스 상단 헤더) */
+.flow-head{margin:0 0 26px;max-width:760px;}
+.flow-title{font-size:clamp(20px,2.4vw,28px);font-weight:700;letter-spacing:-.02em;color:#fff;outline:none;border-radius:6px;display:inline-block;min-width:40px;}
+.flow-title:focus{box-shadow:0 0 0 2px var(--flow-pink);}
+.flow-sub{font-size:13.5px;font-weight:400;color:var(--muted-on-dark);line-height:1.5;margin-top:8px;outline:none;border-radius:6px;}
+.flow-sub:focus{box-shadow:0 0 0 2px var(--flow-pink);}
+.flow-title:empty:before{content:attr(data-ph);color:rgba(255,255,255,.32);}
+.flow-sub:empty:before{content:attr(data-ph);color:rgba(255,255,255,.3);}
 
 /* 폰 */
 .phone{width:140px;height:266px;background:#fff;border-radius:20px;padding:0;overflow:hidden;display:flex;flex-direction:column;position:relative;text-align:left;box-shadow:var(--shadow-product);transition:transform .2s;}
@@ -136,8 +149,12 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .phone::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:99px;background:#e5e5ea;}
 .ptag{font-size:8.5px;font-weight:700;letter-spacing:.04em;color:var(--fine);text-transform:uppercase;margin-top:6px;}
 .pimg{border-radius:10px;background:#efeff1;color:var(--ink-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:600;line-height:1.4;background-size:cover;background-position:center;}
-.pimg.slot{transition:box-shadow .12s;}
-.pimg.filled{color:transparent;}
+.pimg.slot{transition:box-shadow .12s,border-color .12s,background .12s;cursor:pointer;position:relative;overflow:hidden;}
+.pimg.slot:not(.filled){border:1.4px dashed #c4c4cc;background:#f3f3f6;}
+.pimg.slot:not(.filled):hover{border-color:var(--brand,var(--primary));background:#eef4fc;}
+.pimg.slot .slot-cue{font-size:8.5px;font-weight:700;letter-spacing:-.01em;color:#9a9aa2;display:inline-flex;align-items:center;gap:2px;pointer-events:none;}
+.pimg.slot.filled .slot-cue{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);color:#fff;font-size:9px;opacity:0;transition:opacity .12s;}
+.pimg.slot.filled:hover .slot-cue{opacity:1;}
 .ptitle{font-size:12px;font-weight:600;color:var(--ink);line-height:1.35;}
 .ptext{font-size:10px;color:var(--ink-muted);line-height:1.45;}
 .pbtn{margin-top:auto;width:100%;background:var(--ink);color:#fff;font-size:10px;font-weight:600;border-radius:9999px;padding:8px 4px;}
@@ -207,7 +224,11 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
   .canvas{overflow:visible;display:flex;justify-content:flex-start;}.flow-col{min-width:0;}.flow-row{flex-wrap:nowrap;}
   .group{animation:none!important;opacity:1!important;}
   #toast{display:none!important;}
-  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn{display:none!important;}
+  .brand-bar,.legend,#meta,.sec-head .hint,.card-tools,.ins-btn,.slot-cue{display:none!important;}
+  .flow-title{color:var(--ink)!important;box-shadow:none!important;}
+  .flow-sub{color:var(--ink-muted)!important;box-shadow:none!important;}
+  .flow-sub:empty,.flow-title:empty{display:none!important;}
+  .g-name{background:#f0f0f2!important;color:var(--ink)!important;border-color:#e0e0e0!important;}
   .t-dark .tile-inner>p{display:none!important;}
   footer{max-width:none!important;margin:0!important;padding:12px 12px 4px!important;}
   .t-dark .tile-inner{padding-top:10px!important;}
@@ -299,6 +320,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
     <span class="sn-title" id="sn-title">버클 화면 플로우 생성기</span>
     <div class="sn-actions hidden" id="result-actions">
       <button class="btn-ghost-pill sm" onclick="restart()">↺ 처음부터</button>
+      <button class="btn-util" onclick="downloadSVG()">SVG</button>
       <button class="btn-util" onclick="downloadPDF()">PDF</button>
     </div>
   </div>
@@ -344,11 +366,12 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
 .card-tools button:active{transform:scale(.9);}
 .card-tools button.del:hover{background:#e5484d;color:#fff;border-color:transparent;}
 .card-tools button:focus-visible{outline:2px solid var(--brand,var(--primary));outline-offset:2px;}
-.ins-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;margin-top:38px;height:266px;}
-.ins-col .arr{margin:0;padding:0;}
+.ins-col{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-top:22px;height:266px;position:relative;}
+.ins-col .arr{margin:0;padding:0 14px;}
+.ins-col .ins-btn{position:absolute;top:calc(50% + 26px);left:50%;transform:translate(-50%,-50%);margin:0;}
 .ins-btn{width:26px;height:26px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.45);background:transparent;color:var(--primary-on-dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;flex:0 0 auto;}
 .ins-btn:hover{background:var(--primary-on-dark);color:#fff;border-style:solid;}
-.ins-btn.edge{align-self:flex-start;margin-top:158px;margin-right:6px;}
+.ins-btn.edge{align-self:flex-start;margin-top:142px;margin-right:6px;}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:500;padding:24px;}
 .modal-bg.hidden{display:none;}
 .modal{background:#fff;border-radius:20px;max-width:900px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);}
@@ -448,7 +471,7 @@ const IMG_SLOTS=['crm_entry','landing','msg_alimtalk','msg_friendtalk','auth_kak
 function photoOf(slot){ return state.photoSlots[slot] || ''; }
 function slotImg(slot,style){
   const url=photoOf(slot), bg=url?`background-image:url('${url}');`:'';
-  return `<div class="pimg slot ${url?'filled':''}" style="${style||''}${bg}">${url?'':'＋ 제품 사진'}</div>`;
+  return `<div class="pimg slot ${url?'filled':''}" style="${style||''}${bg}" onclick="event.stopPropagation();pickSlot('${slot}')" title="${url?'브랜드 이미지 교체':'브랜드 이미지 넣기'}"><span class="slot-cue">${url?'🔄 교체':'📷 브랜드 이미지'}</span></div>`;
 }
 const QR=(n)=>`<div class="qr-box" style="width:${n}px;height:${n}px">${Array.from({length:25},(_,i)=>`<i class="${[2,5,7,11,13,16,19,22].includes(i)?'o':''}"></i>`).join('')}</div>`;
 const SCR={
@@ -491,7 +514,9 @@ const ICN={
   left:'<path d="m15 18-6-6 6-6"/>',
   right:'<path d="m9 18 6-6-6-6"/>',
   trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>',
-  branch:'<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>'
+  branch:'<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21"/>'
 };
 function ic(n){ return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICN[n]||''}</svg>`; }
 const statbar=(c='#1d1d1f')=>`<div class="sc-stat" style="color:${c}"><span>9:41</span><span class="r">▪▪▪ ᯤ ▭</span></div>`;
@@ -514,7 +539,7 @@ function savePhotos(){ try{ localStorage.setItem(photoKey(),JSON.stringify(state
 function loadPhotos(){ try{ const o=JSON.parse(localStorage.getItem(photoKey())||'null'); if(o&&typeof o==='object') return o; }catch(e){} return {}; }
 
 /* ════════ 상태 ════════ */
-const state={ brand:'', brandColor:'#0066cc', ch:null, ev:null, opts:[], start:'', end:'', teasing:true, photoSlots:{}, tasks:[] };
+const state={ brand:'', brandColor:'#0066cc', ch:null, ev:null, opts:[], start:'', end:'', teasing:true, photoSlots:{}, tasks:[], flowTitle:'', flowSub:'' };
 
 /* ════════ 이벤트 정의 ════════ */
 const EV={
@@ -641,11 +666,13 @@ function generate(){
 let FLOW=null;
 function renderFlow(){
   const f=FLOW;
-  let html=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
+  const title=escHtml(state.flowTitle||FLOW.name), sub=escHtml(state.flowSub||'');
+  let html=`<div class="flow-head"><div class="flow-title" contenteditable="true" spellcheck="false" data-ph="캠페인 제목을 입력하세요" onblur="setFlowTitle(this.textContent)">${title}</div><div class="flow-sub" contenteditable="true" spellcheck="false" data-ph="한 줄 설명 (선택)" onblur="setFlowSub(this.textContent)">${sub}</div></div>`;
+  html+=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
-    const up='';/* +사진 버튼 제거 — 사진은 카드 클릭→편집 모달에서 올림 */
-    const tools=`<div class="card-tools"><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
-    html+=`<div class="group" data-sid="${s.id}" style="animation-delay:${i*.05}s"><div class="g-lbl" style="background:${AC[s.a]||'#444'}">${escHtml(s.n)}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 이 화면의 사진·문구를 수정합니다">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div>${up}${s.cap?`<div class="p-cap">${escHtml(s.cap)}</div>`:''}</div>`;
+    const tools=`<div class="card-tools"><button title="문구 수정" aria-label="문구 수정" onclick="event.stopPropagation();openEdit(${i})">${ic('edit')}</button><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
+    const note=s.note||s.cap||'';
+    html+=`<div class="group" data-sid="${s.id}" style="animation-delay:${i*.05}s"><div class="g-note">${note?'✱ '+escHtml(note):''}</div><div class="g-phones editable" onclick="openEdit(${i})" title="클릭하면 문구 수정 · 이미지 영역을 클릭하면 브랜드 사진 교체">${tools}${phone(s.t,{...(s.p||{}),slot:s.slot,brand:state.brand})}</div><div class="g-name"><i style="background:${AC[s.a]||'#444'}"></i><span>${escHtml(s.n)}</span></div></div>`;
     const last=i===f.screens.length-1;
     html+=`<div class="ins-col"><div class="arr" style="${last?'visibility:hidden;':''}">→</div><button class="ins-btn" title="여기에 화면 추가" onclick="openPicker('add',${i+1})">＋</button></div>`;
   });
@@ -653,9 +680,9 @@ function renderFlow(){
   f.branches.forEach(b=>{
     const fromIdx=f.screens.findIndex(s=>s.id===b.from);
     const indent=Math.max(0,fromIdx)*(140+50);
-    const up='';/* +사진 버튼 제거 — 분기 사진도 카드 클릭→편집 모달에서 올림 */
-    const bTools=`<div class="card-tools"><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
-    html+=`<div class="flow-row branch-row" data-bid="${b.id}" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ <span class="b-from">${escHtml((f.screens[fromIdx]||{}).n||'화면')}</span> · ${escHtml(b.cond)}</div><div class="group"><div class="g-lbl branch">${escHtml(b.n)}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div>${up}${b.cap?`<div class="p-cap">${escHtml(b.cap)}</div>`:''}</div></div>`;
+    const bnote=b.note||'';
+    const bTools=`<div class="card-tools"><button title="분기 수정" aria-label="분기 수정" onclick="event.stopPropagation();openEditBranch('${b.id}')">${ic('edit')}</button><button class="del" title="분기 삭제" aria-label="분기 삭제" onclick="event.stopPropagation();deleteBranch('${b.id}')">${ic('trash')}</button></div>`;
+    html+=`<div class="flow-row branch-row" data-bid="${b.id}" style="margin-left:${indent}px"><div class="b-tag" onclick="openEditBranch('${b.id}')" style="cursor:pointer" title="분기 조건 수정">↘ <span class="b-from">${escHtml((f.screens[fromIdx]||{}).n||'화면')}</span> · ${escHtml(b.cond)}</div><div class="group"><div class="g-note">${bnote?'✱ '+escHtml(bnote):''}</div><div class="g-phones editable" onclick="openEditBranch('${b.id}')" title="클릭하면 이 분기 화면을 수정합니다">${bTools}${phone(b.t,{...(b.p||{}),brand:state.brand,slot:b.slot})}</div><div class="g-name"><i style="background:${AC['분기']}"></i><span>${escHtml(b.n)}</span></div></div></div>`;
   });
   document.getElementById('flow-col').innerHTML='<svg id="branch-svg"></svg>'+html;
   requestAnimationFrame(drawBranchConnectors);
@@ -665,7 +692,7 @@ function drawBranchConnectors(){
   const col=document.getElementById('flow-col'), svg=document.getElementById('branch-svg'); if(!col||!svg)return;
   const W=col.scrollWidth, H=col.scrollHeight; svg.setAttribute('width',W); svg.setAttribute('height',H); svg.style.width=W+'px'; svg.style.height=H+'px';
   const cr=col.getBoundingClientRect(), sl=col.scrollLeft, st=col.scrollTop;
-  const brand=state.brandColor||'#0066cc';
+  const pink=(getComputedStyle(document.documentElement).getPropertyValue('--flow-pink')||'').trim()||'#F92D9B';
   const pt=el=>{ const r=el.getBoundingClientRect(); return {l:r.left-cr.left+sl, t:r.top-cr.top+st, b:r.bottom-cr.top+st, cx:r.left+r.width/2-cr.left+sl}; };
   let p='';
   (FLOW.branches||[]).forEach(b=>{
@@ -673,12 +700,12 @@ function drawBranchConnectors(){
     const tgt=row.querySelector('.g-phones')||row.querySelector('.group')||row;
     const s=pt(src), r=pt(tgt);
     const x1=s.cx, y1=s.b-2;          // 출발 카드 하단 중앙
-    const x2=r.l-7, y2=r.t+20;        // 분기 카드 왼쪽 상단(끝점) → 오른쪽으로 휨
-    const cr2=Math.min(11, Math.abs(y2-y1)/2, Math.max(2,Math.abs(x2-x1)));
+    const x2=r.l-8, y2=r.t+20;        // 분기 카드 왼쪽 상단(끝점) → 오른쪽으로 휨
+    const cr2=Math.min(13, Math.abs(y2-y1)/2, Math.max(2,Math.abs(x2-x1)));
     const dir=x2<x1?-1:1;
-    p+=`<path d="M ${x1} ${y1} V ${y2-cr2} Q ${x1} ${y2} ${x1+dir*cr2} ${y2} H ${x2}" fill="none" stroke="${brand}" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/>`;
-    p+=`<circle cx="${x1}" cy="${y1}" r="3.5" fill="${brand}"/>`;
-    p+=`<circle cx="${x2}" cy="${y2}" r="2.5" fill="${brand}"/>`;
+    p+=`<path d="M ${x1} ${y1} V ${y2-cr2} Q ${x1} ${y2} ${x1+dir*cr2} ${y2} H ${x2-dir*5}" fill="none" stroke="${pink}" stroke-width="2.2" stroke-linecap="round"/>`;
+    p+=`<circle cx="${x1}" cy="${y1}" r="3.4" fill="${pink}"/>`;
+    p+=`<path d="M ${x2} ${y2} l ${-dir*7} -4.2 v 8.4 z" fill="${pink}"/>`;  // 분기 카드 향한 화살촉
   });
   svg.innerHTML=p;
 }
@@ -700,6 +727,8 @@ function renderBrandBar(){
 }
 function setBrandName(v){ state.brand=v; const t=document.getElementById('sn-title'); if(t) t.innerHTML=`${escHtml(state.brand||'브랜드')} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`; renderFlow(); }
 function setBrandColor(v){ state.brandColor=v; renderFlow(); }
+function setFlowTitle(v){ state.flowTitle=(v||'').replace(/\s+/g,' ').trim(); saveFlow(); }
+function setFlowSub(v){ state.flowSub=(v||'').replace(/\s+/g,' ').trim(); saveFlow(); }
 
 /* ════════ 버클 화면 애셋 라이브러리 (편집 시 여기서 고름) ════════ */
 const TYPE_ACTION={qr_entry:'진입',crm_entry:'진입',landing:'진입',msg_alimtalk:'메시지',msg_friendtalk:'메시지',auth_kakao:'인증',auth_phone:'인증',signup:'가입',lounge_home:'가입',participate:'참여',luckydraw:'참여',winner:'당첨',loser:'당첨',photocard_sel:'참여',photocard_issued:'리워드',coupon:'발급',coupon_box:'발급',warranty_issue:'발급',ticket:'발급',reward_tier:'리워드',reward:'리워드',rsvp_apply:'예약',rsvp_detail:'예약',reserve_done:'예약',checkin_qr:'체크인',admin_scan:'체크인',checkin_done:'체크인',share:'공유'};
@@ -711,8 +740,8 @@ function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')
 /* ════════ 플로우 영속 + 편집 ════════ */
 let _uid=0;
 function flowKey(){ return 'vjb-flow-'+(state.brand||'x')+'|'+(state.ev||'x'); }
-function saveFlow(){ try{ localStorage.setItem(flowKey(),JSON.stringify({screens:FLOW.screens,branches:FLOW.branches})); }catch(e){} }
-function loadSavedFlow(){ try{ const o=JSON.parse(localStorage.getItem(flowKey())||'null'); if(o&&Array.isArray(o.screens)&&o.screens.length){ FLOW.screens=o.screens; if(Array.isArray(o.branches)) FLOW.branches=o.branches; } }catch(e){} }
+function saveFlow(){ try{ localStorage.setItem(flowKey(),JSON.stringify({screens:FLOW.screens,branches:FLOW.branches,flowTitle:state.flowTitle,flowSub:state.flowSub})); }catch(e){} }
+function loadSavedFlow(){ try{ const o=JSON.parse(localStorage.getItem(flowKey())||'null'); if(o&&Array.isArray(o.screens)&&o.screens.length){ FLOW.screens=o.screens; if(Array.isArray(o.branches)) FLOW.branches=o.branches; if(typeof o.flowTitle==='string') state.flowTitle=o.flowTitle; if(typeof o.flowSub==='string') state.flowSub=o.flowSub; } }catch(e){} }
 function afterEdit(){ saveFlow(); renderMeta(); renderLegend(); renderFlow(); }
 function newScreen(t){ const id='u'+(_uid++); return {id,n:(TYPE_META[t]||{}).st||t,a:TYPE_ACTION[t]||'참여',t,p:{},slot:'s_'+id}; }
 function addScreen(idx,t){ FLOW.screens.splice(idx,0,newScreen(t)); afterEdit(); toast('화면을 추가했어요'); }
@@ -921,6 +950,7 @@ function removeTask(id){ state.tasks=state.tasks.filter(t=>t.id!==id); saveTasks
 function renderResult(){
   FLOW=buildFlow();
   loadSavedFlow();
+  if(!state.flowTitle) state.flowTitle=`${state.brand||'브랜드'} ${FLOW.name}`;
   document.getElementById('sn-title').innerHTML=`${state.brand} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`;
   state.photoSlots=loadPhotos(); state.tasks=loadTasks();
   renderMeta(); renderBrandBar(); renderLegend(); renderFlow();
@@ -950,6 +980,28 @@ function downloadPDF(){
   ps.textContent='@media print{@page{size:A4 '+(landscape?'landscape':'portrait')+';margin:8mm;}}';
   toast('인쇄 창에서 "PDF로 저장" 선택 · 배경 그래픽 켜기 권장 (방향 자동)');
   setTimeout(()=>window.print(),500);
+}
+/* ════════ SVG 내보내기 — 화면 그대로의 자가완결 .svg (CSS 인라인·이미지 임베드) ════════ */
+function downloadSVG(){
+  const col=document.getElementById('flow-col'); if(!col){ toast('플로우가 없어요'); return; }
+  const PAD=44, W=Math.ceil(col.scrollWidth)+PAD*2, H=Math.ceil(col.scrollHeight)+PAD*2;
+  const clone=col.cloneNode(true);
+  // 에디터 전용 요소 제거 (툴바·삽입버튼·이미지 안내문구)
+  clone.querySelectorAll('.card-tools,.ins-btn,.slot-cue').forEach(e=>e.remove());
+  clone.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
+  clone.querySelectorAll('.flow-title,.flow-sub').forEach(e=>{ if(!e.textContent.trim()) e.remove(); });
+  // 동일 출처 <style> 규칙만 수집해 인라인 (CDN 폰트는 시스템 폰트로 폴백)
+  let css=''; for(const sh of document.styleSheets){ try{ for(const r of sh.cssRules) css+=r.cssText+'\n'; }catch(e){} }
+  css=css.replace(/@font-face\s*\{[^}]*\}/g,'');   // CDN 폰트 제거 → 오프라인 행/에러 방지(시스템 폰트 폴백)
+  css=css.split(']]>').join(']] >');   // CDATA 조기종료 방지
+  const inner=new XMLSerializer().serializeToString(clone);   // XML well-formed (<br> 등 void 태그 자동 정리)
+  const fo=`<foreignObject x="0" y="0" width="${W}" height="${H}">`
+    +`<div xmlns="http://www.w3.org/1999/xhtml" style="--brand:${state.brandColor||'#0066cc'};padding:${PAD}px;background:#272729;width:${W}px;box-sizing:border-box;font-family:-apple-system,system-ui,'Pretendard Variable',Pretendard,sans-serif;">`
+    +`<style><![CDATA[\n${css}\n]]></style>${inner}</div></foreignObject>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#272729"/>${fo}</svg>`;
+  const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${(state.brand||'campaign')}-여정플로우.svg`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('SVG로 내려받았어요 (브라우저에서 열어 확인)');
 }
 function copyJSON(){ const j=JSON.stringify(figmaJSON(),null,2); navigator.clipboard.writeText(j).then(()=>toast('Figma 배치용 JSON을 복사했어요')).catch(()=>toast('복사 실패 — JSON 박스에서 직접 선택해 주세요')); }
 function downloadJSON(){ const j=JSON.stringify(figmaJSON(),null,2); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([j],{type:'application/json'})); a.download=`${state.brand||'campaign'}-flow.json`; a.click(); URL.revokeObjectURL(a.href); toast('⬇ flow.json 내려받기'); }
