@@ -515,6 +515,16 @@ const ASSET={
   'pc-issued':{n:'포토카드 생성완료',a:'리워드',cat:'포토카드'},
   'pc-issued-login':{n:'포토카드 완료 (로그인)',a:'인증',cat:'포토카드'},
   'pc-issued-agree':{n:'포토카드 완료 (약관)',a:'가입',cat:'포토카드'},
+  'membership':{n:'멤버십 상세 (전용 쿠폰)',a:'발급',cat:'진입·라운지'},
+  'mb-lucky-intro':{n:'럭키드로우 안내',a:'참여',cat:'럭키드로우'},
+  'mb-scratch':{n:'랜덤박스 긁기 (그래픽)',a:'참여',cat:'럭키드로우'},
+  'mb-scratch-login':{n:'긁기 + 카카오 로그인',a:'인증',cat:'럭키드로우'},
+  'mb-scratch-agree':{n:'긁기 + 약관 동의',a:'가입',cat:'럭키드로우'},
+  'mb-loser':{n:'미당첨 화면 (MB)',a:'당첨',cat:'럭키드로우'},
+  'checkin-coupon':{n:'쿠폰 제시',a:'발급',cat:'체크인'},
+  'staff-confirm':{n:'직원 확인 (쿠폰 제시)',a:'체크인',cat:'체크인'},
+  'staff-pin':{n:'직원 확인 PIN',a:'체크인',cat:'체크인'},
+  'share-kakao':{n:'공유하기 (친구톡)',a:'공유',cat:'공유'},
   'coupon-box':{n:'라운지 쿠폰함',a:'발급',cat:'쿠폰·발급'},
   'coupon-mall-photo':{n:'자사몰 쿠폰 (사진O)',a:'발급',cat:'쿠폰·발급'},
   'coupon-mall-nophoto':{n:'자사몰 쿠폰 (사진X)',a:'발급',cat:'쿠폰·발급'},
@@ -530,7 +540,7 @@ const ASSET={
   'msg-warranty-vircle':{n:'보증서 메시지 (버클채널)',a:'메시지',cat:'메시지·CRM'},
   'msg-friend':{n:'친구톡 메시지',a:'메시지',cat:'메시지·CRM'},
 };
-const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','포토카드','쿠폰·발급','보증서','메시지·CRM'];
+const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','포토카드','쿠폰·발급','보증서','체크인','메시지·CRM','공유'];
 function isAsset(t){ return typeof t==='string' && t.indexOf('asset:')===0; }
 function assetSlug(t){ return t.slice(6); }
 function screenName(t){ return isAsset(t)?((ASSET[assetSlug(t)]||{}).n||t):((TYPE_META[t]||{}).st||t); }
@@ -625,6 +635,7 @@ const EV={
     {id:'m4',n:'라운지 쿠폰함',a:'발급',t:'asset:coupon-box'},
   ],branches:[
     {from:'m1',cond:'미당첨',n:'미당첨 화면',t:'asset:ld-loser',cap:'재도전 유도'},
+    {from:'m2',cond:'친구 공유',n:'공유하기',t:'asset:share-kakao',cap:'바이럴 확산'},
     {from:'m2',cond:'팝업 종료 후 D+7',n:'감사 쿠폰 알림톡',t:'asset:msg-coupon',cap:'자사몰 재유입'},
   ]},
   rsvp:{n:'RSVP / 초대',e:'📅',screens:[
@@ -659,9 +670,9 @@ const EV={
     {id:'m2',n:'쿠폰 발급',a:'발급',t:'coupon',p:{title:'사은품 쿠폰',benefit:'사은품 증정',validity:'행사 기간',channel:'오프라인',cta:'사용하기'}},
   ],branches:[]},
   checkin:{n:'오프라인 체크인',e:'📍',screens:[
-    {id:'m1',n:'체크인 QR',a:'체크인',t:'checkin_qr',p:{title:'직원에게 보여주세요',cta:'입장하기'}},
-    {id:'m2',n:'체크인 완료',a:'체크인',t:'checkin_done'},
-    {id:'m3',n:'방문 리워드',a:'리워드',t:'reward',p:{title:'방문 리워드',desc:'방문 감사 혜택',cta:'받기'}},
+    {id:'m1',n:'쿠폰 제시',a:'발급',t:'asset:checkin-coupon'},
+    {id:'m2',n:'직원 확인',a:'체크인',t:'asset:staff-confirm'},
+    {id:'m3',n:'직원 확인 PIN',a:'체크인',t:'asset:staff-pin'},
   ],branches:[]},
   survey:{n:'설문/취향 수집',e:'📝',screens:[
     {id:'m1',n:'설문 참여',a:'참여',t:'participate',p:{title:'취향을 알려주세요',desc:'간단한 설문에 참여하고 혜택을 받으세요',cta:'다음'}},
