@@ -391,6 +391,7 @@ footer p{font-size:13px;color:var(--ink-muted);}footer .v{margin-left:auto;font-
     <div class="brand-bar" id="brand-bar"></div>
     <div class="canvas"><div class="flow-col" id="flow-col"></div></div>
     <p style="font-size:12.5px;color:var(--muted-on-dark);margin-top:18px;"><b style="color:#fff;font-weight:600;">카드를 클릭</b>하면 사진·문구를 수정해요 · 카드 위 아이콘으로 <b style="color:#fff;font-weight:600;">교체·이동·삭제</b> · 화면 사이 <b style="color:#fff;font-weight:600;">＋</b>로 추가. <button class="btn-ghost-pill sm" style="margin-left:8px;border-color:rgba(255,255,255,.45);color:#fff;vertical-align:middle;" onclick="resetFlow()">↺ 자동 생성으로 복원</button></p>
+    <div id="insights-mount" style="margin-top:30px;"></div>
   </div></div>
 
   <footer>
@@ -594,6 +595,7 @@ function insightsPanelHTML(){
     +`<div class="fi-chips">${chips.map(c=>`<span class="fi-chip" onclick="var q=document.getElementById('fi-q');q.value=this.textContent;askInsights()">${c}</span>`).join('')}</div>`
     +`<div class="fi-ans" id="fi-ans"><div class="fi-lead">비슷한 업계 브랜드들의 CRM·이벤트 운영 사례예요. 위에 자연어로 물어보세요.</div>${relevantInsights().map(caseHTML).join('')}</div></div>`;
 }
+function renderInsights(){ const m=document.getElementById('insights-mount'); if(m) m.innerHTML=insightsPanelHTML(); }
 function askInsights(){
   const el=document.getElementById('fi-q'), ans=document.getElementById('fi-ans'); if(!ans)return;
   const q=(el&&el.value||'').trim();
@@ -820,7 +822,7 @@ let FLOW=null;
 function renderFlow(){
   const f=FLOW;
   const title=escHtml(state.flowTitle||FLOW.name), sub=escHtml(state.flowSub||'');
-  let html=`<div class="flow-head"><div class="flow-title" contenteditable="true" spellcheck="false" data-ph="캠페인 제목을 입력하세요" onblur="setFlowTitle(this.textContent)">${title}</div><div class="flow-sub" contenteditable="true" spellcheck="false" data-ph="한 줄 설명 — 어떤 프로모션인지 적어보세요" onblur="setFlowSub(this.textContent)">${sub}</div>${insightsPanelHTML()}</div>`;
+  let html=`<div class="flow-head"><div class="flow-title" contenteditable="true" spellcheck="false" data-ph="캠페인 제목을 입력하세요" onblur="setFlowTitle(this.textContent)">${title}</div><div class="flow-sub" contenteditable="true" spellcheck="false" data-ph="한 줄 설명 — 어떤 프로모션인지 적어보세요" onblur="setFlowSub(this.textContent)">${sub}</div></div>`;
   html+=`<div class="flow-row"><button class="ins-btn edge" title="맨 앞에 화면 추가" onclick="openPicker('add',0)">＋</button>`;
   f.screens.forEach((s,i)=>{
     const tools=`<div class="card-tools"><button title="문구 수정" aria-label="문구 수정" onclick="event.stopPropagation();openEdit(${i})">${ic('edit')}</button><button title="화면 교체" aria-label="화면 교체" onclick="event.stopPropagation();openPicker('swap',${i})">${ic('swap')}</button><button title="왼쪽으로 이동" aria-label="왼쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},-1)">${ic('left')}</button><button title="오른쪽으로 이동" aria-label="오른쪽으로 이동" onclick="event.stopPropagation();moveScreen(${i},1)">${ic('right')}</button><button title="분기 추가" aria-label="분기 추가" onclick="event.stopPropagation();openPicker('branch',${i})">${ic('branch')}</button><button class="del" title="삭제" aria-label="화면 삭제" onclick="event.stopPropagation();deleteScreen(${i})">${ic('trash')}</button></div>`;
@@ -1131,7 +1133,7 @@ function renderResult(){
   if(!state.flowTitle) state.flowTitle=`${state.brand||'브랜드'} ${FLOW.name}`;
   document.getElementById('sn-title').innerHTML=`${state.brand} <span class="sn-sep">·</span> <em>${FLOW.emoji} ${FLOW.name}</em>`;
   state.photoSlots=loadPhotos(); state.tasks=loadTasks();
-  renderMeta(); renderBrandBar(); renderLegend(); renderFlow();
+  renderMeta(); renderBrandBar(); renderLegend(); renderFlow(); renderInsights();
   document.getElementById('stage-wizard').classList.add('hidden');
   document.getElementById('stage-result').classList.remove('hidden');
   document.getElementById('result-actions').classList.remove('hidden');
