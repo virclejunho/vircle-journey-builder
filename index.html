@@ -1169,26 +1169,48 @@ function downloadPDF(){
   setTimeout(()=>window.print(),500);
 }
 /* ════════ SVG 내보내기 — 화면 그대로의 자가완결 .svg (CSS 인라인·이미지 임베드) ════════ */
-function downloadSVG(){
+async function _svgImgURI(src){ try{ const r=await fetch(src,{cache:'force-cache'}); const b=await r.blob(); return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>res('');fr.readAsDataURL(b);}); }catch(e){ return ''; } }
+/* 폰(HTML)을 PNG data URI로 래스터화 — 내부 <img>는 먼저 data URI로 인라인(외부참조·taint 제거) */
+async function _rasterPhone(ph,css,scale){
+  const w=ph.offsetWidth,h=ph.offsetHeight; if(!w||!h)return '';
+  const clone=ph.cloneNode(true);
+  clone.querySelectorAll('.card-tools,.slot-cue').forEach(e=>e.remove());
+  for(const im of clone.querySelectorAll('img')){ const d=await _svgImgURI(im.currentSrc||im.getAttribute('src')); if(d){im.setAttribute('src',d);} im.removeAttribute('loading'); }
+  const xhtml=new XMLSerializer().serializeToString(clone);
+  const fsvg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><foreignObject width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="--brand:${state.brandColor||'#0066cc'};width:${w}px;height:${h}px;font-family:-apple-system,system-ui,sans-serif;"><style>${css}</style>${xhtml}</div></foreignObject></svg>`;
+  return await new Promise(res=>{ const img=new Image(); img.onload=()=>{ try{ const c=document.createElement('canvas'); c.width=Math.round(w*scale); c.height=Math.round(h*scale); const x=c.getContext('2d'); x.scale(scale,scale); x.drawImage(img,0,0); res(c.toDataURL('image/png')); }catch(e){ res(''); } }; img.onerror=()=>res(''); img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(fsvg); });
+}
+/* 네이티브 SVG 내보내기 — 화면=인라인 <image>(PNG), 커넥터=<path>, 라벨=<text>. foreignObject 없음 → 피그마 import 가능 */
+async function downloadSVG(){
   const col=document.getElementById('flow-col'); if(!col){ toast('플로우가 없어요'); return; }
-  const PAD=44, W=Math.ceil(col.scrollWidth)+PAD*2, H=Math.ceil(col.scrollHeight)+PAD*2;
-  const clone=col.cloneNode(true);
-  // 에디터 전용 요소 제거 (툴바·삽입버튼·이미지 안내문구)
-  clone.querySelectorAll('.card-tools,.ins-btn,.slot-cue,.flow-insights').forEach(e=>e.remove());
-  clone.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
-  clone.querySelectorAll('.flow-title,.flow-sub').forEach(e=>{ if(!e.textContent.trim()) e.remove(); });
-  // 동일 출처 <style> 규칙만 수집해 인라인 (CDN 폰트는 시스템 폰트로 폴백)
-  let css=''; for(const sh of document.styleSheets){ try{ for(const r of sh.cssRules) css+=r.cssText+'\n'; }catch(e){} }
-  css=css.replace(/@font-face\s*\{[^}]*\}/g,'');   // CDN 폰트 제거 → 오프라인 행/에러 방지(시스템 폰트 폴백)
-  css=css.split(']]>').join(']] >');   // CDATA 조기종료 방지
-  const inner=new XMLSerializer().serializeToString(clone);   // XML well-formed (<br> 등 void 태그 자동 정리)
-  const fo=`<foreignObject x="0" y="0" width="${W}" height="${H}">`
-    +`<div xmlns="http://www.w3.org/1999/xhtml" style="--brand:${state.brandColor||'#0066cc'};padding:${PAD}px;background:#ffffff;width:${W}px;box-sizing:border-box;font-family:-apple-system,system-ui,'Pretendard Variable',Pretendard,sans-serif;">`
-    +`<style><![CDATA[\n${css}\n]]></style>${inner}</div></foreignObject>`;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#ffffff"/>${fo}</svg>`;
-  const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${(state.brand||'campaign')}-여정플로우.svg`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  toast('SVG로 내려받았어요 (브라우저에서 열어 확인)');
+  toast('SVG 만드는 중… 화면 이미지 인라인 (몇 초 걸려요)');
+  const PAD=44, G=PAD, cr=col.getBoundingClientRect(), sl=col.scrollLeft, st=col.scrollTop;
+  const W=Math.ceil(col.scrollWidth)+PAD*2, H=Math.ceil(col.scrollHeight)+PAD*2;
+  const rel=el=>{ const r=el.getBoundingClientRect(); return {x:r.left-cr.left+sl,y:r.top-cr.top+st,w:r.width,h:r.height,cx:r.left+r.width/2-cr.left+sl,cy:r.top+r.height/2-cr.top+st}; };
+  const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const pink=(getComputedStyle(document.documentElement).getPropertyValue('--flow-pink')||'#F92D9B').trim();
+  let css=''; for(const sh of document.styleSheets){ try{ for(const r of sh.cssRules) css+=r.cssText+'\n'; }catch(e){} } css=css.replace(/@font-face\s*\{[^}]*\}/g,'');
+  // 1) 폰 → PNG <image>
+  let body='';
+  for(const ph of col.querySelectorAll('.g-phones .phone')){
+    const b=rel(ph), href=await _rasterPhone(ph,css,2);
+    const X=(b.x+G).toFixed(1),Y=(b.y+G).toFixed(1),Wd=b.w.toFixed(1),Ht=b.h.toFixed(1);
+    if(href) body+=`<image x="${X}" y="${Y}" width="${Wd}" height="${Ht}" preserveAspectRatio="none" xlink:href="${href}"/>`;
+    body+=`<rect x="${X}" y="${Y}" width="${Wd}" height="${Ht}" rx="20" fill="${href?'none':'#f2f2f4'}" stroke="#e6e6ea"/>`;
+  }
+  // 2) 커넥터: 분기(그려진 #branch-svg 복사) + 메인 → 화살표
+  let conn=(document.getElementById('branch-svg')||{}).innerHTML||'';
+  const mp=[...col.querySelectorAll('.flow-row .g-phones .phone')].map(rel);
+  for(let i=0;i<mp.length-1;i++){ const a=mp[i],b2=mp[i+1],y=a.cy.toFixed(1),x1=(a.x+a.w+4).toFixed(1),x2=b2.x-4; conn+=`<path d="M ${x1} ${y} H ${(x2-6).toFixed(1)}" stroke="${pink}" stroke-width="2.2" fill="none"/><path d="M ${x2.toFixed(1)} ${y} l -7 -4.5 v 9 z" fill="${pink}"/>`; }
+  // 3) 라벨 (타이틀/서브/필/노트) → <text>
+  const txt=(el,anchor)=>{ const t=(el.textContent||'').trim(); if(!t)return ''; const b=rel(el),cs=getComputedStyle(el); const x=(anchor==='start'?b.x:b.cx)+G; return `<text x="${x.toFixed(1)}" y="${(b.cy+G).toFixed(1)}" font-size="${(parseFloat(cs.fontSize)||12).toFixed(1)}" font-weight="${cs.fontWeight}" fill="${cs.color}" text-anchor="${anchor==='start'?'start':'middle'}" dominant-baseline="central" font-family="-apple-system,system-ui,Pretendard,sans-serif">${esc(t)}</text>`; };
+  let lab=''; const ti=col.querySelector('.flow-title'); if(ti&&ti.textContent.trim())lab+=txt(ti,'start');
+  const su=col.querySelector('.flow-sub'); if(su&&su.textContent.trim())lab+=txt(su,'start');
+  for(const gn of col.querySelectorAll('.g-name')){ const b=rel(gn); lab+=`<rect x="${(b.x+G).toFixed(1)}" y="${(b.y+G).toFixed(1)}" width="${b.w.toFixed(1)}" height="${b.h.toFixed(1)}" rx="${(b.h/2).toFixed(1)}" fill="#f0f0f2" stroke="#e2e2e9"/>`; const dot=gn.querySelector('i'); if(dot){const d=rel(dot);lab+=`<circle cx="${(d.cx+G).toFixed(1)}" cy="${(d.cy+G).toFixed(1)}" r="3.5" fill="${getComputedStyle(dot).backgroundColor}"/>`;} const sp=gn.querySelector('span')||gn; lab+=txt(sp,'middle'); }
+  for(const nt of col.querySelectorAll('.g-note')){ if(nt.textContent.trim())lab+=txt(nt,'middle'); }
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#ffffff"/>${body}<g transform="translate(${G},${G})">${conn}</g>${lab}</svg>`;
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'})); a.download=`${(state.brand||'campaign')}-여정플로우.svg`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  toast('SVG 내려받았어요 — 피그마에서 열어 작업하세요 (화면=이미지·커넥터·텍스트 레이어)');
 }
 /* ════════ 마케팅 리포트 다운로드 — 캠페인+여정+인사이트(출처 포함) 인쇄용 HTML ════════ */
 function downloadReport(){
