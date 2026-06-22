@@ -709,6 +709,13 @@ const EV={
     {id:'m4',n:'직원 QR 스캔',a:'체크인',t:'asset:rsvp-scan'},
     {id:'m5',n:'입장 인증 완료',a:'체크인',t:'asset:rsvp-verified'},
   ],branches:[]},
+  reserve:{n:'예약하기',e:'📆',screens:[
+    {id:'m1',n:'행사 안내·예약 신청',a:'예약',t:'rsvp_apply',p:{title:'방문 예약 안내',schedule:'행사 일정 · 장소',desc:'원하는 방문 일정을 선택해 예약하세요',cta:'예약하기'}},
+    {id:'m2',n:'예약 완료',a:'예약',t:'reserve_done',p:{title:'예약 완료!',desc:'예약 확정 알림을 보내드릴게요'}},
+    {id:'m3',n:'예약 확인 · 입장 QR',a:'예약',t:'rsvp_detail',p:{guestName:'OOO님',schedule:'예약 일시 · 장소',cta:'예약 확인'}},
+  ],branches:[
+    {from:'m2',cond:'방문 전일 리마인드',n:'리마인드 알림톡',t:'msg_alimtalk',p:{msgKind:'방문 리마인드',body:'예약하신 방문이 내일이에요',cta:'예약 확인하기',timing:'방문 전일'},cap:'노쇼 방지'},
+  ]},
   photocard:{n:'포토카드',e:'📸',screens:[
     {id:'m1',n:'사진 등록',a:'참여',t:'asset:pc-upload'},
     {id:'m2',n:'사진 앨범 선택',a:'참여',t:'asset:pc-album'},
@@ -776,7 +783,7 @@ function buildFlow(){
 }
 
 /* ════════ 위저드 ════════ */
-const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'photocard',l:'📸 포토카드'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'warranty',l:'🛡️ 보증서 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향'},{v:'reward_tier',l:'🎁 단계별 사은품'}];
+const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'reserve',l:'📆 예약하기'},{v:'photocard',l:'📸 포토카드'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'warranty',l:'🛡️ 보증서 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향'},{v:'reward_tier',l:'🎁 단계별 사은품'}];
 const CONDS=[{v:'signup',l:'회원가입 필요'},{v:'member_only',l:'구매자만 참여'},{v:'firstcome',l:'선착순 제한'},{v:'share',l:'공유 기능 포함'},{v:'checkin',l:'체크인 필요'}];
 const STEPS=[
   {kicker:'VIRCLE JOURNEY BUILDER',q:()=>'안녕하세요 👋<br>어떤 브랜드의<br>캠페인인가요?',sub:'브랜드명만 입력하면 바로 시작합니다. 로그인·가입은 없어요.',
