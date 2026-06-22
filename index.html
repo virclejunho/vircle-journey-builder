@@ -541,6 +541,12 @@ const ASSET={
   'pc-issued':{n:'포토카드 생성완료',a:'리워드',cat:'포토카드'},
   'pc-issued-login':{n:'포토카드 완료 (로그인)',a:'인증',cat:'포토카드'},
   'pc-issued-agree':{n:'포토카드 완료 (약관)',a:'가입',cat:'포토카드'},
+  'reserve-form':{n:'예약자 정보 입력',a:'예약',cat:'RSVP·입장'},
+  'reserve-datetime':{n:'날짜·시간 선택',a:'예약',cat:'RSVP·입장'},
+  'reserve-card':{n:'VIP 예약 카드·확인',a:'예약',cat:'RSVP·입장'},
+  'quiz-question':{n:'퀴즈 문항',a:'참여',cat:'퀴즈·설문'},
+  'quiz-agree':{n:'개인정보 동의',a:'가입',cat:'퀴즈·설문'},
+  'quiz-form':{n:'정보 입력 (경품)',a:'참여',cat:'퀴즈·설문'},
   'membership':{n:'멤버십 상세 (전용 쿠폰)',a:'발급',cat:'진입·라운지'},
   'mb-lucky-intro':{n:'럭키드로우 안내',a:'참여',cat:'럭키드로우'},
   'mb-scratch':{n:'랜덤박스 긁기 (그래픽)',a:'참여',cat:'럭키드로우'},
@@ -566,7 +572,7 @@ const ASSET={
   'msg-warranty-vircle':{n:'보증서 메시지 (버클채널)',a:'메시지',cat:'메시지·CRM'},
   'msg-friend':{n:'친구톡 메시지',a:'메시지',cat:'메시지·CRM'},
 };
-const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','포토카드','쿠폰·발급','보증서','체크인','메시지·CRM','공유'];
+const ASSET_CATS=['진입·라운지','약관·가입','럭키드로우','RSVP·입장','포토카드','퀴즈·설문','쿠폰·발급','보증서','체크인','메시지·CRM','공유'];
 
 /* ════════ 마케팅 인사이트 풀 (실제 공개 사례만 — 출처 표기·날조 금지, 소스 추가 시 항목 누적) ════════ */
 const INSIGHTS=[
@@ -710,11 +716,18 @@ const EV={
     {id:'m5',n:'입장 인증 완료',a:'체크인',t:'asset:rsvp-verified'},
   ],branches:[]},
   reserve:{n:'예약하기',e:'📆',screens:[
-    {id:'m1',n:'행사 안내·예약 신청',a:'예약',t:'rsvp_apply',p:{title:'방문 예약 안내',schedule:'행사 일정 · 장소',desc:'원하는 방문 일정을 선택해 예약하세요',cta:'예약하기'}},
-    {id:'m2',n:'예약 완료',a:'예약',t:'reserve_done',p:{title:'예약 완료!',desc:'예약 확정 알림을 보내드릴게요'}},
-    {id:'m3',n:'예약 확인 · 입장 QR',a:'예약',t:'rsvp_detail',p:{guestName:'OOO님',schedule:'예약 일시 · 장소',cta:'예약 확인'}},
+    {id:'m1',n:'예약자 정보 입력',a:'예약',t:'asset:reserve-form'},
+    {id:'m2',n:'날짜·시간 선택',a:'예약',t:'asset:reserve-datetime'},
+    {id:'m3',n:'예약 확인 · VIP 카드',a:'예약',t:'asset:reserve-card'},
   ],branches:[
-    {from:'m2',cond:'방문 전일 리마인드',n:'리마인드 알림톡',t:'msg_alimtalk',p:{msgKind:'방문 리마인드',body:'예약하신 방문이 내일이에요',cta:'예약 확인하기',timing:'방문 전일'},cap:'노쇼 방지'},
+    {from:'m3',cond:'방문 전일 리마인드',n:'리마인드 알림톡',t:'msg_alimtalk',p:{msgKind:'방문 리마인드',body:'예약하신 방문이 내일이에요',cta:'예약 확인하기',timing:'방문 전일'},cap:'노쇼 방지'},
+  ]},
+  quiz:{n:'퀴즈',e:'🧩',screens:[
+    {id:'m1',n:'퀴즈 문항',a:'참여',t:'asset:quiz-question'},
+    {id:'m2',n:'개인정보 동의',a:'가입',t:'asset:quiz-agree'},
+    {id:'m3',n:'정보 입력 (경품)',a:'참여',t:'asset:quiz-form'},
+  ],branches:[
+    {from:'m3',cond:'정답자 경품 안내',n:'경품 알림톡',t:'msg_alimtalk',p:{msgKind:'퀴즈 경품 안내',body:'퀴즈 참여 경품이 지급되었어요',cta:'확인하기',timing:'추첨 후'},cap:'정답자 보상'},
   ]},
   photocard:{n:'포토카드',e:'📸',screens:[
     {id:'m1',n:'사진 등록',a:'참여',t:'asset:pc-upload'},
@@ -783,7 +796,7 @@ function buildFlow(){
 }
 
 /* ════════ 위저드 ════════ */
-const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'reserve',l:'📆 예약하기'},{v:'photocard',l:'📸 포토카드'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'warranty',l:'🛡️ 보증서 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향'},{v:'reward_tier',l:'🎁 단계별 사은품'}];
+const EVENTS=[{v:'lucky',l:'🎰 럭키드로우'},{v:'rsvp',l:'📅 RSVP / 초대'},{v:'reserve',l:'📆 예약하기'},{v:'photocard',l:'📸 포토카드'},{v:'coupon',l:'🏷️ 쿠폰 발급'},{v:'warranty',l:'🛡️ 보증서 발급'},{v:'checkin',l:'📍 오프라인 체크인'},{v:'survey',l:'📝 설문 / 취향'},{v:'quiz',l:'🧩 퀴즈'},{v:'reward_tier',l:'🎁 단계별 사은품'}];
 const CONDS=[{v:'signup',l:'회원가입 필요'},{v:'member_only',l:'구매자만 참여'},{v:'firstcome',l:'선착순 제한'},{v:'share',l:'공유 기능 포함'},{v:'checkin',l:'체크인 필요'}];
 const STEPS=[
   {kicker:'VIRCLE JOURNEY BUILDER',q:()=>'안녕하세요 👋<br>어떤 브랜드의<br>캠페인인가요?',sub:'브랜드명만 입력하면 바로 시작합니다. 로그인·가입은 없어요.',
